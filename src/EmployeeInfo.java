@@ -458,6 +458,7 @@ public class EmployeeInfo extends JPanel {
                 edit_button.setEnabled(false);
                 delete_button.setEnabled(false);
                 add_button.setEnabled(false);
+                save_button.setEnabled(true);
 
                 tableID_text.setText("");
 
@@ -508,6 +509,14 @@ public class EmployeeInfo extends JPanel {
         save_button.setForeground(Color.BLACK);
         save_button.setEnabled(false);
         buttons_panel.add(save_button);
+        save_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("") || nameEng_text.getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
+                }
+            }
+        });
 
         cancel_button = new JButton("Cancel");
         cancel_button.setForeground(Color.BLACK);
@@ -517,7 +526,6 @@ public class EmployeeInfo extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 tableID_label.setForeground(Color.RED);
 
-                location_box.setEnabled(false);
                 save_button.setEnabled(false);
                 edit_button.setEnabled(false);
 
@@ -552,6 +560,9 @@ public class EmployeeInfo extends JPanel {
 
                 shiftRus_box.setEnabled(false);
                 shiftRus_box.setSelectedIndex(0);
+
+                location_box.setEnabled(false);
+                location_box.setSelectedIndex(0);
 
                 jobClass_text.setEnabled(false);
                 jobClass_text.setText("");

@@ -86,10 +86,9 @@ public class OperationsDaily extends JPanel {
 
         JPanel dayHoursInfoPanel = new JPanel();
         dayHoursInfoPanel.setBackground(Color.WHITE);
-        dayHoursInfoPanel.setBounds(20, 370, 450, 180);
+        dayHoursInfoPanel.setBounds(20, 350, 450, 180);
         dayHoursInfoPanel.setLayout(new BoxLayout(dayHoursInfoPanel, BoxLayout.X_AXIS));
         dayHoursInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Day Hours | Ежед. часы"));
-
 
         this.add(dayHoursInfoPanel);
 
