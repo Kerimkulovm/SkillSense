@@ -84,9 +84,29 @@ public class OperationsDaily extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        JPanel employeeInfo_panel = new JPanel();
+        employeeInfo_panel.setBackground(Color.white);
+        employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
+        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
+        employeeInfo_panel.setBounds(20, 180, 450, 210);
+        this.add(employeeInfo_panel);
+
+        JPanel infoLabels = new JPanel();
+        JPanel inputPanel = new JPanel();
+
+        infoLabels.setLayout(new BoxLayout(infoLabels, BoxLayout.Y_AXIS));
+        infoLabels.setBackground(Color.WHITE);
+        employeeInfo_panel.add(infoLabels);
+
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        inputPanel.setBackground(Color.WHITE);
+        employeeInfo_panel.add(inputPanel);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JPanel dayHoursInfoPanel = new JPanel();
         dayHoursInfoPanel.setBackground(Color.WHITE);
-        dayHoursInfoPanel.setBounds(20, 350, 450, 180);
+        dayHoursInfoPanel.setBounds(20, 400, 450, 180);
         dayHoursInfoPanel.setLayout(new BoxLayout(dayHoursInfoPanel, BoxLayout.X_AXIS));
         dayHoursInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Day Hours | Ежед. часы"));
 
@@ -102,26 +122,6 @@ public class OperationsDaily extends JPanel {
         dayHoursTexts.setLayout(new BoxLayout(dayHoursTexts, BoxLayout.Y_AXIS));
         dayHoursTexts.setBackground(Color.WHITE);
         dayHoursInfoPanel.add(dayHoursTexts);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel employeeInfo_panel = new JPanel();
-        employeeInfo_panel.setBackground(Color.white);
-        employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
-        employeeInfo_panel.setBounds(20, 180, 450, 160);
-        this.add(employeeInfo_panel);
-
-        JPanel infoLabels = new JPanel();
-        JPanel inputPanel = new JPanel();
-
-        infoLabels.setLayout(new BoxLayout(infoLabels, BoxLayout.Y_AXIS));
-        infoLabels.setBackground(Color.WHITE);
-        employeeInfo_panel.add(infoLabels);
-
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-        inputPanel.setBackground(Color.WHITE);
-        employeeInfo_panel.add(inputPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,6 +188,32 @@ public class OperationsDaily extends JPanel {
         instructor_text.setEnabled(false);
         instructor_panel.add(instructor_text);
         inputPanel.add(instructor_text);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        JPanel crew_panel = new JPanel();
+        JLabel crew_label = new JLabel("Department | Отдел: ");
+        crew_panel.add(crew_label);
+        crew_panel.setBackground(Color.WHITE);
+        infoLabels.add(crew_panel);
+
+        JTextField crew_text = new JTextField();
+        crew_text.setEnabled(false);
+        crew_panel.add(crew_text);
+        inputPanel.add(crew_text);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        JPanel shift_panel = new JPanel();
+        JLabel shift_label = new JLabel("Shift | Смена :");
+        shift_panel.add(shift_label);
+        shift_panel.setBackground(Color.WHITE);
+        infoLabels.add(shift_panel);
+
+        JTextField shift_text = new JTextField();
+        shift_text.setEnabled(false);
+        shift_panel.add(shift_text);
+        inputPanel.add(shift_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
