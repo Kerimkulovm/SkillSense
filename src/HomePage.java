@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import backend.getDataFromDB;
+
 public class HomePage extends JPanel {
 
     private BufferedImage logo_image;
@@ -25,6 +27,7 @@ public class HomePage extends JPanel {
     private JButton reports_button;
     private JButton addList_button;
     private JButton exit_button;
+    private JButton test_button;
 
     public HomePage()
     {
@@ -58,6 +61,9 @@ public class HomePage extends JPanel {
         gorniy_label.setForeground(new Color(72, 107, 88));
         gorniy_label.setFont(new Font("Kumtor", Font.BOLD, 20));
         this.add(gorniy_label);
+
+
+
 
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.white);
@@ -97,6 +103,19 @@ public class HomePage extends JPanel {
         buttons_panel.add(addList_button);
         addList_button.setHorizontalAlignment(SwingConstants.LEFT);
         addList_button.setBackground(Color.WHITE);
+
+
+        test_button = new JButton("<html> <big> test button </html> ");
+        test_button.setForeground(Color.RED);
+        buttons_panel.add(test_button);
+        test_button.setHorizontalAlignment(SwingConstants.LEFT);
+        test_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getDataFromDB.testClick();
+            }
+        });
+
 
         exit_button = new JButton("<html> <big> EXIT DATABASE </big> <br /> Выход из программы </html> ");
         exit_button.setForeground(Color.RED);

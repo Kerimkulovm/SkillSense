@@ -451,6 +451,7 @@ public class EmployeeInfo extends JPanel {
                 edit_button.setEnabled(false);
                 delete_button.setEnabled(false);
                 tableID_label.setForeground(Color.BLACK);
+
             }
         });
 
