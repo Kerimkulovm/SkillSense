@@ -57,6 +57,7 @@ public class EnterMenu extends JPanel {
         JButton employeesInfo_button = new JButton("<html><big>Employees Info.</big><br />Ввод информации о работниках</html>");
         buttons_panel.add(employeesInfo_button);
         employeesInfo_button.setHorizontalAlignment(SwingConstants.LEFT);
+        employeesInfo_button.setBackground(Color.WHITE);
         employeesInfo_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,6 +68,7 @@ public class EnterMenu extends JPanel {
         JButton operations_button = new JButton("<html><big>Mine Operations daily</big><br />Ввод ежедневной информации</html>");
         buttons_panel.add(operations_button);
         operations_button.setHorizontalAlignment(SwingConstants.LEFT);
+        operations_button.setBackground(Color.WHITE);
         operations_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -77,6 +79,7 @@ public class EnterMenu extends JPanel {
         JButton srt_button = new JButton("<html><big>Enter SRT</big><br />Ввод данных по ТБ</html>");
         buttons_panel.add(srt_button);
         srt_button.setHorizontalAlignment(SwingConstants.LEFT);
+        srt_button.setBackground(Color.WHITE);
         srt_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,6 +89,7 @@ public class EnterMenu extends JPanel {
 
         JButton return_button = new JButton("<html><big>Return to Main Switchboard</big><br />Возврат в главное меню</html>");
         buttons_panel.add(return_button);
+        return_button.setBackground(Color.WHITE);
         return_button.setForeground(Color.red);
         return_button.setHorizontalAlignment(SwingConstants.LEFT);
         return_button.addActionListener(new ActionListener() {

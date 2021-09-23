@@ -83,6 +83,7 @@ public class EmployeeInfo extends JPanel {
 
         searchButton = new JButton("Search");
         searchButton.setForeground(Color.RED);
+        searchButton.setBackground(Color.WHITE);
         tableID_panel.add(searchButton);
         searchEmployee_panel.add(searchButton);
 
@@ -432,11 +433,13 @@ public class EmployeeInfo extends JPanel {
         this.add(buttons_panel);
 
         delete_button = new JButton("Delete");
+        delete_button.setBackground(Color.WHITE);
         delete_button.setForeground(Color.RED);
         delete_button.setEnabled(false);
         buttons_panel.add(delete_button);
 
         edit_button = new JButton("Edit");
+        edit_button.setBackground(Color.WHITE);
         edit_button.setForeground(Color.BLUE);
         edit_button.setEnabled(false);
         buttons_panel.add(edit_button);
@@ -452,7 +455,8 @@ public class EmployeeInfo extends JPanel {
         });
 
         add_button = new JButton("New");
-        add_button.setForeground(Color.GREEN);
+        add_button.setBackground(Color.GREEN);
+        add_button.setForeground(Color.BLACK);
         buttons_panel.add(add_button);
         add_button.addActionListener(new ActionListener() {
             @Override
@@ -508,6 +512,7 @@ public class EmployeeInfo extends JPanel {
         });
 
         save_button = new JButton("Save");
+        save_button.setBackground(Color.WHITE);
         save_button.setForeground(Color.BLACK);
         save_button.setEnabled(false);
         buttons_panel.add(save_button);
@@ -521,7 +526,8 @@ public class EmployeeInfo extends JPanel {
         });
 
         cancel_button = new JButton("Cancel");
-        cancel_button.setForeground(Color.BLACK);
+        cancel_button.setBackground(Color.RED);
+        cancel_button.setForeground(Color.WHITE);
         buttons_panel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
@@ -589,6 +595,7 @@ public class EmployeeInfo extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton exit_button = new JButton("Exit | Выход");
         exit_button.setBounds(730, 60, 150, 30);
+        exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {

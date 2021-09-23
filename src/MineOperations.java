@@ -1,5 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 
 public class MineOperations extends JFrame {
 
@@ -17,7 +21,8 @@ public class MineOperations extends JFrame {
     public static CardLayout card;
     public static JPanel cardPane;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        connectToDatabase();
         launchMineOperationsTraining();
     }
 
@@ -40,5 +45,10 @@ public class MineOperations extends JFrame {
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);
+    }
+
+    private static void connectToDatabase() throws SQLException, ClassNotFoundException {
+
+
     }
 }

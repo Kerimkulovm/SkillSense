@@ -70,6 +70,7 @@ public class HomePage extends JPanel {
         enterData_button = new JButton("<html> <big> Enter/Data Files </big><br /> Ввод/Просмотр Общих Данных </html>");
         buttons_panel.add(enterData_button);
         enterData_button.setHorizontalAlignment(SwingConstants.LEFT);
+        enterData_button.setBackground(Color.WHITE);
         enterData_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,23 +81,28 @@ public class HomePage extends JPanel {
         viewFiles_button = new JButton("<html> <big> View Files by </big> <br /> Просмотр данных по оборудованию </html>");
         buttons_panel.add(viewFiles_button);
         viewFiles_button.setHorizontalAlignment(SwingConstants.LEFT);
+        viewFiles_button.setBackground(Color.WHITE);
 
         viewSchedule_button = new JButton("<html> <big> View/Schedule SRT </big> <br /> Повторное планирование по ТБ </html>");
         buttons_panel.add(viewSchedule_button);
         viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
+        viewSchedule_button.setBackground(Color.WHITE);
 
         reports_button = new JButton("<html> <big> Reports </big> <br /> Отчеты </html>");
         buttons_panel.add(reports_button);
         reports_button.setHorizontalAlignment(SwingConstants.LEFT);
+        reports_button.setBackground(Color.WHITE);
 
         addList_button = new JButton("<html> <big> Add List </big> <br /> Лист включения инструкторов итд. </html>");
         buttons_panel.add(addList_button);
         addList_button.setHorizontalAlignment(SwingConstants.LEFT);
+        addList_button.setBackground(Color.WHITE);
 
         exit_button = new JButton("<html> <big> EXIT DATABASE </big> <br /> Выход из программы </html> ");
         exit_button.setForeground(Color.RED);
         buttons_panel.add(exit_button);
         exit_button.setHorizontalAlignment(SwingConstants.LEFT);
+        exit_button.setBackground(Color.WHITE);
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
