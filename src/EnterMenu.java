@@ -77,6 +77,12 @@ public class EnterMenu extends JPanel {
         JButton srt_button = new JButton("<html><big>Enter SRT</big><br />Ввод данных по ТБ</html>");
         buttons_panel.add(srt_button);
         srt_button.setHorizontalAlignment(SwingConstants.LEFT);
+        srt_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Enter SRT");
+            }
+        });
 
         JButton return_button = new JButton("<html><big>Return to Main Switchboard</big><br />Возврат в главное меню</html>");
         buttons_panel.add(return_button);

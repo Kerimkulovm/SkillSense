@@ -39,7 +39,8 @@ public class EmployeeInfo extends JPanel {
             positionEng_box,
             positionRus_box;
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image,
+            profile_image;
 
     public EmployeeInfo()
     {
@@ -53,11 +54,11 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("Employee Information");
+        JLabel titleEng = new JLabel("<html><big>Employee Information</big><br /> Информация о сотрудниках</html>");
         titleEng.setBounds(160, 0, 400, 100);
         titleEng.setBackground(Color.WHITE);
         titleEng.setForeground(Color.WHITE);
-        titleEng.setFont(new Font("Kumtor", Font.BOLD, 30));
+        titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,6 +213,7 @@ public class EmployeeInfo extends JPanel {
                 "Ассистент Инженера ТБ","Техник Отдела ТБ","Пробоотборщик","Координатор СБ","Сотрудник СБ","Нач. Отдела Безопасности","Старший Мастер","Старший Геомеханик",
                 "Проходчик","Оператор Экскаватора","Мастер СССР","Кладовщик","Студент","Маркшейдер","Тех. Специалист","Оператор Гусен. Бульдозера","Инструктор","Переводчик/Администратор",
                 "Токарь","Вице-Президент по Произодству","Зав. Склад","Сварщик","Стажер"};
+
         positionRus_box = new JComboBox(positionRus_list);
         positionRus_box.setEnabled(false);
         positionRus_box.addActionListener(new ActionListener() {

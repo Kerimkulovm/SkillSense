@@ -88,7 +88,7 @@ public class OperationsDaily extends JPanel {
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
         employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
-        employeeInfo_panel.setBounds(20, 180, 450, 210);
+        employeeInfo_panel.setBounds(20, 170, 450, 210);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -102,11 +102,18 @@ public class OperationsDaily extends JPanel {
         inputPanel.setBackground(Color.WHITE);
         employeeInfo_panel.add(inputPanel);
 
+        JPanel photoPanel = new JPanel();
+        photoPanel.setBackground(Color.WHITE);
+        photoPanel.setBounds(480, 120, 390, 450);
+        photoPanel.setLayout(new BoxLayout(photoPanel, BoxLayout.X_AXIS));
+        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Photo"));
+        this.add(photoPanel);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel dayHoursInfoPanel = new JPanel();
         dayHoursInfoPanel.setBackground(Color.WHITE);
-        dayHoursInfoPanel.setBounds(20, 400, 450, 180);
+        dayHoursInfoPanel.setBounds(20, 390, 450, 180);
         dayHoursInfoPanel.setLayout(new BoxLayout(dayHoursInfoPanel, BoxLayout.X_AXIS));
         dayHoursInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Day Hours | Ежед. часы"));
 
