@@ -6,7 +6,7 @@ public class getDataFromDB {
 
 
     public static void testClick() {
-        System.out.println("Clicked !!!!");
+        System.out.println("Clicked !!!! ");
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTraining; username=MineTraining;password=qazwsx";
