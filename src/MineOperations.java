@@ -1,11 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class MineOperations extends JFrame {
+
+    //Connecting to Database
+    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTraining; username=MineTraining;password=qazwsx";
+    public static Connection conn;
+    static {
+        try {
+            conn = DriverManager.getConnection(url);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static JFrame application_frame;
 
@@ -22,8 +30,8 @@ public class MineOperations extends JFrame {
     public static JPanel cardPane;
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        connectToDatabase();
         launchMineOperationsTraining();
+        connectToDatabase();
     }
 
     private static void launchMineOperationsTraining() {
@@ -46,9 +54,7 @@ public class MineOperations extends JFrame {
         application_frame.add(cardPane);
         application_frame.setVisible(true);
     }
-
-    private static void connectToDatabase() throws SQLException, ClassNotFoundException {
-
-
+    private static void connectToDatabase() throws ClassNotFoundException, SQLException {
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
     }
 }

@@ -1,5 +1,4 @@
 package backend;
-import backend.MyConnection;
 import java.sql.*;
 
 public class getDataFromDB {

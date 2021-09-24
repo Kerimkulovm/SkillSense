@@ -8,6 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.chrono.MinguoEra;
+
 
 public class EmployeeInfo extends JPanel {
 
@@ -35,7 +40,6 @@ public class EmployeeInfo extends JPanel {
             departmentEng_box,
             departmentRus_box,
             shiftEng_box,
-            shiftRus_box,
             positionEng_box,
             positionRus_box;
 
@@ -86,6 +90,50 @@ public class EmployeeInfo extends JPanel {
         searchButton.setBackground(Color.WHITE);
         tableID_panel.add(searchButton);
         searchEmployee_panel.add(searchButton);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Statement searchStatement = MineOperations.conn.createStatement();
+                    ResultSet searchResults = searchStatement.executeQuery("SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText());
+
+                    if (!searchResults.next()) throw new SQLException("Error");
+
+                    String employeeRusName = searchResults.getString("LastName");
+                    nameRus_text.setText(employeeRusName);
+
+                    String  employeeEngName = searchResults.getString("FirstName");
+                    nameEng_text.setText(employeeEngName);
+
+                    String reportsTo = searchResults.getString("ReportsTo");
+                    reportsTo_text.setText(reportsTo);
+
+                    String positionEng = searchResults.getString("Title");
+                    positionEng_box.setEnabled(true);
+                    positionEng_box.setSelectedItem(positionEng);
+
+                    String positionRus = searchResults.getString("RusTitle");
+                    positionRus_box.setEnabled(true);
+                    positionRus_box.setSelectedItem(positionRus);
+
+                    String departmentID = searchResults.getString("Department");
+                    departmentEng_box.setEnabled(true);
+                    departmentRus_box.setEnabled(true);
+                    departmentEng_box.setSelectedIndex(Integer.parseInt(departmentID));
+
+                    String shift  = searchResults.getString("Shift");
+                    shiftEng_box.setEnabled(true);
+                    shiftEng_box.setSelectedItem(shift);
+
+                    System.out.println(employeeRusName + " " + employeeEngName + " "
+                            + reportsTo + " " + positionEng + " " + shift);
+
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Employee has ot been found");
+                    ex.printStackTrace();
+                }
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -143,6 +191,8 @@ public class EmployeeInfo extends JPanel {
         nameEng_text = new JTextField();
         nameEng_text.setEnabled(false);
         nameEng_panel.add(nameEng_text);
+        nameEng_text.setForeground(Color.BLACK);
+        nameEng_text.setDisabledTextColor(Color.BLACK);
         inputPanel.add(nameEng_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,10 +201,13 @@ public class EmployeeInfo extends JPanel {
         JLabel nameRus_label = new JLabel("Имя и Фамилия: ");
         nameRus_panel.add(nameRus_label);
         nameRus_panel.setBackground(Color.WHITE);
+        nameRus_panel.setForeground(Color.BLACK);
         infoLabels.add(nameRus_panel);
 
         nameRus_text = new JTextField();
         nameRus_text.setEnabled(false);
+        nameRus_text.setForeground(Color.BLACK);
+        nameRus_text.setDisabledTextColor(Color.BLACK);
         nameRus_panel.add(nameRus_text);
         inputPanel.add(nameRus_text);
 
@@ -166,29 +219,34 @@ public class EmployeeInfo extends JPanel {
         positionEng_panel.setBackground(Color.WHITE);
         infoLabels.add(positionEng_panel);
 
-        String[] positionEng_list = new String[]{"","Water-supply Facility Operator","777B Driver","785C Driver","789C Driver","Admin. Mine Operations,",
-                "Assistant Coordinator","Backhoe Coordinator","BathCPlant Coordinator","Blast Trainer","Blaster 1","Blaster 2",
-                "Blaster 3", "Boiler Operator","Bus Driver","Bus Foreman","Car washer","Chief Engineer","CI Specialist","Compactor operator",
-                "Construction Site Supervisor","Contract Administrator","Contract Foreman","Cook","Crane Operator","Crusher Lead Hand",
-                "Dewatering Coordinator","Dewatering Technician","Dispatcher Mine","Dozer Operator","Drill Helper","Drill Lead Hand","Drill Trainer",
-                "Drill/Blast Foreman","Drill/Blast Coordinator","Driller 1","Driller 2","Driver","E/W General Foreman","Earth works Foreman","Electrician",
-                "Emulsion Plant Manager","Emulsion Plant Operator","Engineer","Engineering Manager","Environmental Engineer","Fitter","Fleet Shop Coordinator",
-                "Foreman","Fuel Farm Lead Hand","Fuel Station Operator","Fuel Truck Operator","Gen Set Operator","General Mine Foreman","Geologist","Grader Operator",
-                "Gravel Crusher Helper","Gravel Crusher Operator","Greaser","HD Equipment Maint.Coordinator","Instrumentation Foreman","Instrumentation Technician",
-                "Jr. Foreman","Labourer","Loader Operator","Lowbed Driver","Mack Driver","Magazine Supervisor","Mechanic","Mill Crusher Helper","Mill Crusher Leadhand",
-                "Mill Crusher Operator","Millwright","Mine Foreman","Mine Manager","Mine Trainer","Mine Training Coordinator","Mine Training Foreman","NTD Specialist",
-                "Operations Superintendant","Other","Passenger Traffic Coordinator","Planning Engineer","Production Manager","R.T.D Operator","Rigger","Safety Engineer",
-                "Safety Engineer Assistant","Safety Technician","Sampler","Security Coordinator","Security Officer","Security Superintendant","Senior Foreman",
-                "Senior Roch Mechanics Eng.","Shaftman","Shovel Operator","SSSP Foreman","Strokeeper","Student","Surveyor","Technician","Track Dozer Operator","Trainer",
-                "Translator","Turner","VP, Operations","Warehouse Supervisor","Welder","Intern"};
-        positionEng_box = new JComboBox(positionEng_list);
+        positionEng_box = new JComboBox();
         positionEng_box.setEnabled(false);
+        positionEng_box.setBackground(Color.WHITE);
+
+        try {
+
+            String positionEng_query = "SELECT * FROM dbo.EnTitles";
+            Statement positionEng_statement = MineOperations.conn.createStatement();
+            ResultSet positionEng_result = positionEng_statement.executeQuery(positionEng_query);
+
+            while(positionEng_result.next())
+            {
+                String addPositionEngItem = positionEng_result.getString("Title");
+                positionEng_box.addItem(addPositionEngItem);
+            }
+        }
+        catch (SQLException ignored){
+
+        }
         positionEng_box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 positionRus_box.setSelectedIndex(positionEng_box.getSelectedIndex());
             }
         });
+
+
+
         positionEng_panel.add(positionEng_box);
         inputPanel.add(positionEng_box);
 
@@ -200,29 +258,31 @@ public class EmployeeInfo extends JPanel {
         positionRus_panel.setBackground(Color.WHITE);
         infoLabels.add(positionRus_panel);
 
-        String[] positionRus_list = new String[]{"","Оператор водостанции","777В Водитель","785С Водитель","789С Водитель","Админ. Горного отдела",
-                "Ассистент Координатор","Оператор экскаватора","Координатор РБУ","Инструктор взрывник","Взрывник 1","Взрывник 2","Взрывник 3","Оператор бойлерной",
-                "Вахтовщик","Мастер вахтовщиков","Автомойщик","Главный инженер","Спец. по непрерывн.соверш.","Оператор компактора","Прораб","Админ. по контрактам",
-                "Мастер подрядчиков","Повар","Оператор крана","Опер.фаб.дроб.","Координатор водоотлива","Техник по водоотводу","Диспетчер Горный","Оператор Бульдозера",
-                "Пом.бур","Бригадир бурильщиков","Инструктор Буров.","Мастер БВР","Начальник отд. БВР","Бурильщик 1","Бурильщик 2","Водитель","Ст. Мастер Земельного Отдела",
-                "Пом. Мастера Зем. Отдела","Электрик","Менеджер эмульсионного з-да","Оператор эмульсионного з-да","Инженер","Менеджер Инж. Одела","Эколог","Слесарь",
-                "Координатор Нижнего гаража","Мастер","Мастер заправочной станции","Оператор заправочной станции","Оператор передвежной АЗС","Оператор генераора","Главный гор. мастер",
-                "Геолог","Оператор грейдера","Помощник оператора","Оператор Гравийной Дробилки","Смазчик","Координатор ТО тяж. техники","Мастер КИПиА","Слесарь КИПиП",
-                "Младший Мастер","Разнорабочий","Оператор Погрузчика","Водитель Трала","Водитель Mack","Зав. складом BB","Механик","Пом. Оператора Фабрики","Бригадир Конусной Дробилки","Оператор Фабричной Дробилки",
-                "Монтажник","Горный Мастер","Менеджер Горного Отделения","Инструктор Производ. Обучения","Координатор Отдела Обучения","Мастер Отдела Обучения",
-                "Дефектоскопист","Начальник Карьера","Разное","Координатор ПП","Плановик","Начальник Произодсьва","Оператор Колес. Будльдозера","Стропольщик","Инженер ТБ",
-                "Ассистент Инженера ТБ","Техник Отдела ТБ","Пробоотборщик","Координатор СБ","Сотрудник СБ","Нач. Отдела Безопасности","Старший Мастер","Старший Геомеханик",
-                "Проходчик","Оператор Экскаватора","Мастер СССР","Кладовщик","Студент","Маркшейдер","Тех. Специалист","Оператор Гусен. Бульдозера","Инструктор","Переводчик/Администратор",
-                "Токарь","Вице-Президент по Произодству","Зав. Склад","Сварщик","Стажер"};
+        positionRus_box = new JComboBox();
 
-        positionRus_box = new JComboBox(positionRus_list);
         positionRus_box.setEnabled(false);
+        try {
+
+            String positionRus_query = "SELECT * FROM dbo.EnTitles";
+            Statement positionRus_statement = MineOperations.conn.createStatement();
+            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
+
+            while(positionRus_result.next())
+            {
+                String addPositionRusItem = positionRus_result.getString("RusTitle");
+                positionRus_box.addItem(addPositionRusItem);
+            }
+        }
+        catch (SQLException ignored){
+
+        }
         positionRus_box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 positionEng_box.setSelectedIndex(positionRus_box.getSelectedIndex());
             }
         });
+
         positionRus_panel.add(positionRus_box);
         inputPanel.add(positionRus_box);
 
@@ -236,6 +296,8 @@ public class EmployeeInfo extends JPanel {
 
         reportsTo_text = new JTextField();
         reportsTo_text.setEnabled(false);
+        reportsTo_text.setDisabledTextColor(Color.BLACK);
+        reportsTo_text.setForeground(Color.BLACK);
         reportsTo_panel.add(reportsTo_text);
         inputPanel.add(reportsTo_text);
 
@@ -247,19 +309,32 @@ public class EmployeeInfo extends JPanel {
         departmentEng_panel.setBackground(Color.WHITE);
         infoLabels.add(departmentEng_panel);
 
-        String[] departmentsEng_list = new String[]{"","Mine Maintenance","Mill Maintenance", "Mill","Dewatering Department","Engineering",
-                "Administration","Other","Mine Operations","Site Services Special Projects","Earth Works","Drill and Blast","Environment","Contractor",
-                "Exploration","UnderGround","Mine Training","Safety","Administration","IS&T","Senior Management","Security","Warehouse","BORUSAN","TURKUAZ MACHIERY",
-                "KROSINK","ABT","KYRGYZ ALTYN","Tarylga Service","HELPER ltd","Infrastructure & Projects","Issyk-Kul Resurs","Tamga trans","Ishterman","Dar servis",
-                "Ar-Ton","Epiroc","Daian Trans","Stalker","Rapsodia+","Djety-Oguz trans"};
-        departmentEng_box = new JComboBox(departmentsEng_list);
+        departmentEng_box = new JComboBox();
         departmentEng_box.setEnabled(false);
+
+        try{
+
+            String departmentEng_query = "SELECT * FROM dbo.Department";
+            Statement departmentEnd_statement = MineOperations.conn.createStatement();
+            ResultSet departmentEng_result = departmentEnd_statement.executeQuery((departmentEng_query));
+
+            while(departmentEng_result.next()){
+                String addDepartmentEng = departmentEng_result.getString("Departmant");
+                departmentEng_box.addItem(addDepartmentEng);
+            }
+        }
+
+        catch (SQLException ignored){
+
+        }
+
         departmentEng_box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 departmentRus_box.setSelectedIndex(departmentEng_box.getSelectedIndex());
             }
         });
+
         departmentEng_panel.add(departmentEng_box);
         inputPanel.add(departmentEng_box);
 
@@ -271,13 +346,25 @@ public class EmployeeInfo extends JPanel {
         departmentRus_panel.setBackground(Color.WHITE);
         infoLabels.add(departmentRus_panel);
 
-        String[] departmentRus_list = new String[]{"","Тех. обслуживание Карьера", "Тех. обслуживание Фабрики","Операторы Фабрики","Отдел по Водоотводу",
-                "Инженерный","Обучение в Администрации","Разные","Горный отдел","Спец. проект по Обслуж. Рудника", "Земельный Отдел", "Буровзрывной",
-                "Охрана Окружающей Среды","Подрядчики","Геологоразведка","Подземка","Отдел Обучения Гор. Операций", "Отдел ТБ", "Администрация", "ИСиТ", "Высшее Руководство",
-                "Служба Безопасности" , "Склад", "БОРУСАН", "ТУРКУАЗ МАШИНЕРИ","КРОСИНК","АВТ","КЫРГЫЗ АЛТЫН","Тарылга Сервис","Хелпер","Инфраструктура и Проекты","Ысык-Кол ресурс",
-                "Тамга транс", "Иштерман","Дар сервис","Ар-Тон","Эпирок","Даян транс","Сталкер","Рапсодия+","Джети-Огуз транс"};
-        departmentRus_box = new JComboBox(departmentRus_list);
+        departmentRus_box = new JComboBox();
         departmentRus_box.setEnabled(false);
+
+        try{
+
+            String departmentRus_query = "SELECT * FROM dbo.Department";
+            Statement departmentRus_statement = MineOperations.conn.createStatement();
+            ResultSet departmentRus_result = departmentRus_statement.executeQuery((departmentRus_query));
+
+            while(departmentRus_result.next()){
+                String addDepartmentRus = departmentRus_result.getString("russian");
+                departmentRus_box.addItem(addDepartmentRus);
+            }
+        }
+
+        catch (SQLException e){
+
+        }
+
         departmentRus_box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -295,41 +382,17 @@ public class EmployeeInfo extends JPanel {
         shiftEng_panel.setBackground(Color.WHITE);
         infoLabels.add(shiftEng_panel);
 
-        String[] shiftEng_list = new String[]{"","A Crew","B Crew","C Crew","D Crew","D/B A Crew","D/B B Crew","D/B C Crew","D/B D Crew","E/W A/B Crew",
-                "E/W C/D Crew","Engineering","SSSP","CONTRACTOR","OTHER CREW","ADMINISTRATION","ENVIRONMENT","Underground Portal","Mine Maintenance","Exploration","Mill",
-                "SAFETY","SECURITY"};
-        shiftEng_box = new JComboBox(shiftEng_list);
+        String[] shifts = new String[]{"A Crew","B Crew","C Crew","D Crew"};
+        shiftEng_box = new JComboBox(shifts);
         shiftEng_box.setEnabled(false);
         shiftEng_box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                shiftRus_box.setSelectedIndex(shiftEng_box.getSelectedIndex());
+
             }
         });
         shiftEng_panel.add(shiftEng_box);
         inputPanel.add(shiftEng_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel shiftRus_panel = new JPanel();
-        JLabel shiftRus_label = new JLabel("Смена: ");
-        shiftRus_panel.add(shiftRus_label);
-        shiftRus_panel.setBackground(Color.WHITE);
-        infoLabels.add(shiftRus_panel);
-
-        String[] shiftRus_list = new String[]{"","Бриг. А","Бриг. Б","Бриг. С","Бриг. Д","Б/В Бриг. А","Б/В Бриг. Б","Б/В Бриг. С","Б/В Бриг. Д","З/О Бриг. АБ",
-                "З/О Бриг. СД","Инженерный","СССР","Подрядчие","Другие Бригад.","АДМИНИСТРАЦИЯ","ЭКОЛОГИЯ","Подземка","Тех. Обслуж","Геологоразведка","Фабрика","ТБ","СБ"};
-        shiftRus_box = new JComboBox(shiftRus_list);
-        shiftRus_box.setEnabled(false);
-        shiftRus_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                shiftEng_box.setSelectedIndex(shiftRus_box.getSelectedIndex());
-            }
-        });
-        shiftRus_panel.add(shiftRus_box);
-        inputPanel.add(shiftRus_box);
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -485,7 +548,6 @@ public class EmployeeInfo extends JPanel {
                 positionRus_box.setEnabled(true);
 
                 shiftEng_box.setEnabled(true);
-                shiftRus_box.setEnabled(true);
 
                 jobClass_text.setEnabled(true);
                 jobClass_text.setText("");
@@ -566,9 +628,6 @@ public class EmployeeInfo extends JPanel {
 
                 shiftEng_box.setEnabled(false);
                 shiftEng_box.setSelectedIndex(0);
-
-                shiftRus_box.setEnabled(false);
-                shiftRus_box.setSelectedIndex(0);
 
                 location_box.setEnabled(false);
                 location_box.setSelectedIndex(0);

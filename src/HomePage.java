@@ -104,19 +104,6 @@ public class HomePage extends JPanel {
         addList_button.setHorizontalAlignment(SwingConstants.LEFT);
         addList_button.setBackground(Color.WHITE);
 
-
-        test_button = new JButton("<html> <big> test button </html> ");
-        test_button.setForeground(Color.RED);
-        buttons_panel.add(test_button);
-        test_button.setHorizontalAlignment(SwingConstants.LEFT);
-        test_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getDataFromDB.testClick();
-            }
-        });
-
-
         exit_button = new JButton("<html> <big> EXIT DATABASE </big> <br /> Выход из программы </html> ");
         exit_button.setForeground(Color.RED);
         buttons_panel.add(exit_button);
