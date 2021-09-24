@@ -21,9 +21,6 @@ public class EmployeeInfo extends JPanel {
     private final JTextField nameEng_text,
             nameRus_text,
             reportsTo_text,
-            jobClass_text,
-            jobLevel_text,
-            hireDate_text,
             lastOr_text,
             firstAid_text,
             pdcs_text,
@@ -42,6 +39,8 @@ public class EmployeeInfo extends JPanel {
             shiftEng_box,
             positionEng_box,
             positionRus_box;
+
+    private DefaultComboBoxModel shiftsModelBox;
 
     private BufferedImage logo_image,
             profile_image;
@@ -95,7 +94,10 @@ public class EmployeeInfo extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Statement searchStatement = MineOperations.conn.createStatement();
-                    ResultSet searchResults = searchStatement.executeQuery("SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText());
+                    ResultSet searchResults = searchStatement.executeQuery("SELECT d.Departmant, d.russian as RusDept, e.* " +
+                            "FROM dbo.Employees e " +
+                            "left join dbo.Department d on e.Department = d.DeptId " +
+                            "where e.EmployeeID = " + tableID_text.getText());
 
                     if (!searchResults.next()) throw new SQLException("Error");
 
@@ -116,17 +118,26 @@ public class EmployeeInfo extends JPanel {
                     positionRus_box.setEnabled(true);
                     positionRus_box.setSelectedItem(positionRus);
 
-                    String departmentID = searchResults.getString("Department");
+                    String departmentID = searchResults.getString("Departmant");
+                    departmentEng_box.setSelectedItem(departmentID);
                     departmentEng_box.setEnabled(true);
                     departmentRus_box.setEnabled(true);
-                    departmentEng_box.setSelectedIndex(Integer.parseInt(departmentID));
 
                     String shift  = searchResults.getString("Shift");
                     shiftEng_box.setEnabled(true);
+                    if (shiftsModelBox.getIndexOf(shift)==-1){
+                        shiftsModelBox.setSelectedItem("");
+                    }
                     shiftEng_box.setSelectedItem(shift);
 
+                    String lastOr = searchResults.getString("SafteyOrin");
+                    lastOr_text.setText(lastOr.substring(0,10));
+
+                    String firstAid_string = searchResults.getString("FirstAid");
+                    firstAid_text.setText(firstAid_string.substring(0,10));
+
                     System.out.println(employeeRusName + " " + employeeEngName + " "
-                            + reportsTo + " " + positionEng + " " + shift);
+                            + reportsTo + " " + positionEng + " " + departmentID + " " + shift);
 
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Employee has ot been found");
@@ -141,7 +152,7 @@ public class EmployeeInfo extends JPanel {
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
         employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
-        employeeInfo_panel.setBounds(20, 175, 450, 350);
+        employeeInfo_panel.setBounds(20, 175, 450, 230);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -157,7 +168,7 @@ public class EmployeeInfo extends JPanel {
 
         JPanel lastOrientationInfoPanel = new JPanel();
         lastOrientationInfoPanel.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.setBounds(20, 530, 450, 130);
+        lastOrientationInfoPanel.setBounds(20, 415, 450, 130);
         lastOrientationInfoPanel.setLayout(new BoxLayout(lastOrientationInfoPanel, BoxLayout.X_AXIS));
         lastOrientationInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Last Orientation Information"));
         this.add(lastOrientationInfoPanel);
@@ -377,13 +388,14 @@ public class EmployeeInfo extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel shiftEng_panel = new JPanel();
-        JLabel shift_label = new JLabel("Shift: ");
+        JLabel shift_label = new JLabel("Crew: ");
         shiftEng_panel.add(shift_label);
         shiftEng_panel.setBackground(Color.WHITE);
         infoLabels.add(shiftEng_panel);
 
-        String[] shifts = new String[]{"A Crew","B Crew","C Crew","D Crew"};
-        shiftEng_box = new JComboBox(shifts);
+        String[] shifts = new String[]{"A   Crew","B   Crew","C   Crew","D   Crew"};
+        shiftsModelBox = new DefaultComboBoxModel(shifts);
+        shiftEng_box = new JComboBox(shiftsModelBox);
         shiftEng_box.setEnabled(false);
         shiftEng_box.addActionListener(new ActionListener() {
             @Override
@@ -394,6 +406,7 @@ public class EmployeeInfo extends JPanel {
         shiftEng_panel.add(shiftEng_box);
         inputPanel.add(shiftEng_box);
 
+        /*
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel jobClass_panel = new JPanel();
@@ -404,6 +417,8 @@ public class EmployeeInfo extends JPanel {
 
         jobClass_text = new JTextField();
         jobClass_text.setEnabled(false);
+        jobClass_text.setDisabledTextColor(Color.BLACK);
+        jobClass_text.setForeground(Color.BLACK);
         jobClass_panel.add(jobClass_text);
         inputPanel.add(jobClass_text);
 
@@ -432,6 +447,7 @@ public class EmployeeInfo extends JPanel {
         hireDate_text.setEnabled(false);
         hireDate_panel.add(hireDate_text);
         inputPanel.add(hireDate_text);
+        */
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -443,6 +459,8 @@ public class EmployeeInfo extends JPanel {
 
         lastOr_text = new JTextField();
         lastOr_text.setEnabled(false);
+        lastOr_text.setForeground(Color.BLACK);
+        lastOr_text.setDisabledTextColor(Color.BLACK);
         lastOr_panel.add(lastOr_text);
         lastOrientTexts.add(lastOr_text);
 
@@ -456,6 +474,8 @@ public class EmployeeInfo extends JPanel {
 
         firstAid_text = new JTextField();
         firstAid_text.setEnabled(false);
+        firstAid_text.setForeground(Color.BLACK);
+        firstAid_text.setDisabledTextColor(Color.BLACK);
         firstAid_panel.add(firstAid_text);
         lastOrientTexts.add(firstAid_text);
 
@@ -549,6 +569,7 @@ public class EmployeeInfo extends JPanel {
 
                 shiftEng_box.setEnabled(true);
 
+                /*
                 jobClass_text.setEnabled(true);
                 jobClass_text.setText("");
 
@@ -557,6 +578,8 @@ public class EmployeeInfo extends JPanel {
 
                 hireDate_text.setEnabled(true);
                 hireDate_text.setText("");
+                */
+
 
                 lastOr_text.setEnabled(true);
                 lastOr_text.setText("");
@@ -632,6 +655,7 @@ public class EmployeeInfo extends JPanel {
                 location_box.setEnabled(false);
                 location_box.setSelectedIndex(0);
 
+                /*
                 jobClass_text.setEnabled(false);
                 jobClass_text.setText("");
 
@@ -640,6 +664,7 @@ public class EmployeeInfo extends JPanel {
 
                 hireDate_text.setEnabled(false);
                 hireDate_text.setText("");
+                 */
 
                 lastOr_text.setEnabled(false);
                 lastOr_text.setText("");
