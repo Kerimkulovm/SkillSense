@@ -2,48 +2,47 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import java.util.Date;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.chrono.MinguoEra;
-
+import java.util.Objects;
 
 public class EmployeeInfo extends JPanel {
 
     private final JLabel tableID_label;
 
-    private final JTextField nameEng_text,
+    private final JTextField
             nameRus_text,
-            reportsTo_text,
             lastOr_text,
-            firstAid_text,
-            pdcs_text,
             tableID_text;
 
-    private final JButton searchButton,
+    private final JButton search_button,
             add_button,
             save_button,
             edit_button,
-            cancel_button,
-            delete_button;
+            delete_button,
+            cancel_button;
 
-    private final JComboBox location_box,
-            departmentEng_box,
-            departmentRus_box,
-            shiftEng_box,
-            positionEng_box,
-            positionRus_box;
+    private JComboBox departmentRus_box;
+    private JComboBox shiftRus_box;
+    private JComboBox positionRus_box;
+    private JComboBox supervisor_box;
+
 
     private DefaultComboBoxModel shiftsModelBox;
 
-    private BufferedImage logo_image,
-            profile_image;
+    private BufferedImage logo_image;
+    private boolean editUser;
+
 
     public EmployeeInfo()
     {
@@ -57,26 +56,25 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Employee Information</big><br /> Информация о сотрудниках</html>");
+        JLabel titleEng = new JLabel("<html><big>Информация о сотрудниках</big><br />Поиск данных сотрудника</html>");
         titleEng.setBounds(160, 0, 400, 100);
-        titleEng.setBackground(Color.WHITE);
+        titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
         titleEng.setForeground(Color.WHITE);
-        titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Search Employee"));
+        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
         searchEmployee_panel.setBounds(20, 120, 450, 50);
         this.add(searchEmployee_panel);
 
         JPanel tableID_panel = new JPanel();
-        tableID_label = new JLabel("Табельный номер | Employee ID: ");
+        tableID_label = new JLabel(" Табельный номер:  ");
         tableID_label.setForeground(Color.RED);
-        tableID_panel.add(tableID_label);
         tableID_panel.setBackground(Color.WHITE);
+        tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
 
         tableID_text = new JTextField();
@@ -84,64 +82,51 @@ public class EmployeeInfo extends JPanel {
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
 
-        searchButton = new JButton("Search");
-        searchButton.setForeground(Color.RED);
-        searchButton.setBackground(Color.WHITE);
-        tableID_panel.add(searchButton);
-        searchEmployee_panel.add(searchButton);
-        searchButton.addActionListener(new ActionListener() {
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     Statement searchStatement = MineOperations.conn.createStatement();
-                    ResultSet searchResults = searchStatement.executeQuery("SELECT d.Departmant, d.russian as RusDept, e.* " +
+                    String query_text = "SELECT d.russian, d.russian as RusDept, e.* " +
                             "FROM dbo.Employees e " +
                             "left join dbo.Department d on e.Department = d.DeptId " +
-                            "where e.EmployeeID = " + tableID_text.getText());
+                            "where e.EmployeeID = ";
+                    System.out.println(query_text + tableID_text.getText());
+                    ResultSet searchResults = searchStatement.executeQuery(query_text + tableID_text.getText());
 
                     if (!searchResults.next()) throw new SQLException("Error");
 
-                    String employeeRusName = searchResults.getString("LastName");
-                    nameRus_text.setText(employeeRusName);
+                    String employeeRusName_string = searchResults.getString("LastName");
+                    nameRus_text.setText(employeeRusName_string);
 
-                    String  employeeEngName = searchResults.getString("FirstName");
-                    nameEng_text.setText(employeeEngName);
+                    String supervisor_string = searchResults.getString("ReportsTo");
+                    enableComboText(supervisor_box).setSelectedItem(selectSupervisorName(supervisor_string));
 
-                    String reportsTo = searchResults.getString("ReportsTo");
-                    reportsTo_text.setText(reportsTo);
+                    String positionRus_string = searchResults.getString("RusTitle");
+                    enableComboText(positionRus_box).setSelectedItem(positionRus_string);
 
-                    String positionEng = searchResults.getString("Title");
-                    positionEng_box.setEnabled(true);
-                    positionEng_box.setSelectedItem(positionEng);
+                    String departmentID_string = searchResults.getString("russian");
+                    enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
 
-                    String positionRus = searchResults.getString("RusTitle");
-                    positionRus_box.setEnabled(true);
-                    positionRus_box.setSelectedItem(positionRus);
-
-                    String departmentID = searchResults.getString("Departmant");
-                    departmentEng_box.setSelectedItem(departmentID);
-                    departmentEng_box.setEnabled(true);
-                    departmentRus_box.setEnabled(true);
-
-                    String shift  = searchResults.getString("Shift");
-                    shiftEng_box.setEnabled(true);
-                    if (shiftsModelBox.getIndexOf(shift)==-1){
+                    String shift_string  = searchResults.getString("Shift");
+                    if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string))==-1){
                         shiftsModelBox.setSelectedItem("");
+                    } else {
+                        enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
                     }
-                    shiftEng_box.setSelectedItem(shift);
 
-                    String lastOr = searchResults.getString("SafteyOrin");
-                    lastOr_text.setText(lastOr.substring(0,10));
+                    String lastOr_string = searchResults.getString("SafteyOrin");
+                    lastOr_text.setText(checkNullVariable(lastOr_string).substring(0,10));
 
-                    String firstAid_string = searchResults.getString("FirstAid");
-                    firstAid_text.setText(firstAid_string.substring(0,10));
-
-                    System.out.println(employeeRusName + " " + employeeEngName + " "
-                            + reportsTo + " " + positionEng + " " + departmentID + " " + shift);
+                    edit_button.setEnabled(true);
 
                 } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Employee has ot been found");
-                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник не найден!");
                 }
             }
         });
@@ -151,8 +136,8 @@ public class EmployeeInfo extends JPanel {
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
-        employeeInfo_panel.setBounds(20, 175, 450, 230);
+        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Персональная Информация"));
+        employeeInfo_panel.setBounds(20, 175, 450, 160);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -168,9 +153,9 @@ public class EmployeeInfo extends JPanel {
 
         JPanel lastOrientationInfoPanel = new JPanel();
         lastOrientationInfoPanel.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.setBounds(20, 415, 450, 130);
+        lastOrientationInfoPanel.setBounds(20, 340, 450, 50);
         lastOrientationInfoPanel.setLayout(new BoxLayout(lastOrientationInfoPanel, BoxLayout.X_AXIS));
-        lastOrientationInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Last Orientation Information"));
+        lastOrientationInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Общие Правила ТБ"));
         this.add(lastOrientationInfoPanel);
 
         JPanel lastOrientLabels = new JPanel();
@@ -188,23 +173,14 @@ public class EmployeeInfo extends JPanel {
         photoPanel.setBackground(Color.WHITE);
         photoPanel.setBounds(480, 120, 390, 450);
         photoPanel.setLayout(new BoxLayout(photoPanel, BoxLayout.X_AXIS));
-        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Photo"));
+        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel nameEng_panel = new JPanel();
-        JLabel nameEng_label = new JLabel("Full Name: ");
-        nameEng_panel.add(nameEng_label);
-        nameEng_panel.setBackground(Color.WHITE);
-        infoLabels.add(nameEng_panel);
-
-        nameEng_text = new JTextField();
-        nameEng_text.setEnabled(false);
-        nameEng_panel.add(nameEng_text);
-        nameEng_text.setForeground(Color.BLACK);
-        nameEng_text.setDisabledTextColor(Color.BLACK);
-        inputPanel.add(nameEng_text);
+        JPanel licenceInfoPanel = new JPanel();
+        licenceInfoPanel.setBackground(Color.WHITE);
+        licenceInfoPanel.setBounds(20, 400, 450, 300);
+        licenceInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Удостоверение Тракториста"));
+        this.add(licenceInfoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -224,45 +200,6 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel positionEng_panel = new JPanel();
-        JLabel positionEng_label = new JLabel("Position:");
-        positionEng_panel.add(positionEng_label);
-        positionEng_panel.setBackground(Color.WHITE);
-        infoLabels.add(positionEng_panel);
-
-        positionEng_box = new JComboBox();
-        positionEng_box.setEnabled(false);
-        positionEng_box.setBackground(Color.WHITE);
-
-        try {
-
-            String positionEng_query = "SELECT * FROM dbo.EnTitles";
-            Statement positionEng_statement = MineOperations.conn.createStatement();
-            ResultSet positionEng_result = positionEng_statement.executeQuery(positionEng_query);
-
-            while(positionEng_result.next())
-            {
-                String addPositionEngItem = positionEng_result.getString("Title");
-                positionEng_box.addItem(addPositionEngItem);
-            }
-        }
-        catch (SQLException ignored){
-
-        }
-        positionEng_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                positionRus_box.setSelectedIndex(positionEng_box.getSelectedIndex());
-            }
-        });
-
-
-
-        positionEng_panel.add(positionEng_box);
-        inputPanel.add(positionEng_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         JPanel positionRus_panel = new JPanel();
         JLabel positionRus_label = new JLabel("Должность: ");
         positionRus_panel.add(positionRus_label);
@@ -270,7 +207,7 @@ public class EmployeeInfo extends JPanel {
         infoLabels.add(positionRus_panel);
 
         positionRus_box = new JComboBox();
-
+        positionRus_box.setBackground(Color.WHITE);
         positionRus_box.setEnabled(false);
         try {
 
@@ -287,67 +224,37 @@ public class EmployeeInfo extends JPanel {
         catch (SQLException ignored){
 
         }
-        positionRus_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                positionEng_box.setSelectedIndex(positionRus_box.getSelectedIndex());
-            }
-        });
-
         positionRus_panel.add(positionRus_box);
         inputPanel.add(positionRus_box);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel reportsTo_panel = new JPanel();
-        JLabel reportsTo_label = new JLabel("Начальник | Reports to: ");
+        JLabel reportsTo_label = new JLabel("Начальник: ");
         reportsTo_panel.add(reportsTo_label);
         reportsTo_panel.setBackground(Color.WHITE);
         infoLabels.add(reportsTo_panel);
 
-        reportsTo_text = new JTextField();
-        reportsTo_text.setEnabled(false);
-        reportsTo_text.setDisabledTextColor(Color.BLACK);
-        reportsTo_text.setForeground(Color.BLACK);
-        reportsTo_panel.add(reportsTo_text);
-        inputPanel.add(reportsTo_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel departmentEng_panel = new JPanel();
-        JLabel departmentEng_label = new JLabel("Department: ");
-        departmentEng_panel.add(departmentEng_label);
-        departmentEng_panel.setBackground(Color.WHITE);
-        infoLabels.add(departmentEng_panel);
-
-        departmentEng_box = new JComboBox();
-        departmentEng_box.setEnabled(false);
-
+        supervisor_box = new JComboBox();
+        supervisor_box.setBackground(Color.WHITE);
+        supervisor_box.setEnabled(false);
         try{
 
-            String departmentEng_query = "SELECT * FROM dbo.Department";
-            Statement departmentEnd_statement = MineOperations.conn.createStatement();
-            ResultSet departmentEng_result = departmentEnd_statement.executeQuery((departmentEng_query));
+            String reportsTo_query = "SELECT * FROM dbo.Supervisors";
+            Statement reportsTo_statement = MineOperations.conn.createStatement();
+            ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
 
-            while(departmentEng_result.next()){
-                String addDepartmentEng = departmentEng_result.getString("Departmant");
-                departmentEng_box.addItem(addDepartmentEng);
+            while(reportsTo_result.next()){
+                String addreportsTo = reportsTo_result.getString("Russian");
+                supervisor_box.addItem(addreportsTo);
             }
         }
 
-        catch (SQLException ignored){
+        catch (SQLException e){
 
         }
-
-        departmentEng_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                departmentRus_box.setSelectedIndex(departmentEng_box.getSelectedIndex());
-            }
-        });
-
-        departmentEng_panel.add(departmentEng_box);
-        inputPanel.add(departmentEng_box);
+        reportsTo_panel.add(supervisor_box);
+        inputPanel.add(supervisor_box);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -358,6 +265,7 @@ public class EmployeeInfo extends JPanel {
         infoLabels.add(departmentRus_panel);
 
         departmentRus_box = new JComboBox();
+        departmentRus_box.setBackground(Color.WHITE);
         departmentRus_box.setEnabled(false);
 
         try{
@@ -372,87 +280,33 @@ public class EmployeeInfo extends JPanel {
             }
         }
 
-        catch (SQLException e){
-
+        catch (SQLException ex){
+            ex.printStackTrace();
         }
 
-        departmentRus_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                departmentEng_box.setSelectedIndex(departmentRus_box.getSelectedIndex());
-            }
-        });
         departmentRus_panel.add(departmentRus_box);
         inputPanel.add(departmentRus_box);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel shiftEng_panel = new JPanel();
-        JLabel shift_label = new JLabel("Crew: ");
+        JLabel shift_label = new JLabel("Смена: ");
         shiftEng_panel.add(shift_label);
         shiftEng_panel.setBackground(Color.WHITE);
         infoLabels.add(shiftEng_panel);
 
-        String[] shifts = new String[]{"A   Crew","B   Crew","C   Crew","D   Crew"};
+        String[] shifts = new String[]{"Нет данных","A   Crew","B   Crew","C   Crew","D   Crew"};
         shiftsModelBox = new DefaultComboBoxModel(shifts);
-        shiftEng_box = new JComboBox(shiftsModelBox);
-        shiftEng_box.setEnabled(false);
-        shiftEng_box.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        shiftEng_panel.add(shiftEng_box);
-        inputPanel.add(shiftEng_box);
-
-        /*
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel jobClass_panel = new JPanel();
-        JLabel jobClass_label = new JLabel("Класс. | Job Class: ");
-        jobClass_panel.add(jobClass_label);
-        jobClass_panel.setBackground(Color.WHITE);
-        infoLabels.add(jobClass_panel);
-
-        jobClass_text = new JTextField();
-        jobClass_text.setEnabled(false);
-        jobClass_text.setDisabledTextColor(Color.BLACK);
-        jobClass_text.setForeground(Color.BLACK);
-        jobClass_panel.add(jobClass_text);
-        inputPanel.add(jobClass_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel jobLevel_panel = new JPanel();
-        JLabel jobLevel_label = new JLabel("Уровень | Job Level: ");
-        jobLevel_panel.add(jobLevel_label);
-        jobLevel_panel.setBackground(Color.WHITE);
-        infoLabels.add(jobLevel_panel);
-
-        jobLevel_text = new JTextField();
-        jobLevel_text.setEnabled(false);
-        jobLevel_panel.add(jobLevel_text);
-        inputPanel.add(jobLevel_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel hireDate_panel = new JPanel();
-        JLabel hireDate_label = new JLabel("Дата наема | Hire Date: ");
-        hireDate_panel.add(hireDate_label);
-        hireDate_panel.setBackground(Color.WHITE);
-        infoLabels.add(hireDate_panel);
-
-        hireDate_text = new JTextField();
-        hireDate_text.setEnabled(false);
-        hireDate_panel.add(hireDate_text);
-        inputPanel.add(hireDate_text);
-        */
+        shiftRus_box = new JComboBox(shiftsModelBox);
+        shiftRus_box.setBackground(Color.WHITE);
+        shiftRus_box.setEnabled(false);
+        shiftEng_panel.add(shiftRus_box);
+        inputPanel.add(shiftRus_box);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel lastOr_panel = new JPanel();
-        JLabel lastOr_label = new JLabel("Ориен. гор.дела | Last Safety Orientation: ");
+        JLabel lastOr_label = new JLabel("Общие правила ТБ: ");
         lastOr_panel.add(lastOr_label);
         lastOr_panel.setBackground(Color.WHITE);
         lastOrientLabels.add(lastOr_panel);
@@ -466,62 +320,25 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel firstAid_panel = new JPanel();
-        JLabel firstAid_label = new JLabel("9001 Первая Помощь | First Aid: ");
-        firstAid_panel.add(firstAid_label);
-        firstAid_panel.setBackground(Color.WHITE);
-        lastOrientLabels.add(firstAid_panel);
-
-        firstAid_text = new JTextField();
-        firstAid_text.setEnabled(false);
-        firstAid_text.setForeground(Color.BLACK);
-        firstAid_text.setDisabledTextColor(Color.BLACK);
-        firstAid_panel.add(firstAid_text);
-        lastOrientTexts.add(firstAid_text);
+        String[][] truckLicence = {};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel pdcs_panel = new JPanel();
-        JLabel pdcs_label = new JLabel("7201 - ПДСЧ, ПСП, СУОТ: ");
-        pdcs_panel.add(pdcs_label);
-        pdcs_panel.setBackground(Color.WHITE);
-        lastOrientLabels.add(pdcs_panel);
-
-        pdcs_text = new JTextField();
-        pdcs_text.setEnabled(false);
-        pdcs_panel.add(pdcs_text);
-        lastOrientTexts.add(pdcs_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel location_panel = new JPanel();
-        JLabel location_label = new JLabel("Местоположение | Location: ");
-        location_panel.add(location_label);
-        location_panel.setBackground(Color.WHITE);
-        lastOrientLabels.add(location_panel);
-
-        String[] cities = new String[]{"", "Бишкек", "Балыкчы", "Каракол"};
-        location_box = new JComboBox(cities);
-        location_box.setEnabled(false);
-        location_panel.add(location_box);
-        lastOrientTexts.add(location_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(480, 590, 400, 70);
         buttons_panel.setLayout(new GridLayout(1, 5));
-        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Control Panel"));
+        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Панель Управления"));
         this.add(buttons_panel);
 
-        delete_button = new JButton("Delete");
+        delete_button = new JButton("Удалить");
         delete_button.setBackground(Color.WHITE);
         delete_button.setForeground(Color.RED);
         delete_button.setEnabled(false);
         buttons_panel.add(delete_button);
 
-        edit_button = new JButton("Edit");
+        edit_button = new JButton("Изменить");
         edit_button.setBackground(Color.WHITE);
         edit_button.setForeground(Color.BLUE);
         edit_button.setEnabled(false);
@@ -529,75 +346,24 @@ public class EmployeeInfo extends JPanel {
         edit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                searchButton.setEnabled(false);
-                add_button.setEnabled(false);
-                edit_button.setEnabled(false);
-                delete_button.setEnabled(false);
-                tableID_label.setForeground(Color.BLACK);
-
+                editFields();
+                editUser = true;
             }
         });
 
-        add_button = new JButton("New");
+        add_button = new JButton("Создать");
         add_button.setBackground(Color.GREEN);
         add_button.setForeground(Color.BLACK);
         buttons_panel.add(add_button);
         add_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                edit_button.setEnabled(false);
-                delete_button.setEnabled(false);
-                add_button.setEnabled(false);
-                save_button.setEnabled(true);
-
-                tableID_text.setText("");
-
-                nameEng_text.setEnabled(true);
-                nameEng_text.setText("");
-
-                nameRus_text.setEnabled(true);
-                nameRus_text.setText("");
-
-                reportsTo_text.setEnabled(true);
-                reportsTo_text.setText("");
-
-                departmentEng_box.setEnabled(true);
-                departmentRus_box.setEnabled(true);
-
-                positionEng_box.setEnabled(true);
-                positionRus_box.setEnabled(true);
-
-                shiftEng_box.setEnabled(true);
-
-                /*
-                jobClass_text.setEnabled(true);
-                jobClass_text.setText("");
-
-                jobLevel_text.setEnabled(true);
-                jobLevel_text.setText("");
-
-                hireDate_text.setEnabled(true);
-                hireDate_text.setText("");
-                */
-
-
-                lastOr_text.setEnabled(true);
-                lastOr_text.setText("");
-
-                firstAid_text.setEnabled(true);
-                firstAid_text.setText("");
-
-                pdcs_text.setEnabled(true);
-                pdcs_text.setText("");
-
-                location_box.setEnabled(true);
-
-                searchButton.setEnabled(false);
-                tableID_label.setForeground(Color.BLACK);
+                enableFields();
+                editUser = false;
             }
         });
 
-        save_button = new JButton("Save");
+        save_button = new JButton("Сохранить");
         save_button.setBackground(Color.WHITE);
         save_button.setForeground(Color.BLACK);
         save_button.setEnabled(false);
@@ -605,88 +371,58 @@ public class EmployeeInfo extends JPanel {
         save_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("") || nameEng_text.getText().equals("")){
+                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")){
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
+                } else {
+                    if (editUser){
+                        String updateQuery =
+                                "UPDATE dbo.Employees SET RusTitle = '" + positionRus_box.getSelectedItem() +
+                                        "', LastName = '" + nameRus_text.getText() +
+                                        "', Shift = '" + shiftRus_box.getSelectedItem() +
+                                        "', Department = '" + convertDept(departmentRus_box) +
+                                        "', ReportsTo = '" + selectSupervisorID(supervisor_box) +
+                                        "' WHERE EmployeeID = " + tableID_text.getText();
+
+                        try{
+                            System.out.println(updateQuery);
+                            PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
+                            updateEmployee.executeUpdate();
+                        }catch (SQLException ex){
+                            ex.printStackTrace();
+                            System.err.println("Got an exception! ");
+                            System.err.println(ex.getMessage());
+                        }
+
+                    } else {
+                        final String checkEmployee_query = "SELECT * FROM db.Employees WHERE EmployeeID = " + tableID_text.getText();
+
+                    }
                 }
             }
         });
 
-        cancel_button = new JButton("Cancel");
+        cancel_button = new JButton("Отмена");
         cancel_button.setBackground(Color.RED);
         cancel_button.setForeground(Color.WHITE);
         buttons_panel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tableID_label.setForeground(Color.RED);
-
-                save_button.setEnabled(false);
-                edit_button.setEnabled(false);
-
-                add_button.setEnabled(true);
-                searchButton.setEnabled(true);
-
-                tableID_text.setText("");
-
-                nameEng_text.setEnabled(false);
-                nameEng_text.setText("");
-
-                nameRus_text.setEnabled(false);
-                nameRus_text.setText("");
-
-                reportsTo_text.setEnabled(false);
-                reportsTo_text.setText("");
-
-                departmentEng_box.setEnabled(false);
-                departmentEng_box.setSelectedIndex(0);
-
-                departmentRus_box.setEnabled(false);
-                departmentRus_box.setSelectedIndex(0);
-
-                positionEng_box.setEnabled(false);
-                positionEng_box.setSelectedIndex(0);
-
-                positionRus_box.setEnabled(false);
-                positionRus_box.setSelectedIndex(0);
-
-                shiftEng_box.setEnabled(false);
-                shiftEng_box.setSelectedIndex(0);
-
-                location_box.setEnabled(false);
-                location_box.setSelectedIndex(0);
-
-                /*
-                jobClass_text.setEnabled(false);
-                jobClass_text.setText("");
-
-                jobLevel_text.setEnabled(false);
-                jobLevel_text.setText("");
-
-                hireDate_text.setEnabled(false);
-                hireDate_text.setText("");
-                 */
-
-                lastOr_text.setEnabled(false);
-                lastOr_text.setText("");
-
-                firstAid_text.setEnabled(false);
-                firstAid_text.setText("");
-
-                pdcs_text.setEnabled(false);
-                pdcs_text.setText("");
+                clearFields();
             }
         });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JButton exit_button = new JButton("Exit | Выход");
-        exit_button.setBounds(730, 60, 150, 30);
-        exit_button.setBackground(Color.WHITE);
-        exit_button.setForeground(Color.RED);
+        JButton exit_button = new JButton("Выход");
+        exit_button.setBounds(720, 60, 150, 30);
+        exit_button.setBackground(Color.RED);
+        exit_button.setForeground(Color.WHITE);
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Enter Data");
+                clearFields();
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -702,5 +438,167 @@ public class EmployeeInfo extends JPanel {
         g.fillRect(0, 0, 900, 100);
 
         g.drawImage(logo_image, 0, 0, 150, 100, this);
+    }
+
+    private String checkNullVariable(String inputString){
+        String outPutString = "Нет данных";
+        return Objects.requireNonNullElse(inputString, outPutString);
+    }
+
+    private JComboBox enableComboText(JComboBox inputCombobox){
+        inputCombobox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public void paint(Graphics g) {
+                setForeground(Color.BLACK);
+                super.paint(g);
+            }
+        });
+        return inputCombobox;
+    }
+
+    private JComboBox disableComboText(JComboBox inputCombobox){
+        inputCombobox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public void paint(Graphics g) {
+                setForeground(Color.LIGHT_GRAY);
+                super.paint(g);
+            }
+        });
+        return inputCombobox;
+    }
+
+    private void clearFields(){
+
+        search_button.setEnabled(true);
+        add_button.setEnabled(true);
+
+        save_button.setEnabled(false);
+        edit_button.setEnabled(false);
+
+        tableID_label.setForeground(Color.RED);
+        tableID_text.setText("");
+
+        nameRus_text.setEnabled(false);
+        nameRus_text.setText("");
+
+        departmentRus_box.setEnabled(false);
+        disableComboText(departmentRus_box).setSelectedIndex(0);
+
+        supervisor_box.setEnabled(false);
+        disableComboText(supervisor_box).setSelectedItem(0);
+
+        positionRus_box.setEnabled(false);
+        disableComboText(positionRus_box).setSelectedIndex(0);
+
+        shiftRus_box.setEnabled(false);
+        disableComboText(shiftRus_box).setSelectedIndex(0);
+
+        lastOr_text.setEnabled(false);
+        lastOr_text.setText("");
+    }
+
+    private void enableFields(){
+
+        edit_button.setEnabled(false);
+        delete_button.setEnabled(false);
+        add_button.setEnabled(false);
+
+        save_button.setEnabled(true);
+
+        tableID_text.setText("");
+
+        nameRus_text.setEnabled(true);
+        nameRus_text.setText("");
+
+        enableComboText(departmentRus_box).setEnabled(true);
+        enableComboText(positionRus_box).setEnabled(true);
+        enableComboText(shiftRus_box).setEnabled(true);
+        enableComboText(supervisor_box).setEnabled(true);
+
+        lastOr_text.setEnabled(true);
+        lastOr_text.setText("");
+
+        search_button.setEnabled(false);
+        tableID_label.setForeground(Color.BLACK);
+    }
+
+    private void editFields(){
+
+        tableID_label.setForeground(Color.BLACK);
+
+        search_button.setEnabled(false);
+        add_button.setEnabled(false);
+        edit_button.setEnabled(false);
+        delete_button.setEnabled(false);
+        save_button.setEnabled(true);
+
+        nameRus_text.setEnabled(true);
+        positionRus_box.setEnabled(true);
+        supervisor_box.setEnabled(true);
+        departmentRus_box.setEnabled(true);
+        shiftRus_box.setEnabled(true);
+
+        lastOr_text.setEnabled(true);
+    }
+
+    private int convertDept(JComboBox inputBox){
+
+        String departQuery = "SELECT * FROM dbo.Department WHERE Russian = '" + (String) inputBox.getSelectedItem()+"'";
+        int deptID = 0;
+
+        try {
+            Statement departmentSt = MineOperations.conn.createStatement();
+            ResultSet departmentResult = departmentSt.executeQuery(departQuery);
+
+            while(departmentResult.next())
+            {
+                deptID = departmentResult.getInt("DeptID");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return deptID;
+    }
+
+    private String selectSupervisorName(String reportsID){
+
+        String supervisorName = "";
+        String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE SupervisorId = '" + reportsID + "'";
+
+        try{
+
+            Statement supervisorName_statement = MineOperations.conn.createStatement();
+            ResultSet supervisorName_result = supervisorName_statement.executeQuery(supervisorName_query);
+
+            while(supervisorName_result.next()){
+                supervisorName = supervisorName_result.getString("Russian");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return supervisorName;
+    }
+
+    private int selectSupervisorID(JComboBox inputBox){
+
+        int supervisorID = 0;
+        String supervisorID_query = "SELECT * FROM dbo.Supervisors WHERE Russian = '" + (String) inputBox.getSelectedItem() + "'";
+
+        try {
+
+            Statement supervisorID_statement = MineOperations.conn.createStatement();
+            ResultSet supervisorID_result = supervisorID_statement.executeQuery(supervisorID_query);
+
+            while (supervisorID_result.next()){
+                supervisorID = supervisorID_result.getInt("SupervisorId");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return supervisorID;
     }
 }
