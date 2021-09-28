@@ -2,8 +2,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import java.util.Date;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -178,7 +176,7 @@ public class EmployeeInfo extends JPanel {
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
-        licenceInfoPanel.setBounds(20, 400, 450, 300);
+        licenceInfoPanel.setBounds(20, 400, 450, 150);
         licenceInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Удостоверение Тракториста"));
         this.add(licenceInfoPanel);
 
@@ -245,8 +243,8 @@ public class EmployeeInfo extends JPanel {
             ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
 
             while(reportsTo_result.next()){
-                String addreportsTo = reportsTo_result.getString("Russian");
-                supervisor_box.addItem(addreportsTo);
+                String addReportsTo = reportsTo_result.getString("Russian");
+                supervisor_box.addItem(addReportsTo);
             }
         }
 
@@ -327,7 +325,7 @@ public class EmployeeInfo extends JPanel {
 
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(480, 590, 400, 70);
+        buttons_panel.setBounds(20, 590, 450, 50);
         buttons_panel.setLayout(new GridLayout(1, 5));
         buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Панель Управления"));
         this.add(buttons_panel);
@@ -335,12 +333,14 @@ public class EmployeeInfo extends JPanel {
         delete_button = new JButton("Удалить");
         delete_button.setBackground(Color.WHITE);
         delete_button.setForeground(Color.RED);
+        delete_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         delete_button.setEnabled(false);
         buttons_panel.add(delete_button);
 
         edit_button = new JButton("Изменить");
         edit_button.setBackground(Color.WHITE);
         edit_button.setForeground(Color.BLUE);
+        edit_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         edit_button.setEnabled(false);
         buttons_panel.add(edit_button);
         edit_button.addActionListener(new ActionListener() {
@@ -354,6 +354,7 @@ public class EmployeeInfo extends JPanel {
         add_button = new JButton("Создать");
         add_button.setBackground(Color.GREEN);
         add_button.setForeground(Color.BLACK);
+        add_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         buttons_panel.add(add_button);
         add_button.addActionListener(new ActionListener() {
             @Override
@@ -366,6 +367,7 @@ public class EmployeeInfo extends JPanel {
         save_button = new JButton("Сохранить");
         save_button.setBackground(Color.WHITE);
         save_button.setForeground(Color.BLACK);
+        save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         save_button.setEnabled(false);
         buttons_panel.add(save_button);
         save_button.addActionListener(new ActionListener() {
@@ -378,8 +380,8 @@ public class EmployeeInfo extends JPanel {
                         String updateQuery =
                                 "UPDATE dbo.Employees SET RusTitle = '" + positionRus_box.getSelectedItem() +
                                         "', LastName = '" + nameRus_text.getText() +
-                                        "', Shift = '" + shiftRus_box.getSelectedItem() +
-                                        "', Department = '" + convertDept(departmentRus_box) +
+                                        "', Shift = " + stringToNull((String) shiftRus_box.getSelectedItem()) +
+                                        ", Department = '" + convertDepartment(departmentRus_box) +
                                         "', ReportsTo = '" + selectSupervisorID(supervisor_box) +
                                         "' WHERE EmployeeID = " + tableID_text.getText();
 
@@ -387,6 +389,8 @@ public class EmployeeInfo extends JPanel {
                             System.out.println(updateQuery);
                             PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
                             updateEmployee.executeUpdate();
+                            JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике изменена успешна");
+                            clearFields();
                         }catch (SQLException ex){
                             ex.printStackTrace();
                             System.err.println("Got an exception! ");
@@ -394,8 +398,36 @@ public class EmployeeInfo extends JPanel {
                         }
 
                     } else {
-                        final String checkEmployee_query = "SELECT * FROM db.Employees WHERE EmployeeID = " + tableID_text.getText();
-
+                        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
+                        try {
+                            final Statement checkEmployee_st = MineOperations.conn.createStatement();
+                            final ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
+                            if (!employeeExist_result.next())
+                            {
+                                String insert_query = "INSERT INTO dbo.Employees (EmployeeID, LastName, FirstName, ReportsTo, Shift, " +
+                                        "Terminated, Transfered, Driverschk, LightTtruck, MineResc, CraneTr, " +
+                                        "Department, SafteyOrin, RusTitle) "+
+                                        "VALUES ('" + tableID_text.getText() + "', " +
+                                        "'" + nameRus_text.getText() + "', " +
+                                        "'" + nameRus_text.getText() + "', " +
+                                        selectSupervisorID(supervisor_box) + ", " +
+                                        "" + stringToNull((String) shiftRus_box.getSelectedItem()) + ", " +
+                                        0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " +
+                                        "" + convertDepartment(departmentRus_box) + ", " +
+                                        "'" + lastOr_text.getText() + "', " +
+                                        "'" + positionRus_box.getSelectedItem() + "')";
+                                System.out.println(insert_query);
+                                PreparedStatement insertEmployee = MineOperations.conn.prepareStatement(insert_query);
+                                insertEmployee.executeQuery();
+                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
+                            } else {
+                                do {
+                                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер: " +
+                                    tableID_text.getText() + " уже занят. Пожалуйста введите другой");
+                                } while (employeeExist_result.next());
+                            }
+                        } catch (SQLException ignored) {
+                        }
                     }
                 }
             }
@@ -404,6 +436,7 @@ public class EmployeeInfo extends JPanel {
         cancel_button = new JButton("Отмена");
         cancel_button.setBackground(Color.RED);
         cancel_button.setForeground(Color.WHITE);
+        cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         buttons_panel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
@@ -541,7 +574,7 @@ public class EmployeeInfo extends JPanel {
         lastOr_text.setEnabled(true);
     }
 
-    private int convertDept(JComboBox inputBox){
+    private int convertDepartment(JComboBox inputBox){
 
         String departQuery = "SELECT * FROM dbo.Department WHERE Russian = '" + (String) inputBox.getSelectedItem()+"'";
         int deptID = 0;
@@ -600,5 +633,14 @@ public class EmployeeInfo extends JPanel {
             ex.printStackTrace();
         }
         return supervisorID;
+    }
+
+    private String stringToNull(String inputString){
+        if (Objects.equals(inputString, "Нет данных")){
+            return null;
+        } else {
+            inputString = "'" + inputString + "'";
+            return inputString;
+        }
     }
 }
