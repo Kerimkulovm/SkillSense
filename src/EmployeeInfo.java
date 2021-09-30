@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class EmployeeInfo extends JPanel {
@@ -23,18 +25,20 @@ public class EmployeeInfo extends JPanel {
             lastOr_text,
             tableID_text;
 
-    private final JButton search_button,
+    private final JButton
+            search_button,
             add_button,
             save_button,
             edit_button,
             delete_button,
             cancel_button;
 
-    private JComboBox departmentRus_box;
-    private JComboBox shiftRus_box;
-    private JComboBox positionRus_box;
-    private JComboBox supervisor_box;
-
+    private JComboBox
+            departmentRus_box,
+            shiftRus_box,
+            positionRus_box,
+            supervisor_box,
+            terminatedStatus_box;
 
     private DefaultComboBoxModel shiftsModelBox;
 
@@ -90,12 +94,10 @@ public class EmployeeInfo extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Statement searchStatement = MineOperations.conn.createStatement();
-                    String query_text = "SELECT d.russian, d.russian as RusDept, e.* " +
-                            "FROM dbo.Employees e " +
-                            "left join dbo.Department d on e.Department = d.DeptId " +
-                            "where e.EmployeeID = ";
-                    System.out.println(query_text + tableID_text.getText());
-                    ResultSet searchResults = searchStatement.executeQuery(query_text + tableID_text.getText());
+                    String query_text =
+                            "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
+                    System.out.println(query_text);
+                    ResultSet searchResults = searchStatement.executeQuery(query_text);
 
                     if (!searchResults.next()) throw new SQLException("Error");
 
@@ -108,8 +110,11 @@ public class EmployeeInfo extends JPanel {
                     String positionRus_string = searchResults.getString("RusTitle");
                     enableComboText(positionRus_box).setSelectedItem(positionRus_string);
 
-                    String departmentID_string = searchResults.getString("russian");
+                    String departmentID_string = findDepartment(searchResults.getInt("Department"));
                     enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
+
+                    String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
+                    enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
 
                     String shift_string  = searchResults.getString("Shift");
                     if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string))==-1){
@@ -135,7 +140,7 @@ public class EmployeeInfo extends JPanel {
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
         employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Персональная Информация"));
-        employeeInfo_panel.setBounds(20, 175, 450, 160);
+        employeeInfo_panel.setBounds(20, 175, 450, 180);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -151,7 +156,7 @@ public class EmployeeInfo extends JPanel {
 
         JPanel lastOrientationInfoPanel = new JPanel();
         lastOrientationInfoPanel.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.setBounds(20, 340, 450, 50);
+        lastOrientationInfoPanel.setBounds(20, 360, 450, 50);
         lastOrientationInfoPanel.setLayout(new BoxLayout(lastOrientationInfoPanel, BoxLayout.X_AXIS));
         lastOrientationInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Общие Правила ТБ"));
         this.add(lastOrientationInfoPanel);
@@ -169,16 +174,24 @@ public class EmployeeInfo extends JPanel {
 
         JPanel photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(480, 120, 390, 450);
-        photoPanel.setLayout(new BoxLayout(photoPanel, BoxLayout.X_AXIS));
+        photoPanel.setBounds(480, 120, 200, 240);
+        photoPanel.setLayout(new BorderLayout());
         photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
-        licenceInfoPanel.setBounds(20, 400, 450, 150);
-        licenceInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Удостоверение Тракториста"));
+        licenceInfoPanel.setBounds(20, 415, 450, 80);
+        licenceInfoPanel.setLayout(new BorderLayout());
+        licenceInfoPanel.setBorder(new LineBorder(Color.orange));
         this.add(licenceInfoPanel);
+
+        JPanel driverLicenceInfo_panel = new JPanel();
+        driverLicenceInfo_panel.setBackground(Color.WHITE);
+        driverLicenceInfo_panel.setBounds(20, 500,450,160);
+        driverLicenceInfo_panel.setLayout(new BorderLayout());
+        driverLicenceInfo_panel.setBorder(new LineBorder(Color.orange));
+        this.add(driverLicenceInfo_panel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -303,6 +316,21 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        JPanel terminated_panel = new JPanel();
+        JLabel terminated_label = new JLabel("Статус: ");
+        terminated_panel.add(terminated_label);
+        terminated_panel.setBackground(Color.WHITE);
+        infoLabels.add(terminated_panel);
+
+        String[] status = new String[]{"Работает","Уволен"};
+        terminatedStatus_box = new JComboBox(status);
+        terminatedStatus_box.setBackground(Color.WHITE);
+        terminatedStatus_box.setEnabled(false);
+        terminated_panel.add(terminatedStatus_box);
+        inputPanel.add(terminatedStatus_box);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JPanel lastOr_panel = new JPanel();
         JLabel lastOr_label = new JLabel("Общие правила ТБ: ");
         lastOr_panel.add(lastOr_label);
@@ -318,16 +346,85 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        String[][] truckLicence = {};
+        DefaultTableModel licence_model = new DefaultTableModel(7,3);
+        DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
+        centerRederer.setHorizontalAlignment(JLabel.CENTER);
+
+        JTable licence_table = new JTable(licence_model);
+        licence_table.setBorder(new LineBorder(Color.BLACK));
+        licence_table.setBackground(Color.WHITE);
+        licence_table.setRowHeight(20);
+        licence_table.setVisible(true);
+
+        JTableHeader header= licence_table.getTableHeader();
+        header.setBorder(new LineBorder(Color.BLACK));
+        header.setBackground(Color.WHITE);
+
+        TableColumnModel licence_columns = header.getColumnModel();
+
+        TableColumn tabCol0 = licence_columns.getColumn(0);
+        tabCol0.setHeaderValue("Категория");
+        tabCol0.setCellRenderer(centerRederer);
+        tabCol0.setPreferredWidth(10);
+
+        String[] categories_list = new String[]{"А","Б","В","Г","Д","Е","Е1"};
+        for (int i = 0; i < licence_table.getRowCount(); i++){
+            licence_table.setValueAt(categories_list[i],i,0);
+        }
+
+        TableColumn tabCol1 = licence_columns.getColumn(1);
+        tabCol1.setCellRenderer(centerRederer);
+        tabCol1.setHeaderValue("Статус");
+
+        String[] licenceStatus_string = new String[]{"Разрешено", "Недопущен"};
+        JComboBox licenceStatus_box = new JComboBox(licenceStatus_string);
+        tabCol1.setCellEditor(new DefaultCellEditor(licenceStatus_box));
+
+        for (int i = 0; i < licence_table.getRowCount(); i++ ){
+            licence_table.setValueAt(licenceStatus_string[1],i,1);
+        }
+
+        TableColumn tabCol2 = licence_columns.getColumn(2);
+        tabCol2.setHeaderValue("Дата");
+
+        licenceInfoPanel.add(new JScrollPane(licence_table));
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        DefaultTableModel drivingLicence_model = new DefaultTableModel(13,2);
+        DefaultTableCellRenderer drivingLicenceRendered = new DefaultTableCellRenderer();
+        drivingLicenceRendered.setHorizontalAlignment(JLabel.CENTER);
 
+        JTable drivingLicence_table = new JTable(drivingLicence_model);
+        drivingLicence_table.setBorder(new LineBorder(Color.BLACK));
+        drivingLicence_table.setBackground(Color.WHITE);
+        drivingLicence_table.setRowHeight(20);
+
+        JTableHeader drivingLicence_header = drivingLicence_table.getTableHeader();
+        drivingLicence_header.setBorder(new LineBorder(Color.BLACK));
+        drivingLicence_header.setBackground(Color.WHITE);
+
+        TableColumnModel drivingLicence_columns = drivingLicence_header.getColumnModel();
+
+        TableColumn drivingCol0 = drivingLicence_columns.getColumn(0);
+        drivingCol0.setHeaderValue("Категория");
+        drivingCol0.setCellRenderer(drivingLicenceRendered);
+        drivingCol0.setPreferredWidth(100);
+
+        String[] drivingCategories_list = new String[]{"A","A1","B","B1","C","C1","D","D1","BE","CE","C1E","DE","D1E"};
+        for (int i = 0; i < drivingLicence_table.getRowCount(); i++){
+            drivingLicence_table.setValueAt(drivingCategories_list[i],i,0);
+        }
+
+        driverLicenceInfo_panel.add(new JScrollPane(drivingLicence_table));
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Панель Управления
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 590, 450, 50);
+        buttons_panel.setBounds(20, 670, 450, 30);
         buttons_panel.setLayout(new GridLayout(1, 5));
-        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Панель Управления"));
+        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(buttons_panel);
 
         delete_button = new JButton("Удалить");
@@ -380,10 +477,11 @@ public class EmployeeInfo extends JPanel {
                         String updateQuery =
                                 "UPDATE dbo.Employees SET RusTitle = '" + positionRus_box.getSelectedItem() +
                                         "', LastName = '" + nameRus_text.getText() +
-                                        "', Shift = " + stringToNull((String) shiftRus_box.getSelectedItem()) +
-                                        ", Department = '" + convertDepartment(departmentRus_box) +
+                                        "', Shift = " + stringToNull(shiftRus_box) +
+                                        ", Department = '" + setDepartmentName(departmentRus_box) +
                                         "', ReportsTo = '" + selectSupervisorID(supervisor_box) +
-                                        "' WHERE EmployeeID = " + tableID_text.getText();
+                                        "', Terminated = " + setTerminatedStatus(terminatedStatus_box) +
+                                        " WHERE EmployeeID = " + tableID_text.getText();
 
                         try{
                             System.out.println(updateQuery);
@@ -411,15 +509,17 @@ public class EmployeeInfo extends JPanel {
                                         "'" + nameRus_text.getText() + "', " +
                                         "'" + nameRus_text.getText() + "', " +
                                         selectSupervisorID(supervisor_box) + ", " +
-                                        "" + stringToNull((String) shiftRus_box.getSelectedItem()) + ", " +
-                                        0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " +
-                                        "" + convertDepartment(departmentRus_box) + ", " +
+                                        "" + stringToNull(shiftRus_box) + ", " +
+                                        setTerminatedStatus(terminatedStatus_box) +
+                                        ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " +
+                                        "" + setDepartmentName(departmentRus_box) + ", " +
                                         "'" + lastOr_text.getText() + "', " +
                                         "'" + positionRus_box.getSelectedItem() + "')";
                                 System.out.println(insert_query);
                                 PreparedStatement insertEmployee = MineOperations.conn.prepareStatement(insert_query);
-                                insertEmployee.executeQuery();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
+                                insertEmployee.executeQuery();
+                                clearFields();
                             } else {
                                 do {
                                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер: " +
@@ -526,6 +626,9 @@ public class EmployeeInfo extends JPanel {
         shiftRus_box.setEnabled(false);
         disableComboText(shiftRus_box).setSelectedIndex(0);
 
+        terminatedStatus_box.setEnabled(false);
+        disableComboText(terminatedStatus_box).setSelectedItem(0);
+
         lastOr_text.setEnabled(false);
         lastOr_text.setText("");
     }
@@ -547,6 +650,7 @@ public class EmployeeInfo extends JPanel {
         enableComboText(positionRus_box).setEnabled(true);
         enableComboText(shiftRus_box).setEnabled(true);
         enableComboText(supervisor_box).setEnabled(true);
+        enableComboText(terminatedStatus_box).setEnabled(true);
 
         lastOr_text.setEnabled(true);
         lastOr_text.setText("");
@@ -570,11 +674,33 @@ public class EmployeeInfo extends JPanel {
         supervisor_box.setEnabled(true);
         departmentRus_box.setEnabled(true);
         shiftRus_box.setEnabled(true);
+        terminatedStatus_box.setEnabled(true);
 
         lastOr_text.setEnabled(true);
     }
 
-    private int convertDepartment(JComboBox inputBox){
+    private String findDepartment(int departmentID){
+
+        String departmentName = "";
+        String departmentID_query = "SELECT * FROM dbo.Department WHERE DeptId = " + departmentID;
+
+        try {
+
+            Statement departmentName_statement = MineOperations.conn.createStatement();
+            ResultSet departmentName_result = departmentName_statement.executeQuery(departmentID_query);
+
+            while(departmentName_result.next()){
+                departmentName = departmentName_result.getString("Departmant");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return departmentName;
+    }
+
+    private int setDepartmentName(JComboBox inputBox){
 
         String departQuery = "SELECT * FROM dbo.Department WHERE Russian = '" + (String) inputBox.getSelectedItem()+"'";
         int deptID = 0;
@@ -635,12 +761,38 @@ public class EmployeeInfo extends JPanel {
         return supervisorID;
     }
 
-    private String stringToNull(String inputString){
+    private String stringToNull(JComboBox inputBox){
+        String inputString = (String) inputBox.getSelectedItem();
         if (Objects.equals(inputString, "Нет данных")){
             return null;
         } else {
             inputString = "'" + inputString + "'";
             return inputString;
         }
+    }
+
+    private String findTerminatedStatus(int inputNum){
+
+        String status = "";
+
+        if (inputNum == 0){
+            status = "Работает";
+        } else {
+            status = "Уволен";
+        }
+
+        return status;
+    }
+
+    private int setTerminatedStatus(JComboBox inputBox){
+
+        String inputString = (String) inputBox.getSelectedItem();
+        int terminatedID = 0;
+
+        if (Objects.equals(inputString, "Уволен")){
+            terminatedID = 1;
+        }
+
+        return terminatedID;
     }
 }
