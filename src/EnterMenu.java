@@ -54,7 +54,7 @@ public class EnterMenu extends JPanel {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton employeesInfo_button = new JButton("<html><big>Employees Info.</big><br />Ввод информации о работниках</html>");
+        JButton employeesInfo_button = new JButton("<html><big>Ввод информации о работниках</big><br />(Добавить, изменить, удалить данные о сотруднике)<br /></html>");
         buttons_panel.add(employeesInfo_button);
         employeesInfo_button.setHorizontalAlignment(SwingConstants.LEFT);
         employeesInfo_button.setBackground(Color.WHITE);
@@ -65,7 +65,7 @@ public class EnterMenu extends JPanel {
             }
         });
 
-        JButton operations_button = new JButton("<html><big>Mine Operations daily</big><br />Ввод ежедневной информации</html>");
+        JButton operations_button = new JButton("<html><big>Ввод ежедневной информации</big><br /></html>");
         buttons_panel.add(operations_button);
         operations_button.setHorizontalAlignment(SwingConstants.LEFT);
         operations_button.setBackground(Color.WHITE);

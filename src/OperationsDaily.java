@@ -302,9 +302,11 @@ public class OperationsDaily extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton exit_button = new JButton("Exit | Выход");
-        exit_button.setBounds(730, 60, 150, 30);
-        exit_button.setForeground(Color.RED);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        JButton exit_button = new JButton("Выход");
+        exit_button.setBounds(720, 60, 150, 30);
+        exit_button.setBackground(Color.RED);
+        exit_button.setForeground(Color.WHITE);
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override

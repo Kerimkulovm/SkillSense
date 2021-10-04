@@ -9,11 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
+import java.sql.*;
 import java.util.Objects;
 
 public class EmployeeInfo extends JPanel {
@@ -42,9 +38,10 @@ public class EmployeeInfo extends JPanel {
 
     private DefaultComboBoxModel shiftsModelBox;
 
-    private BufferedImage logo_image;
-    private boolean editUser;
+    private BufferedImage logo_image, profile_image;
+    private JPanel photoPanel;
 
+    private boolean editUser;
 
     public EmployeeInfo()
     {
@@ -96,7 +93,6 @@ public class EmployeeInfo extends JPanel {
                     Statement searchStatement = MineOperations.conn.createStatement();
                     String query_text =
                             "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
-                    System.out.println(query_text);
                     ResultSet searchResults = searchStatement.executeQuery(query_text);
 
                     if (!searchResults.next()) throw new SQLException("Error");
@@ -131,6 +127,8 @@ public class EmployeeInfo extends JPanel {
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник не найден!");
                 }
+
+                setVisible(true);
             }
         });
 
@@ -140,7 +138,7 @@ public class EmployeeInfo extends JPanel {
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
         employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Персональная Информация"));
-        employeeInfo_panel.setBounds(20, 175, 450, 180);
+        employeeInfo_panel.setBounds(20, 175, 450, 210);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -154,44 +152,26 @@ public class EmployeeInfo extends JPanel {
         inputPanel.setBackground(Color.WHITE);
         employeeInfo_panel.add(inputPanel);
 
-        JPanel lastOrientationInfoPanel = new JPanel();
-        lastOrientationInfoPanel.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.setBounds(20, 360, 450, 50);
-        lastOrientationInfoPanel.setLayout(new BoxLayout(lastOrientationInfoPanel, BoxLayout.X_AXIS));
-        lastOrientationInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Общие Правила ТБ"));
-        this.add(lastOrientationInfoPanel);
-
-        JPanel lastOrientLabels = new JPanel();
-        JPanel lastOrientTexts = new JPanel();
-
-        lastOrientLabels.setLayout(new BoxLayout(lastOrientLabels, BoxLayout.Y_AXIS));
-        lastOrientLabels.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.add(lastOrientLabels);
-
-        lastOrientTexts.setLayout(new BoxLayout(lastOrientTexts, BoxLayout.Y_AXIS));
-        lastOrientTexts.setBackground(Color.WHITE);
-        lastOrientationInfoPanel.add(lastOrientTexts);
-
-        JPanel photoPanel = new JPanel();
+        photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(480, 120, 200, 240);
+        photoPanel.setBounds(480, 120, 210, 260);
         photoPanel.setLayout(new BorderLayout());
         photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
-        JPanel licenceInfoPanel = new JPanel();
-        licenceInfoPanel.setBackground(Color.WHITE);
-        licenceInfoPanel.setBounds(20, 415, 450, 80);
-        licenceInfoPanel.setLayout(new BorderLayout());
-        licenceInfoPanel.setBorder(new LineBorder(Color.orange));
-        this.add(licenceInfoPanel);
-
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
-        driverLicenceInfo_panel.setBounds(20, 500,450,160);
+        driverLicenceInfo_panel.setBounds(480, 390, 210, 200);
         driverLicenceInfo_panel.setLayout(new BorderLayout());
         driverLicenceInfo_panel.setBorder(new LineBorder(Color.orange));
         this.add(driverLicenceInfo_panel);
+
+        JPanel licenceInfoPanel = new JPanel();
+        licenceInfoPanel.setBackground(Color.WHITE);
+        licenceInfoPanel.setBounds(20, 390,450,200);
+        licenceInfoPanel.setLayout(new BorderLayout());
+        licenceInfoPanel.setBorder(new LineBorder(Color.orange));
+        this.add(licenceInfoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,7 +218,7 @@ public class EmployeeInfo extends JPanel {
         positionRus_panel.add(positionRus_box);
         inputPanel.add(positionRus_box);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////Ищдв///////////////////////////////////////////
 
         JPanel reportsTo_panel = new JPanel();
         JLabel reportsTo_label = new JLabel("Начальник: ");
@@ -335,14 +315,14 @@ public class EmployeeInfo extends JPanel {
         JLabel lastOr_label = new JLabel("Общие правила ТБ: ");
         lastOr_panel.add(lastOr_label);
         lastOr_panel.setBackground(Color.WHITE);
-        lastOrientLabels.add(lastOr_panel);
+        infoLabels.add(lastOr_panel);
 
         lastOr_text = new JTextField();
         lastOr_text.setEnabled(false);
         lastOr_text.setForeground(Color.BLACK);
         lastOr_text.setDisabledTextColor(Color.BLACK);
         lastOr_panel.add(lastOr_text);
-        lastOrientTexts.add(lastOr_text);
+        inputPanel.add(lastOr_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -353,12 +333,13 @@ public class EmployeeInfo extends JPanel {
         JTable licence_table = new JTable(licence_model);
         licence_table.setBorder(new LineBorder(Color.BLACK));
         licence_table.setBackground(Color.WHITE);
-        licence_table.setRowHeight(20);
+        licence_table.setRowHeight(25);
         licence_table.setVisible(true);
 
         JTableHeader header= licence_table.getTableHeader();
         header.setBorder(new LineBorder(Color.BLACK));
         header.setBackground(Color.WHITE);
+        header.setFont(new Font("Helvetica", Font.BOLD,12));
 
         TableColumnModel licence_columns = header.getColumnModel();
 
@@ -387,6 +368,9 @@ public class EmployeeInfo extends JPanel {
         TableColumn tabCol2 = licence_columns.getColumn(2);
         tabCol2.setHeaderValue("Дата");
 
+
+
+
         licenceInfoPanel.add(new JScrollPane(licence_table));
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,6 +387,7 @@ public class EmployeeInfo extends JPanel {
         JTableHeader drivingLicence_header = drivingLicence_table.getTableHeader();
         drivingLicence_header.setBorder(new LineBorder(Color.BLACK));
         drivingLicence_header.setBackground(Color.WHITE);
+        drivingLicence_header.setFont(new Font("Helvetica", Font.BOLD,12));
 
         TableColumnModel drivingLicence_columns = drivingLicence_header.getColumnModel();
 
@@ -416,13 +401,20 @@ public class EmployeeInfo extends JPanel {
             drivingLicence_table.setValueAt(drivingCategories_list[i],i,0);
         }
 
-        driverLicenceInfo_panel.add(new JScrollPane(drivingLicence_table));
+        TableColumn drivingCol1 = drivingLicence_columns.getColumn(1);
+        drivingCol1.setHeaderValue("Дата");
+        drivingCol1.setCellRenderer(drivingLicenceRendered);
+        drivingCol1.setPreferredWidth(150);
+
+        JScrollPane drivingLicence_scrollPane = new JScrollPane(drivingLicence_table);
+        drivingLicence_scrollPane.setBackground(Color.WHITE);
+        driverLicenceInfo_panel.add(drivingLicence_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Панель Управления
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 670, 450, 30);
+        buttons_panel.setBounds(20, 600, 450, 30);
         buttons_panel.setLayout(new GridLayout(1, 5));
         buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(buttons_panel);
@@ -484,15 +476,12 @@ public class EmployeeInfo extends JPanel {
                                         " WHERE EmployeeID = " + tableID_text.getText();
 
                         try{
-                            System.out.println(updateQuery);
                             PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
                             updateEmployee.executeUpdate();
                             JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике изменена успешна");
                             clearFields();
                         }catch (SQLException ex){
                             ex.printStackTrace();
-                            System.err.println("Got an exception! ");
-                            System.err.println(ex.getMessage());
                         }
 
                     } else {
@@ -515,7 +504,6 @@ public class EmployeeInfo extends JPanel {
                                         "" + setDepartmentName(departmentRus_box) + ", " +
                                         "'" + lastOr_text.getText() + "', " +
                                         "'" + positionRus_box.getSelectedItem() + "')";
-                                System.out.println(insert_query);
                                 PreparedStatement insertEmployee = MineOperations.conn.prepareStatement(insert_query);
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
                                 insertEmployee.executeQuery();

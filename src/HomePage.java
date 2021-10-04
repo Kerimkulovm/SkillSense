@@ -43,27 +43,18 @@ public class HomePage extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        title_label = new JLabel("Home Page");
+        title_label = new JLabel("Главная страница");
         title_label.setBounds(160, 0, 500, 100);
         title_label.setBackground(Color.WHITE);
         title_label.setForeground(Color.WHITE);
         title_label.setFont(new Font("Kumtor", Font.BOLD, 40));
         this.add(title_label);
 
-        mineOperations_label = new JLabel("<html>Mine Operations<br>Training</html>");
-        mineOperations_label.setBounds(550, 50, 300, 200);
-        mineOperations_label.setForeground(new Color(72, 107, 88));
-        mineOperations_label.setFont(new Font("Kumtor", Font.BOLD, 30));
-        this.add(mineOperations_label);
-
         gorniy_label = new JLabel("<html>Горный Оператор-<br>Обучение</html>");
-        gorniy_label.setBounds(550, 120, 300, 200);
+        gorniy_label.setBounds(550, 50, 300, 200);
         gorniy_label.setForeground(new Color(72, 107, 88));
-        gorniy_label.setFont(new Font("Kumtor", Font.BOLD, 20));
+        gorniy_label.setFont(new Font("Helvetica", Font.BOLD, 30));
         this.add(gorniy_label);
-
-
-
 
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.white);
@@ -73,7 +64,7 @@ public class HomePage extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        enterData_button = new JButton("<html> <big> Enter/Data Files </big><br /> Ввод/Просмотр Общих Данных </html>");
+        enterData_button = new JButton("<html> <big>  Ввод/Просмотр Общих Данных </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
         buttons_panel.add(enterData_button);
         enterData_button.setHorizontalAlignment(SwingConstants.LEFT);
         enterData_button.setBackground(Color.WHITE);
@@ -84,27 +75,34 @@ public class HomePage extends JPanel {
             }
         });
 
-        viewFiles_button = new JButton("<html> <big> View Files by </big> <br /> Просмотр данных по оборудованию </html>");
+        viewFiles_button = new JButton("<html> <big> Просмотр данных по оборудованию  </big> <br /> (Обзор квалификации по сменам и часов работ по оборудованию) </html>");
         buttons_panel.add(viewFiles_button);
         viewFiles_button.setHorizontalAlignment(SwingConstants.LEFT);
         viewFiles_button.setBackground(Color.WHITE);
+        viewFiles_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"View Qualifications");
+            }
+        });
 
-        viewSchedule_button = new JButton("<html> <big> View/Schedule SRT </big> <br /> Повторное планирование по ТБ </html>");
+
+        viewSchedule_button = new JButton("<html> <big> Повторное планирование по ТБ  </big> <br /> </html>");
         buttons_panel.add(viewSchedule_button);
         viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
         viewSchedule_button.setBackground(Color.WHITE);
 
-        reports_button = new JButton("<html> <big> Reports </big> <br /> Отчеты </html>");
+        reports_button = new JButton("<html> <big> Отчеты </big> <br />  </html>");
         buttons_panel.add(reports_button);
         reports_button.setHorizontalAlignment(SwingConstants.LEFT);
         reports_button.setBackground(Color.WHITE);
 
-        addList_button = new JButton("<html> <big> Add List </big> <br /> Лист включения инструкторов итд. </html>");
+        addList_button = new JButton("<html> <big> Лист включения инструкторов итд. </big> <br />  </html>");
         buttons_panel.add(addList_button);
         addList_button.setHorizontalAlignment(SwingConstants.LEFT);
         addList_button.setBackground(Color.WHITE);
 
-        exit_button = new JButton("<html> <big> EXIT DATABASE </big> <br /> Выход из программы </html> ");
+        exit_button = new JButton("<html> <big> Выход из программы </big> <br />  </html> ");
         exit_button.setForeground(Color.RED);
         buttons_panel.add(exit_button);
         exit_button.setHorizontalAlignment(SwingConstants.LEFT);
