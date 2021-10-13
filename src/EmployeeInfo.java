@@ -99,69 +99,73 @@ public class EmployeeInfo extends JPanel {
                             "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
                     ResultSet searchResults = searchStatement.executeQuery(query_text);
 
-                    if (!searchResults.next()) throw new SQLException("Error");
+                    if (!searchResults.next()) JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник не найден!");
+                    else {
+                        String employeeRusName_string = searchResults.getString("FullNameRu");
+                        nameRus_text.setText(employeeRusName_string);
 
-                    String employeeRusName_string = searchResults.getString("FullNameRu");
-                    nameRus_text.setText(employeeRusName_string);
+                        String supervisor_string = searchResults.getString("SupervisorId");
+                        enableComboText(supervisor_box).setSelectedItem(selectSupervisorName(supervisor_string));
 
-                    String supervisor_string = searchResults.getString("SupervisorId");
-                    enableComboText(supervisor_box).setSelectedItem(selectSupervisorName(supervisor_string));
+                        //String positionRus_string = searchResults.getString("RusTitle");
+                        String positionRus_string = searchResults.getString("JobTitleID");
+                        enableComboText(positionRus_box).setSelectedItem(positionRus_string);
 
-                    //String positionRus_string = searchResults.getString("RusTitle");
-                    String positionRus_string = searchResults.getString("JobTitleID");
-                    enableComboText(positionRus_box).setSelectedItem(positionRus_string);
+                        String departmentID_string = findDepartment(searchResults.getInt("DepartmentId"));
+                        enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
 
-                    String departmentID_string = findDepartment(searchResults.getInt("DepartmentId"));
-                    enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
+                        String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
+                        enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
 
-                    String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
-                    enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
+                        //String shift_string  = searchResults.getString("Shift");
+                        String shift_string = searchResults.getString("CrewID");
+                        if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string)) == -1) {
+                            shiftsModelBox.setSelectedItem("");
+                        } else {
+                            enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
+                        }
 
-                    //String shift_string  = searchResults.getString("Shift");
-                    String shift_string  = searchResults.getString("CrewID");
-                    if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string))==-1){
-                        shiftsModelBox.setSelectedItem("");
-                    } else {
-                        enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
+                        //Downloading Photo
+                        if (searchResults.getBlob("Photo") != null) {
+                            InputStream is = null;
+                            try {
+                                Blob aBlob = searchResults.getBlob("Photo");
+                                byte[] imageByte = aBlob.getBytes(1, (int) aBlob.length());
+                                is = new ByteArrayInputStream(imageByte);
+                            } catch (NullPointerException ex) {
+                                System.out.println(ex.getMessage());
+                                System.out.print("Caught the NullPointerException");
+                            }
+
+                            BufferedImage imagef = null;
+                            try {
+                                imagef = ImageIO.read(is);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            } catch (NullPointerException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            JLabel label = new JLabel(new ImageIcon(imagef));
+
+                            photoPanel.removeAll();
+                            photoPanel.add(label);
+                            revalidate();
+                            repaint();
+                        } else {
+                            photoPanel.removeAll();
+                            revalidate();
+                            repaint();
+                        }
+
+                        String lastOr_string = searchResults.getString("SafetyOrientation");
+                        lastOr_text.setText(checkNullVariable(lastOr_string).substring(0, 10));
+
+                        edit_button.setEnabled(true);
                     }
-
-                    //Downloading Photo
-
-                    InputStream is = null;
-                    try{
-                        Blob aBlob = searchResults.getBlob("Photo");
-                        byte[] imageByte = aBlob.getBytes(1, (int) aBlob.length());
-                        is=new ByteArrayInputStream(imageByte);
-                    }catch (NullPointerException ex) {
-                        System.out.println(ex.getMessage());
-                        System.out.print("Caught the NullPointerException");
-                    }
-
-                    BufferedImage imagef = null;
-                    try {
-                        imagef = ImageIO.read(is);
-                    }catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (NullPointerException ex) {
-                        ex.printStackTrace();
-                    }
-
-                    JLabel label = new JLabel(new ImageIcon(imagef));
-
-                    photoPanel.removeAll();
-                    photoPanel.add(label);
-                    revalidate();
-                    repaint();
-
-
-                    String lastOr_string = searchResults.getString("SafetyOrientation");
-                    lastOr_text.setText(checkNullVariable(lastOr_string).substring(0,10));
-
-                    edit_button.setEnabled(true);
-
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник не найден!");
+
                 }
 
                 setVisible(true);
