@@ -1,3 +1,4 @@
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -119,6 +120,16 @@ public class EmployeeInfo extends JPanel {
                         enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
                     }
 
+                    BufferedImage image = null;
+                    try {
+                        image = ImageIO.read(new File("E:\\MineTraningPhotos\\sonoo.jpg"));
+                    }catch (IOException exc) {
+                        System.out.println(exc.getMessage());
+                    }
+
+                    JLabel label = new JLabel(new ImageIcon(image));
+                    photoPanel.add(label);
+
                     String lastOr_string = searchResults.getString("SafteyOrin");
                     lastOr_text.setText(checkNullVariable(lastOr_string).substring(0,10));
 
@@ -159,12 +170,18 @@ public class EmployeeInfo extends JPanel {
         photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
+
+
+
+
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
         driverLicenceInfo_panel.setBounds(480, 390, 210, 200);
         driverLicenceInfo_panel.setLayout(new BorderLayout());
         driverLicenceInfo_panel.setBorder(new LineBorder(Color.orange));
         this.add(driverLicenceInfo_panel);
+
+
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
