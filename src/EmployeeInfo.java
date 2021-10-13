@@ -8,9 +8,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class EmployeeInfo extends JPanel {
@@ -98,44 +101,66 @@ public class EmployeeInfo extends JPanel {
 
                     if (!searchResults.next()) throw new SQLException("Error");
 
-                    String employeeRusName_string = searchResults.getString("LastName");
+                    String employeeRusName_string = searchResults.getString("FullNameRu");
                     nameRus_text.setText(employeeRusName_string);
 
-                    String supervisor_string = searchResults.getString("ReportsTo");
+                    String supervisor_string = searchResults.getString("SupervisorId");
                     enableComboText(supervisor_box).setSelectedItem(selectSupervisorName(supervisor_string));
 
-                    String positionRus_string = searchResults.getString("RusTitle");
+                    //String positionRus_string = searchResults.getString("RusTitle");
+                    String positionRus_string = searchResults.getString("JobTitleID");
                     enableComboText(positionRus_box).setSelectedItem(positionRus_string);
 
-                    String departmentID_string = findDepartment(searchResults.getInt("Department"));
+                    String departmentID_string = findDepartment(searchResults.getInt("DepartmentId"));
                     enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
 
                     String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
                     enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
 
-                    String shift_string  = searchResults.getString("Shift");
+                    //String shift_string  = searchResults.getString("Shift");
+                    String shift_string  = searchResults.getString("CrewID");
                     if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string))==-1){
                         shiftsModelBox.setSelectedItem("");
                     } else {
                         enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
                     }
 
-                    BufferedImage image = null;
-                    try {
-                        image = ImageIO.read(new File("E:\\MineTraningPhotos\\sonoo.jpg"));
-                    }catch (IOException exc) {
-                        System.out.println(exc.getMessage());
+                    //Downloading Photo
+
+                    InputStream is = null;
+                    try{
+                        Blob aBlob = searchResults.getBlob("Photo");
+                        byte[] imageByte = aBlob.getBytes(1, (int) aBlob.length());
+                        is=new ByteArrayInputStream(imageByte);
+                    }catch (NullPointerException ex) {
+                        System.out.println(ex.getMessage());
+                        System.out.print("Caught the NullPointerException");
                     }
 
-                    JLabel label = new JLabel(new ImageIcon(image));
-                    photoPanel.add(label);
+                    BufferedImage imagef = null;
+                    try {
+                        imagef = ImageIO.read(is);
+                    }catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    }
 
-                    String lastOr_string = searchResults.getString("SafteyOrin");
+                    JLabel label = new JLabel(new ImageIcon(imagef));
+
+                    photoPanel.removeAll();
+                    photoPanel.add(label);
+                    revalidate();
+                    repaint();
+
+
+                    String lastOr_string = searchResults.getString("SafetyOrientation");
                     lastOr_text.setText(checkNullVariable(lastOr_string).substring(0,10));
 
                     edit_button.setEnabled(true);
 
                 } catch (SQLException ex) {
+                    ex.printStackTrace();
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник не найден!");
                 }
 
@@ -737,7 +762,7 @@ public class EmployeeInfo extends JPanel {
             ResultSet supervisorName_result = supervisorName_statement.executeQuery(supervisorName_query);
 
             while(supervisorName_result.next()){
-                supervisorName = supervisorName_result.getString("Russian");
+                supervisorName = supervisorName_result.getString("SupervisorNameRu");
             }
 
         } catch (SQLException ex){

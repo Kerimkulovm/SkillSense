@@ -1,11 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.sql.*;
 
 public class MineOperations extends JFrame {
 
     //Connecting to Database
-    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTraining; username=MineTraining;password=qazwsx";
+    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDb; username=MineTraining;password=qazwsx";
     public static Connection conn;
     static {
         try {
@@ -21,7 +22,12 @@ public class MineOperations extends JFrame {
     public static final int FRAME_HEIGHT = 750;
 
     public static HomePage homePagePanel = new HomePage();
-    public static EmployeeInfo employeeInfoPanel = new EmployeeInfo();
+    public static EmployeeInfo employeeInfoPanel;
+
+    static {
+        employeeInfoPanel = new EmployeeInfo();
+    }
+
     public static EnterMenu enterMenuPanel = new EnterMenu();
     public static OperationsDaily operationsDailyPanel = new OperationsDaily();
     public static EnterSRT enterSRTPanel = new EnterSRT();
