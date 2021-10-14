@@ -661,9 +661,12 @@ public class EmployeeInfo extends JPanel {
                 }else
                 if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")){
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
-                } else {
+                }else
+                if (!isUserExist(tableID_text.getText())){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер " + tableID_text.getText() + " не существует!" );
+                }
+                else {
                     if (editUser){
-
                         byte[] rawBytes = null;
                         FileInputStream fis = null;
 
@@ -673,9 +676,6 @@ public class EmployeeInfo extends JPanel {
                         } catch (FileNotFoundException ex) {
                             ex.printStackTrace();
                         }
-
-
-
 
                         String updateQuery =
                                 "UPDATE dbo.Employees SET Photo = ? WHERE EmployeeID = " + tableID_text.getText();
@@ -698,8 +698,6 @@ public class EmployeeInfo extends JPanel {
                             ex.printStackTrace();
                         }
 
-                    } else {
-                        //Пока нет тут кода. Возможо и не нужно
                     }
                 }
             }
@@ -955,5 +953,25 @@ public class EmployeeInfo extends JPanel {
         }
 
         return terminatedID;
+    }
+
+    private boolean isUserExist(String userid){
+
+        boolean  isexist = false;
+        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + userid;
+
+        try {
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            while(rs.next()){
+                isexist = true;
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return isexist;
     }
 }
