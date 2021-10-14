@@ -3,17 +3,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class EmployeeInfo extends JPanel {
@@ -31,7 +29,9 @@ public class EmployeeInfo extends JPanel {
             save_button,
             edit_button,
             delete_button,
-            cancel_button;
+            cancel_button,
+            select_button,
+            upload_button;
 
     private JComboBox
             departmentRus_box,
@@ -44,8 +44,14 @@ public class EmployeeInfo extends JPanel {
 
     private BufferedImage logo_image, profile_image;
     private JPanel photoPanel;
+    private JPanel selectButPanel;
+    private JPanel uploadButPanel;
+    private JPanel PhotoPathPanel;
+    JPanel pobj, innerPanel;
+    private JTextField  photoPath;
 
     private boolean editUser;
+    JFileChooser fileChooser;
 
     public EmployeeInfo()
     {
@@ -194,10 +200,33 @@ public class EmployeeInfo extends JPanel {
 
         photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(480, 120, 210, 260);
+        photoPanel.setBounds(480, 120, 210, 230);
         photoPanel.setLayout(new BorderLayout());
         photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
+
+        selectButPanel = new JPanel();
+        selectButPanel.setBackground(Color.WHITE);
+        selectButPanel.setBounds(482, 350, 120, 30);
+        selectButPanel.setLayout(new BorderLayout());
+        selectButPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(selectButPanel);
+
+        uploadButPanel = new JPanel();
+        uploadButPanel = new JPanel();
+        uploadButPanel.setBackground(Color.WHITE);
+        uploadButPanel.setBounds(505, 350, 120, 30);
+        uploadButPanel.setLayout(new BorderLayout());
+        uploadButPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(uploadButPanel);
+
+        PhotoPathPanel = new JPanel();
+        PhotoPathPanel = new JPanel();
+        PhotoPathPanel.setBackground(Color.WHITE);
+        PhotoPathPanel.setBounds(655, 350, 120, 30);
+        PhotoPathPanel.setLayout(new BorderLayout());
+        PhotoPathPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(PhotoPathPanel);
 
 
 
@@ -578,6 +607,104 @@ public class EmployeeInfo extends JPanel {
                 clearFields();
             }
         });
+
+        photoPath = new JTextField();
+        //photoPath.setEnabled(false);
+        photoPath.setForeground(Color.BLACK);
+        photoPath.setDisabledTextColor(Color.BLACK);
+        PhotoPathPanel.add(photoPath);
+        //inputPanel.add(photoPath);
+
+        select_button = new JButton("Выбрать фото");
+        select_button.setBackground(Color.yellow);
+        select_button.setForeground(Color.BLACK);
+        select_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        selectButPanel.add(select_button);
+        select_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                System.out.println("ыудддудудсе");
+                fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "tif", "gif", "bmp"));
+                int returnVal = fileChooser.showOpenDialog(pobj);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    String fileName = fileChooser.getSelectedFile().getName();
+                    String extension = fileName.substring(fileName.lastIndexOf("."));
+                    if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".png")
+                            || extension.equalsIgnoreCase(".bmp") || extension.equalsIgnoreCase(".tif")
+                            || extension.equalsIgnoreCase(".gif")) {
+                        System.out.println("Zawel");
+                        System.out.println(fileChooser.getSelectedFile().getPath());
+                        photoPath.setText(fileChooser.getSelectedFile().getPath());
+                    } else {
+                        JOptionPane.showMessageDialog(pobj, "Kindly Select Image File Only",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    photoPath.setText("No File Uploaded");
+                }
+            }
+        });
+
+        upload_button = new JButton("Загрузить");
+        upload_button.setBackground(Color.red);
+        upload_button.setForeground(Color.BLACK);
+        upload_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        uploadButPanel.add(upload_button);
+        upload_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("ЗАгр");
+                if (photoPath.getText().equals("No File Uploaded")) {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Файл не выбран");
+                }else
+                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
+                } else {
+                    if (editUser){
+
+                        byte[] rawBytes = null;
+                        FileInputStream fis = null;
+
+                        File fileObj = new File(photoPath.getText());
+                        try {
+                            fis = new FileInputStream(fileObj);
+                        } catch (FileNotFoundException ex) {
+                            ex.printStackTrace();
+                        }
+
+
+
+
+                        String updateQuery =
+                                "UPDATE dbo.Employees SET Photo = ? WHERE EmployeeID = " + tableID_text.getText();
+
+                        try{
+                            PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
+                            int imageLength = Integer.parseInt(String.valueOf(fileObj.length()));
+                            rawBytes = new byte[imageLength];
+                            fis.read(rawBytes, 0, imageLength);
+                            //st.setBinaryStream(4, (InputStream) fis, imageLength);
+                            updateEmployee.setBytes(1, rawBytes);
+                            updateEmployee.executeUpdate();
+                            int count = updateEmployee.executeUpdate();
+                            if (count > 0) {
+                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Фото загруженно успешно!");
+                            } else {
+                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Ошибка загрузки фотографии!");
+                            }
+                        }catch (SQLException | IOException ex){
+                            ex.printStackTrace();
+                        }
+
+                    } else {
+                        //Пока нет тут кода. Возможо и не нужно
+                    }
+                }
+            }
+        });
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton exit_button = new JButton("Выход");
