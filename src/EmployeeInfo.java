@@ -1,4 +1,8 @@
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -13,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.*;
 import java.util.Objects;
+import java.util.Properties;
 
 public class EmployeeInfo extends JPanel {
 
@@ -20,7 +25,7 @@ public class EmployeeInfo extends JPanel {
 
     private final JTextField
             nameRus_text,
-            lastOr_text,
+            lastOr_text = null,
             tableID_text;
 
     private final JButton
@@ -41,6 +46,8 @@ public class EmployeeInfo extends JPanel {
             terminatedStatus_box;
 
     private DefaultComboBoxModel shiftsModelBox;
+
+     UtilDateModel model;
 
     private BufferedImage logo_image, profile_image;
     private JPanel photoPanel;
@@ -165,7 +172,7 @@ public class EmployeeInfo extends JPanel {
                         }
 
                         String lastOr_string = searchResults.getString("SafetyOrientation");
-                        lastOr_text.setText(checkNullVariable(lastOr_string).substring(0, 10));
+                        //lastOr_text.setText(checkNullVariable(lastOr_string).substring(0, 10));
 
                         edit_button.setEnabled(true);
                     }
@@ -391,13 +398,23 @@ public class EmployeeInfo extends JPanel {
         lastOr_panel.add(lastOr_label);
         lastOr_panel.setBackground(Color.WHITE);
         infoLabels.add(lastOr_panel);
-
+/*
         lastOr_text = new JTextField();
         lastOr_text.setEnabled(false);
         lastOr_text.setForeground(Color.BLACK);
         lastOr_text.setDisabledTextColor(Color.BLACK);
         lastOr_panel.add(lastOr_text);
         inputPanel.add(lastOr_text);
+*/
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        lastOr_panel.add(datePicker);
+        inputPanel.add(datePicker);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
