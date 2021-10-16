@@ -30,6 +30,7 @@ public class EmployeeInfo extends JPanel {
 
     private final JButton
             search_button,
+            search_icon_button,
             add_button,
             save_button,
             edit_button,
@@ -97,6 +98,23 @@ public class EmployeeInfo extends JPanel {
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
+
+
+       // Icon serch_img = new ImageIcon("textures/logo/s1.jpg");
+
+        search_icon_button = new JButton("srch");
+        search_icon_button.setForeground(Color.RED);
+        search_icon_button.setBackground(Color.WHITE);
+        tableID_panel.add(search_icon_button);
+        searchEmployee_panel.add(search_icon_button);
+        search_icon_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("1234");
+                //new SearchByName().setVisible(true);
+                MineOperations.card.show(MineOperations.cardPane,"Search By Name");
+            }
+        });
 
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.sql.*;
 
 public class MineOperations extends JFrame {
@@ -33,6 +32,8 @@ public class MineOperations extends JFrame {
     public static EnterSRT enterSRTPanel = new EnterSRT();
     public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
 
+    public static SearchByName SearchByNamePanel = new SearchByName();
+
     public static CardLayout card;
     public static JPanel cardPane;
 
@@ -58,6 +59,8 @@ public class MineOperations extends JFrame {
         cardPane.add(operationsDailyPanel, "Operations Daily");
         cardPane.add(enterSRTPanel,"Enter SRT");
         cardPane.add(viewQualificationsPanel,"View Qualifications");
+
+        cardPane.add(SearchByNamePanel, "Search By Name");
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);
