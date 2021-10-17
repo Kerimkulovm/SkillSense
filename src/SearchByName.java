@@ -133,9 +133,9 @@ public class SearchByName extends JPanel {
                         System.out.println(query_text);
                         ResultSet rs = searchStatement.executeQuery(query_text);
 
-                        if (!rs.next()) JOptionPane.showMessageDialog(MineOperations.cardPane, "Нет данных");
-                        else {
+                        if (rs.next()) {//JOptionPane.showMessageDialog(MineOperations.cardPane, "Нет данных");
 
+                            System.out.println("333333");
                             String columns[] = { "Num", "FullNameRu", "EmployeeID" };
                             String data[][] = new String[25][3];
                             String FullNameRu = "";
@@ -143,7 +143,7 @@ public class SearchByName extends JPanel {
                             int i = 0;
                             int m = 25;
 
-                            while (rs.next()) {
+                            do{
                                 if (i<m){
                                     FullNameRu = rs.getString("FullNameRu");
                                     EmployeeID = rs.getString("EmployeeID");
@@ -153,8 +153,8 @@ public class SearchByName extends JPanel {
                                     data[i][2] = EmployeeID;
                                 }
                                 i++;
-
-                            }
+                                System.out.println(FullNameRu);
+                            } while (rs.next());
 
                             model = new DefaultTableModel(data, columns);
                             table = new JTable(model);
