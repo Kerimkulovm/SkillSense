@@ -49,6 +49,7 @@ public class EmployeeInfo extends JPanel {
     private DefaultComboBoxModel shiftsModelBox;
 
      UtilDateModel model;
+    JDatePickerImpl LastOr_dtp=null;
 
     private BufferedImage logo_image, profile_image;
     private JPanel photoPanel;
@@ -194,8 +195,9 @@ public class EmployeeInfo extends JPanel {
                             }
 
                             String lastOr_string = searchResults.getString("SafetyOrientation");
-                            //lastOr_text.setText(checkNullVariable(lastOr_string).substring(0, 10));
-
+                            //LastOr_dtp.setDate(checkNullVariable(lastOr_string).substring(0, 10));
+                            LastOr_dtp.getJFormattedTextField().setText(lastOr_string);
+                            //LastOr_dtp.getJFormattedTextField().getText();
                             edit_button.setEnabled(true);
                         }
                     } catch (SQLException ex) {
@@ -435,9 +437,9 @@ public class EmployeeInfo extends JPanel {
         p.put("text.month", "Month");
         p.put("text.year", "Year");
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-        lastOr_panel.add(datePicker);
-        inputPanel.add(datePicker);
+        LastOr_dtp = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        lastOr_panel.add(LastOr_dtp);
+        inputPanel.add(LastOr_dtp);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -774,6 +776,7 @@ public class EmployeeInfo extends JPanel {
 
     private String checkNullVariable(String inputString){
         String outPutString = "Нет данных";
+        System.out.println("dddd" + inputString);
         return Objects.requireNonNullElse(inputString, outPutString);
     }
 
@@ -828,8 +831,10 @@ public class EmployeeInfo extends JPanel {
         terminatedStatus_box.setEnabled(false);
         disableComboText(terminatedStatus_box).setSelectedItem(0);
 
-        lastOr_text.setEnabled(false);
-        lastOr_text.setText("");
+        //lastOr_text .setEnabled(false);
+        //lastOr_text.setText("");
+        LastOr_dtp.setEnabled(false);
+        LastOr_dtp.getJFormattedTextField().setText("");
     }
 
     private void enableFields(){
@@ -875,7 +880,7 @@ public class EmployeeInfo extends JPanel {
         shiftRus_box.setEnabled(true);
         terminatedStatus_box.setEnabled(true);
 
-        lastOr_text.setEnabled(true);
+        LastOr_dtp.setEnabled(true);
     }
 
     private String findDepartment(int departmentID){
