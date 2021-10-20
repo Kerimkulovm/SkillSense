@@ -177,12 +177,12 @@ public class ViewQualifications  extends JPanel{
 
         try{
 
-            String departmentRus_query = "SELECT * FROM dbo.Department";
+            String departmentRus_query = "SELECT * FROM dbo.Departments";
             Statement departmentRus_statement = MineOperations.conn.createStatement();
             ResultSet departmentRus_result = departmentRus_statement.executeQuery((departmentRus_query));
 
             while(departmentRus_result.next()){
-                String addDepartmentRus = departmentRus_result.getString("russian");
+                String addDepartmentRus = departmentRus_result.getString("DepartmentNameRu");
                 departmentRus_box.addItem(addDepartmentRus);
             }
         }
