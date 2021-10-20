@@ -1,4 +1,3 @@
-
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -6,16 +5,22 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.CellEditorListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 public class EmployeeInfo extends JPanel {
@@ -40,7 +45,7 @@ public class EmployeeInfo extends JPanel {
 
     private JComboBox
             departmentRus_box,
-            shiftRus_box,
+            crewRus_box,
             positionRus_box,
             supervisor_box,
             terminatedStatus_box;
@@ -93,15 +98,9 @@ public class EmployeeInfo extends JPanel {
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
 
-        tableID_text = new JTextField();
-        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        tableID_panel.add(tableID_text);
-        searchEmployee_panel.add(tableID_text);
+        // Icon serch_img = new ImageIcon("textures/logo/s1.jpg");
 
-
-       // Icon serch_img = new ImageIcon("textures/logo/s1.jpg");
-
-        search_icon_button = new JButton("srch");
+        search_icon_button = new JButton("Ф.И.О.");
         search_icon_button.setForeground(Color.RED);
         search_icon_button.setBackground(Color.WHITE);
         tableID_panel.add(search_icon_button);
@@ -118,6 +117,11 @@ public class EmployeeInfo extends JPanel {
                 //MineOperations.card.show(MineOperations.cardPane,"Search By Name");
             }
         });
+
+        tableID_text = new JTextField();
+        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_panel.add(tableID_text);
+        searchEmployee_panel.add(tableID_text);
 
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);
@@ -154,13 +158,8 @@ public class EmployeeInfo extends JPanel {
                             String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
                             enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
 
-                            //String shift_string  = searchResults.getString("Shift");
-                            String shift_string = searchResults.getString("CrewId");
-                            if (shiftsModelBox.getIndexOf(checkNullVariable(shift_string)) == -1) {
-                                shiftsModelBox.setSelectedItem("");
-                            } else {
-                                enableComboText(shiftRus_box).setSelectedItem(checkNullVariable(shift_string));
-                            }
+                            String crewID_string = findCrew(searchResults.getInt("CrewId"));
+                            enableComboText(crewRus_box).setSelectedItem(crewID_string);
 
                             //Downloading Photo
                             if (searchResults.getBlob("Photo") != null) {
@@ -244,16 +243,6 @@ public class EmployeeInfo extends JPanel {
         uploadPhotoPanel.setLayout(new GridLayout(1,2));
         uploadPhotoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(uploadPhotoPanel);
-
-        /*
-        PhotoPathPanel = new JPanel();
-        PhotoPathPanel = new JPanel();
-        PhotoPathPanel.setBackground(Color.WHITE);
-        PhotoPathPanel.setBounds(655, 350, 120, 30);
-        PhotoPathPanel.setLayout(new BorderLayout());
-        PhotoPathPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
-        this.add(PhotoPathPanel);
-        */
 
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
@@ -360,7 +349,7 @@ public class EmployeeInfo extends JPanel {
         try{
             String departmentRus_query = "SELECT * FROM dbo.Departments";
             Statement departmentRus_statement = MineOperations.conn.createStatement();
-            ResultSet departmentRus_result = departmentRus_statement.executeQuery((departmentRus_query));
+            ResultSet departmentRus_result = departmentRus_statement.executeQuery(departmentRus_query);
 
             while(departmentRus_result.next()){
                 String addDepartmentRus = departmentRus_result.getString("DepartmentNameRu");
@@ -387,13 +376,30 @@ public class EmployeeInfo extends JPanel {
         shiftEng_panel.setBackground(Color.WHITE);
         infoLabels.add(shiftEng_panel);
 
-        String[] shifts = new String[]{"Нет данных","A   Crew","B   Crew","C   Crew","D   Crew"};
-        shiftsModelBox = new DefaultComboBoxModel(shifts);
-        shiftRus_box = new JComboBox(shiftsModelBox);
-        shiftRus_box.setBackground(Color.WHITE);
-        shiftRus_box.setEnabled(false);
-        shiftEng_panel.add(shiftRus_box);
-        inputPanel.add(shiftRus_box);
+        crewRus_box = new JComboBox();
+        crewRus_box.setBackground(Color.WHITE);
+        crewRus_box.setEnabled(false);
+        try {
+
+            String crews_query = "SELECT * FROM dbo.Crews";
+            Statement crews_statement = MineOperations.conn.createStatement();
+            ResultSet crews_results = crews_statement.executeQuery(crews_query);
+
+            while (crews_results.next()){
+                String addCrew = crews_results.getString("CrewName");
+                int isActive = crews_results.getInt("IsActive");
+
+                if (isActive == 1){
+                    crewRus_box.addItem(addCrew);
+                } else continue;
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        shiftEng_panel.add(crewRus_box);
+        inputPanel.add(crewRus_box);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -417,25 +423,22 @@ public class EmployeeInfo extends JPanel {
         lastOr_panel.add(lastOr_label);
         lastOr_panel.setBackground(Color.WHITE);
         infoLabels.add(lastOr_panel);
-/*
-        lastOr_text = new JTextField();
-        lastOr_text.setEnabled(false);
-        lastOr_text.setForeground(Color.BLACK);
-        lastOr_text.setDisabledTextColor(Color.BLACK);
-        lastOr_panel.add(lastOr_text);
-        inputPanel.add(lastOr_text);
-*/
+
+
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
         p.put("text.today", "Today");
         p.put("text.month", "Month");
         p.put("text.year", "Year");
+
         JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
         LastOr_dtp = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        LastOr_dtp.setEnabled(false);
         lastOr_panel.add(LastOr_dtp);
         inputPanel.add(LastOr_dtp);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         DefaultTableModel licence_model = new DefaultTableModel(7,3);
         DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
@@ -514,6 +517,55 @@ public class EmployeeInfo extends JPanel {
         drivingCol1.setCellRenderer(drivingLicenceRendered);
         drivingCol1.setPreferredWidth(150);
 
+        drivingLicence_table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1){
+
+                    JFrame tempDateFrame = new JFrame();
+
+                    JPanel dateCellPanel = new JPanel();
+                    dateCellPanel.setBounds(0,0,250,300);
+                    dateCellPanel.setBackground(Color.WHITE);
+                    tempDateFrame.add(dateCellPanel);
+
+                    UtilDateModel cellModel = new UtilDateModel();
+                    Properties pr = new Properties();
+                    pr.put("text.today", "Today");
+                    pr.put("text.month", "Month");
+                    pr.put("text.year", "Year");
+
+                    JDatePanelImpl cellDatePicker = new JDatePanelImpl(cellModel,pr);
+                    dateCellPanel.add(cellDatePicker);
+
+                    JButton okButton = new JButton("OK");
+                    okButton.setBounds(100,280,100,50);
+                    okButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Date selectedDate;
+                            selectedDate = cellModel.getValue();
+
+                            DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd");
+                            String convertedDate = dateformatter.format(selectedDate);
+
+                            System.out.println(convertedDate);
+                            drivingLicence_table.setValueAt(convertedDate,drivingLicence_table.getSelectedRow(),1);
+                            System.out.println(drivingLicence_table.getValueAt(drivingLicence_table.getSelectedRow(), 1));
+                            tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+
+                        }
+                    });
+                    dateCellPanel.add(okButton);
+
+                    tempDateFrame.setPreferredSize(new Dimension(250,300));
+                    tempDateFrame.setLayout(null);
+                    tempDateFrame.pack();
+                    tempDateFrame.setVisible(true);
+                }
+            }
+        });
+
         JScrollPane drivingLicence_scrollPane = new JScrollPane(drivingLicence_table);
         drivingLicence_scrollPane.setBackground(Color.WHITE);
         driverLicenceInfo_panel.add(drivingLicence_scrollPane);
@@ -577,7 +629,7 @@ public class EmployeeInfo extends JPanel {
                         String updateQuery =
                                 "UPDATE dbo.Employees SET FullNameRu = N'" + nameRus_text.getText() +
                                         "', JobTitleId = " + selectJobId(positionRus_box) +
-                                        ", CrewId = " + stringToNull(shiftRus_box) +
+                                        ", CrewId = " + setCrewID(crewRus_box) +
                                         ", DepartmentId = " + setDepartmentName(departmentRus_box) +
                                         ", SupervisorId = " + setSupervisorID(supervisor_box) +
                                         ", Terminated = " + setTerminatedStatus(terminatedStatus_box) +
@@ -608,7 +660,7 @@ public class EmployeeInfo extends JPanel {
                                         "'" + nameRus_text.getText() + "', " +
                                         "'" + nameRus_text.getText() + "', " +
                                         setSupervisorID(supervisor_box) + ", " +
-                                        "" + stringToNull(shiftRus_box) + ", " +
+                                        "" + setCrewID(crewRus_box) + ", " +
                                         setTerminatedStatus(terminatedStatus_box) +
                                         ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " +
                                         "" + setDepartmentName(departmentRus_box) + ", " +
@@ -820,14 +872,12 @@ public class EmployeeInfo extends JPanel {
         positionRus_box.setEnabled(false);
         disableComboText(positionRus_box).setSelectedIndex(0);
 
-        shiftRus_box.setEnabled(false);
-        disableComboText(shiftRus_box).setSelectedIndex(0);
+        crewRus_box.setEnabled(false);
+        disableComboText(crewRus_box).setSelectedIndex(0);
 
         terminatedStatus_box.setEnabled(false);
         disableComboText(terminatedStatus_box).setSelectedItem(0);
 
-        //lastOr_text .setEnabled(false);
-        //lastOr_text.setText("");
         LastOr_dtp.setEnabled(false);
         LastOr_dtp.getJFormattedTextField().setText("");
     }
@@ -847,12 +897,9 @@ public class EmployeeInfo extends JPanel {
 
         enableComboText(departmentRus_box).setEnabled(true);
         enableComboText(positionRus_box).setEnabled(true);
-        enableComboText(shiftRus_box).setEnabled(true);
+        enableComboText(crewRus_box).setEnabled(true);
         enableComboText(supervisor_box).setEnabled(true);
         enableComboText(terminatedStatus_box).setEnabled(true);
-
-        lastOr_text.setEnabled(true);
-        lastOr_text.setText("");
 
         search_button.setEnabled(false);
         tableID_label.setForeground(Color.BLACK);
@@ -872,20 +919,10 @@ public class EmployeeInfo extends JPanel {
         positionRus_box.setEnabled(true);
         supervisor_box.setEnabled(true);
         departmentRus_box.setEnabled(true);
-        shiftRus_box.setEnabled(true);
+        crewRus_box.setEnabled(true);
         terminatedStatus_box.setEnabled(true);
 
         LastOr_dtp.setEnabled(true);
-    }
-
-    private String stringToNull(JComboBox inputBox){
-        String inputString = (String) inputBox.getSelectedItem();
-        if (Objects.equals(inputString, "Нет данных")){
-            return null;
-        } else {
-            inputString = "'" + inputString + "'";
-            return inputString;
-        }
     }
 
     private String findDepartment(int departmentID){
@@ -911,8 +948,9 @@ public class EmployeeInfo extends JPanel {
 
     private int setDepartmentName(JComboBox inputBox){
 
-        String departQuery = "SELECT * FROM dbo.Departments WHERE DepartmentNameRu = N'" + (String) inputBox.getSelectedItem()+"'";
         int deptID = 0;
+        String departQuery = "SELECT * FROM dbo.Departments WHERE DepartmentNameRu = N'" + (String) inputBox.getSelectedItem()+"'";
+
 
         try {
             Statement departmentSt = MineOperations.conn.createStatement();
@@ -928,6 +966,46 @@ public class EmployeeInfo extends JPanel {
         }
 
         return deptID;
+    }
+
+    private String findCrew(int crewID){
+        String crewName = "";
+        String crewID_query = "SELECT * FROM dbo.Crews WHERE CrewId = " + crewID;
+
+        try {
+
+            Statement crewName_statement = MineOperations.conn.createStatement();
+            ResultSet crewName_result = crewName_statement.executeQuery(crewID_query);
+
+            while (crewName_result.next()){
+                crewName = crewName_result.getString("CrewName");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return crewName;
+    }
+
+    private int setCrewID(JComboBox inputBox){
+
+        int crewID = 0;
+        String crew_query = "SELECT * FROM dbo.Crews WHERE CrewName = N'" + (String) inputBox.getSelectedItem() + "'";
+
+        try{
+            Statement crew_statement = MineOperations.conn.createStatement();
+            ResultSet crew_results = crew_statement.executeQuery(crew_query);
+
+            while (crew_results.next()){
+                crewID = crew_results.getInt("CrewId");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return crewID;
     }
 
     private String findSupervisorName(int reportsID){
@@ -1062,7 +1140,7 @@ public class EmployeeInfo extends JPanel {
         private List<String> employeeNames_list = new ArrayList<>();
         private List<Integer> employeeID_list = new ArrayList<>();
 
-        private JPanel pageTitlePanel, tablePanel;
+        private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 
         private JLabel foundEmployees_JLabel;
 
@@ -1071,6 +1149,17 @@ public class EmployeeInfo extends JPanel {
         public SearchBySurname(String surname){
 
             findSurnames(surname);
+            buildFrame();
+            createTable();
+
+            this.setPreferredSize(new Dimension(400, 600));
+            this.setFocusableWindowState(true);
+            this.setAutoRequestFocus(true);
+            this.setLocation(900,40);
+            this.setLayout(null);
+        }
+
+        private void buildFrame(){
 
             pageTitlePanel = new JPanel();
             pageTitlePanel.setBounds(0,0,400,50);
@@ -1090,9 +1179,19 @@ public class EmployeeInfo extends JPanel {
             tablePanel.setVisible(true);
             this.add(tablePanel);
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            backgroundPanel = new JPanel();
+            backgroundPanel.setBounds(0,0,400,600);
+            backgroundPanel.setBackground(Color.WHITE);
+            this.add(backgroundPanel);
+        }
 
-            DefaultTableModel listOfEmployees_model = new DefaultTableModel(numOfRows ,numOfColumns);
+        private void createTable(){
+
+            DefaultTableModel listOfEmployees_model = new DefaultTableModel(numOfRows ,numOfColumns){
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            };
             DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
             centerRederer.setHorizontalAlignment(JLabel.CENTER);
 
@@ -1126,13 +1225,19 @@ public class EmployeeInfo extends JPanel {
                 listOfEmployees_table.setValueAt(employeeNames_list.get(i),i,1);
             }
 
-            tablePanel.add(new JScrollPane(listOfEmployees_table));
 
-            this.setPreferredSize(new Dimension(400, 600));
-            this.setFocusableWindowState(true);
-            this.setAutoRequestFocus(true);
-            this.setLocation(100,40);
-            this.setLayout(null);
+            listOfEmployees_table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 1){
+                        int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
+                        System.out.println(listOfEmployees_table.getValueAt(index1, 0));
+                        tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                    }
+                }
+            });
+
+            tablePanel.add(new JScrollPane(listOfEmployees_table));
         }
 
         private void findSurnames(String surname){
@@ -1167,4 +1272,5 @@ public class EmployeeInfo extends JPanel {
             }
         }
     }
+
 }
