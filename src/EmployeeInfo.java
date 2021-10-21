@@ -5,20 +5,16 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.CellEditorListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +57,8 @@ public class EmployeeInfo extends JPanel {
     private JPanel PhotoPathPanel;
     JPanel pobj, innerPanel;
     private JTextField  photoPath;
+
+    private JTable truckLicence_table, drivingLicence_table;
 
     private boolean editUser;
     JFileChooser fileChooser;
@@ -161,6 +159,28 @@ public class EmployeeInfo extends JPanel {
                             String crewID_string = findCrew(searchResults.getInt("CrewId"));
                             enableComboText(crewRus_box).setSelectedItem(crewID_string);
 
+                            Date kumtor_A_date = searchResults.getDate("kumtor_A");
+                            truckLicence_table.setValueAt(kumtor_A_date, 0, 1);
+
+                            Date kumtor_B_date = searchResults.getDate("kumtor_B");
+                            truckLicence_table.setValueAt(kumtor_B_date,1,1);
+
+                            Date kumtor_V_date = searchResults.getDate("kumtor_V");
+                            truckLicence_table.setValueAt(kumtor_V_date, 2, 1);
+
+                            Date kumtor_G_date = searchResults.getDate("kumtor_G");
+                            truckLicence_table.setValueAt(kumtor_G_date, 3, 1);
+
+                            Date kumtor_D_date = searchResults.getDate("kumtor_D");
+                            truckLicence_table.setValueAt(kumtor_D_date, 4, 1);
+
+                            Date kumtor_E_date = searchResults.getDate("kumtor_E");
+                            truckLicence_table.setValueAt(kumtor_E_date, 5, 1);
+
+                            Date kumtor_E1_date = searchResults.getDate("kumtor_E1");
+                            truckLicence_table.setValueAt(kumtor_E1_date, 6, 1);
+
+
                             //Downloading Photo
                             if (searchResults.getBlob("Photo") != null) {
                                 InputStream is = null;
@@ -195,9 +215,10 @@ public class EmployeeInfo extends JPanel {
                             }
 
                             String lastOr_string = searchResults.getString("SafetyOrientation");
-                            //LastOr_dtp.setDate(checkNullVariable(lastOr_string).substring(0, 10));
                             LastOr_dtp.getJFormattedTextField().setText(lastOr_string);
-                            //LastOr_dtp.getJFormattedTextField().getText();
+
+
+
                             edit_button.setEnabled(true);
                         }
                     } catch (SQLException ex) {
@@ -246,14 +267,14 @@ public class EmployeeInfo extends JPanel {
 
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
-        driverLicenceInfo_panel.setBounds(530, 390, 210, 200);
+        driverLicenceInfo_panel.setBounds(340, 390, 305, 200);
         driverLicenceInfo_panel.setLayout(new BorderLayout());
         driverLicenceInfo_panel.setBorder(new LineBorder(Color.orange));
         this.add(driverLicenceInfo_panel);
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
-        licenceInfoPanel.setBounds(20, 390,500,200);
+        licenceInfoPanel.setBounds(20, 390,315,200);
         licenceInfoPanel.setLayout(new BorderLayout());
         licenceInfoPanel.setBorder(new LineBorder(Color.orange));
         this.add(licenceInfoPanel);
@@ -439,50 +460,89 @@ public class EmployeeInfo extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        DefaultTableModel truckLicence_model = new DefaultTableModel(7,2);
+        DefaultTableCellRenderer centerReder = new DefaultTableCellRenderer();
+        centerReder.setHorizontalAlignment(JLabel.CENTER);
 
-        DefaultTableModel licence_model = new DefaultTableModel(7,3);
-        DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
-        centerRederer.setHorizontalAlignment(JLabel.CENTER);
+        truckLicence_table = new JTable(truckLicence_model);
+        truckLicence_table.setBorder(new LineBorder(Color.BLACK));
+        truckLicence_table.setEnabled(false);
+        truckLicence_table.setBackground(Color.WHITE);
+        truckLicence_table.setRowHeight(25);
 
-        JTable licence_table = new JTable(licence_model);
-        licence_table.setBorder(new LineBorder(Color.BLACK));
-        licence_table.setBackground(Color.WHITE);
-        licence_table.setRowHeight(25);
-        licence_table.setVisible(true);
-
-        JTableHeader header= licence_table.getTableHeader();
+        JTableHeader header= truckLicence_table.getTableHeader();
         header.setBorder(new LineBorder(Color.BLACK));
         header.setBackground(Color.WHITE);
         header.setFont(new Font("Helvetica", Font.BOLD,12));
 
-        TableColumnModel licence_columns = header.getColumnModel();
+        TableColumnModel truckLicence_columns = header.getColumnModel();
 
-        TableColumn tabCol0 = licence_columns.getColumn(0);
+        TableColumn tabCol0 = truckLicence_columns.getColumn(0);
         tabCol0.setHeaderValue("Категория");
-        tabCol0.setCellRenderer(centerRederer);
+        tabCol0.setCellRenderer(centerReder);
         tabCol0.setPreferredWidth(10);
 
         String[] categories_list = new String[]{"А","Б","В","Г","Д","Е","Е1"};
-        for (int i = 0; i < licence_table.getRowCount(); i++){
-            licence_table.setValueAt(categories_list[i],i,0);
+        for (int i = 0; i < truckLicence_table.getRowCount(); i++){
+            truckLicence_table.setValueAt(categories_list[i],i,0);
         }
 
-        TableColumn tabCol1 = licence_columns.getColumn(1);
-        tabCol1.setCellRenderer(centerRederer);
-        tabCol1.setHeaderValue("Статус");
+        TableColumn tabCol1 = truckLicence_columns.getColumn(1);
+        tabCol1.setHeaderValue("Дата");
+        tabCol1.setCellRenderer(centerReder);
+        truckLicence_table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1 && truckLicence_table.isEnabled()){
 
-        String[] licenceStatus_string = new String[]{"Разрешено", "Недопущен"};
-        JComboBox licenceStatus_box = new JComboBox(licenceStatus_string);
-        tabCol1.setCellEditor(new DefaultCellEditor(licenceStatus_box));
+                    JFrame tempDateFrame = new JFrame();
 
-        for (int i = 0; i < licence_table.getRowCount(); i++ ){
-            licence_table.setValueAt(licenceStatus_string[1],i,1);
-        }
+                    JPanel dateCellPanel = new JPanel();
+                    dateCellPanel.setBounds(0,0,250,300);
+                    dateCellPanel.setBackground(Color.WHITE);
+                    tempDateFrame.add(dateCellPanel);
 
-        TableColumn tabCol2 = licence_columns.getColumn(2);
-        tabCol2.setHeaderValue("Дата");
+                    UtilDateModel cellModel = new UtilDateModel();
+                    Properties pr = new Properties();
+                    pr.put("text.today", "Today");
+                    pr.put("text.month", "Month");
+                    pr.put("text.year", "Year");
 
-        licenceInfoPanel.add(new JScrollPane(licence_table));
+                    JDatePanelImpl cellDatePicker = new JDatePanelImpl(cellModel,pr);
+                    dateCellPanel.add(cellDatePicker);
+
+                    JButton okButton = new JButton("OK");
+                    okButton.setBounds(100,280,100,50);
+                    okButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Date selectedDate;
+                            selectedDate = cellModel.getValue();
+
+                            DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd");
+                            String convertedDate = dateformatter.format(selectedDate);
+
+                            System.out.println(convertedDate);
+                            truckLicence_table.setValueAt(convertedDate,truckLicence_table.getSelectedRow(),1);
+                            System.out.println(truckLicence_table.getValueAt(truckLicence_table.getSelectedRow(), 1));
+                            tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+
+                        }
+                    });
+                    dateCellPanel.add(okButton);
+
+                    tempDateFrame.setPreferredSize(new Dimension(250,300));
+                    tempDateFrame.setLocation(new Point(300,300));
+                    tempDateFrame.setLayout(null);
+                    tempDateFrame.pack();
+                    tempDateFrame.setVisible(true);
+                }
+            }
+        });
+
+        JScrollPane licence_scrollPane = new JScrollPane(truckLicence_table);
+        licence_scrollPane.setBackground(Color.WHITE);
+        licenceInfoPanel.add(licence_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -490,8 +550,9 @@ public class EmployeeInfo extends JPanel {
         DefaultTableCellRenderer drivingLicenceRendered = new DefaultTableCellRenderer();
         drivingLicenceRendered.setHorizontalAlignment(JLabel.CENTER);
 
-        JTable drivingLicence_table = new JTable(drivingLicence_model);
+        drivingLicence_table = new JTable(drivingLicence_model);
         drivingLicence_table.setBorder(new LineBorder(Color.BLACK));
+        drivingLicence_table.setEnabled(false);
         drivingLicence_table.setBackground(Color.WHITE);
         drivingLicence_table.setRowHeight(20);
 
@@ -520,7 +581,7 @@ public class EmployeeInfo extends JPanel {
         drivingLicence_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 1){
+                if (e.getClickCount() == 1 && drivingLicence_table.isEnabled()){
 
                     JFrame tempDateFrame = new JFrame();
 
@@ -559,6 +620,7 @@ public class EmployeeInfo extends JPanel {
                     dateCellPanel.add(okButton);
 
                     tempDateFrame.setPreferredSize(new Dimension(250,300));
+                    tempDateFrame.setLocation(new Point(300,300));
                     tempDateFrame.setLayout(null);
                     tempDateFrame.pack();
                     tempDateFrame.setVisible(true);
@@ -633,6 +695,9 @@ public class EmployeeInfo extends JPanel {
                                         ", DepartmentId = " + setDepartmentName(departmentRus_box) +
                                         ", SupervisorId = " + setSupervisorID(supervisor_box) +
                                         ", Terminated = " + setTerminatedStatus(terminatedStatus_box) +
+                                        ", kumtor_A = '" + truckLicence_table.getValueAt(0,1) + "' " +
+                                        ", kumtor_B = '" + truckLicence_table.getValueAt(1,1) + "' " +
+                                        ", kumtor_V = '" + truckLicence_table.getValueAt(2,1) + "' " +
                                         " WHERE EmployeeID = " + tableID_text.getText();
 
                         System.out.println(updateQuery);
@@ -878,6 +943,16 @@ public class EmployeeInfo extends JPanel {
         terminatedStatus_box.setEnabled(false);
         disableComboText(terminatedStatus_box).setSelectedItem(0);
 
+        drivingLicence_table.setEnabled(false);
+        for (int i = 0; i < drivingLicence_table.getRowCount();i++){
+            drivingLicence_table.setValueAt("",i,1);
+        }
+
+        truckLicence_table.setEnabled(false);
+        for (int i = 0; i < truckLicence_table.getRowCount();i++){
+            truckLicence_table.setValueAt("",i,1);
+        }
+
         LastOr_dtp.setEnabled(false);
         LastOr_dtp.getJFormattedTextField().setText("");
     }
@@ -901,6 +976,9 @@ public class EmployeeInfo extends JPanel {
         enableComboText(supervisor_box).setEnabled(true);
         enableComboText(terminatedStatus_box).setEnabled(true);
 
+        truckLicence_table.setEnabled(true);
+        drivingLicence_table.setEnabled(true);
+
         search_button.setEnabled(false);
         tableID_label.setForeground(Color.BLACK);
     }
@@ -921,6 +999,9 @@ public class EmployeeInfo extends JPanel {
         departmentRus_box.setEnabled(true);
         crewRus_box.setEnabled(true);
         terminatedStatus_box.setEnabled(true);
+
+        drivingLicence_table.setEnabled(true);
+        truckLicence_table.setEnabled(true);
 
         LastOr_dtp.setEnabled(true);
     }
