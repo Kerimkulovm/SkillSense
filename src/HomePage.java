@@ -8,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import backend.getDataFromDB;
-
 public class HomePage extends JPanel {
 
     private BufferedImage logo_image;
@@ -25,7 +23,7 @@ public class HomePage extends JPanel {
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
     private JButton reports_button;
-    private JButton addList_button;
+    private JButton classifCourse_button;
     private JButton exit_button;
     private JButton test_button;
 
@@ -97,10 +95,16 @@ public class HomePage extends JPanel {
         reports_button.setHorizontalAlignment(SwingConstants.LEFT);
         reports_button.setBackground(Color.WHITE);
 
-        addList_button = new JButton("<html> <big> Лист включения инструкторов итд. </big> <br />  </html>");
-        buttons_panel.add(addList_button);
-        addList_button.setHorizontalAlignment(SwingConstants.LEFT);
-        addList_button.setBackground(Color.WHITE);
+        classifCourse_button = new JButton("<html> <big> Классификатор 'Курсы' </big> <br />  </html>");
+        buttons_panel.add(classifCourse_button);
+        classifCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
+        classifCourse_button.setBackground(Color.WHITE);
+        classifCourse_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Courses");
+            }
+        });
 
         exit_button = new JButton("<html> <big> Выход из программы </big> <br />  </html> ");
         exit_button.setForeground(Color.RED);

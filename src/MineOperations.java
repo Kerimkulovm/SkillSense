@@ -33,6 +33,7 @@ public class MineOperations extends JFrame {
     public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
 
     public static SearchByName SearchByNamePanel = new SearchByName();
+    public static Courses CoursesPanel = new Courses();
 
     public static CardLayout card;
     public static JPanel cardPane;
@@ -61,6 +62,7 @@ public class MineOperations extends JFrame {
         cardPane.add(viewQualificationsPanel,"View Qualifications");
 
         cardPane.add(SearchByNamePanel, "Search By Name");
+        cardPane.add(CoursesPanel, "Courses");
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);
