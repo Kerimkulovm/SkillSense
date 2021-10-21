@@ -30,7 +30,7 @@ public class EmployeeInfo extends JPanel {
 
     private final JButton
             search_button,
-            search_icon_button,
+            surnameSearch_button,
             add_button,
             save_button,
             edit_button,
@@ -96,14 +96,12 @@ public class EmployeeInfo extends JPanel {
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
 
-        // Icon serch_img = new ImageIcon("textures/logo/s1.jpg");
-
-        search_icon_button = new JButton("Ф.И.О.");
-        search_icon_button.setForeground(Color.RED);
-        search_icon_button.setBackground(Color.WHITE);
-        tableID_panel.add(search_icon_button);
-        searchEmployee_panel.add(search_icon_button);
-        search_icon_button.addActionListener(new ActionListener() {
+        surnameSearch_button = new JButton("Ф.И.О.");
+        surnameSearch_button.setForeground(Color.RED);
+        surnameSearch_button.setBackground(Color.WHITE);
+        tableID_panel.add(surnameSearch_button);
+        searchEmployee_panel.add(surnameSearch_button);
+        surnameSearch_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("1234");
@@ -179,6 +177,45 @@ public class EmployeeInfo extends JPanel {
 
                             Date kumtor_E1_date = searchResults.getDate("kumtor_E1");
                             truckLicence_table.setValueAt(kumtor_E1_date, 6, 1);
+
+                            Date gos_A_date = searchResults.getDate("gos_A");
+                            drivingLicence_table.setValueAt(gos_A_date,0,1);
+
+                            Date gos_A1_date = searchResults.getDate("gos_A1");
+                            drivingLicence_table.setValueAt(gos_A1_date,1,1);
+
+                            Date gos_B_date = searchResults.getDate("gos_B");
+                            drivingLicence_table.setValueAt(gos_B_date,2,1);
+
+                            Date gos_B1_date = searchResults.getDate("gos_B1");
+                            drivingLicence_table.setValueAt(gos_B1_date,3,1);
+
+                            Date gos_C_date = searchResults.getDate("gos_C");
+                            drivingLicence_table.setValueAt(gos_C_date,4,1);
+
+                            Date gos_C1_date = searchResults.getDate("gos_C1");
+                            drivingLicence_table.setValueAt(gos_C1_date,5,1);
+
+                            Date gos_D_date = searchResults.getDate("gos_D");
+                            drivingLicence_table.setValueAt(gos_D_date,6,1);
+
+                            Date gos_D1_date = searchResults.getDate("gos_D1");
+                            drivingLicence_table.setValueAt(gos_D1_date,7,1);
+
+                            Date gos_BE_date = searchResults.getDate("gos_BE");
+                            drivingLicence_table.setValueAt(gos_BE_date,8,1);
+
+                            Date gos_CE_date = searchResults.getDate("gos_CE");
+                            drivingLicence_table.setValueAt(gos_CE_date,9,1);
+
+                            Date gos_C1E_date = searchResults.getDate("gos_C1E");
+                            drivingLicence_table.setValueAt(gos_C1E_date,10,1);
+
+                            Date gos_DE_date = searchResults.getDate("gos_DE");
+                            drivingLicence_table.setValueAt(gos_DE_date,11,1);
+
+                            Date gos_D1E_date = searchResults.getDate("gos_D1E");
+                            drivingLicence_table.setValueAt(gos_D1E_date,12,1);
 
 
                             //Downloading Photo
@@ -498,9 +535,15 @@ public class EmployeeInfo extends JPanel {
                     JFrame tempDateFrame = new JFrame();
 
                     JPanel dateCellPanel = new JPanel();
-                    dateCellPanel.setBounds(0,0,250,300);
+                    dateCellPanel.setBounds(0,0,250,200);
                     dateCellPanel.setBackground(Color.WHITE);
                     tempDateFrame.add(dateCellPanel);
+
+                    JPanel buttonsPanel = new JPanel();
+                    buttonsPanel.setBounds(0,200,250,30);
+                    buttonsPanel.setBackground(Color.WHITE);
+                    buttonsPanel.setLayout(new GridLayout(1,2));
+                    tempDateFrame.add(buttonsPanel);
 
                     UtilDateModel cellModel = new UtilDateModel();
                     Properties pr = new Properties();
@@ -512,7 +555,7 @@ public class EmployeeInfo extends JPanel {
                     dateCellPanel.add(cellDatePicker);
 
                     JButton okButton = new JButton("OK");
-                    okButton.setBounds(100,280,100,50);
+                    okButton.setBackground(Color.WHITE);
                     okButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -529,9 +572,22 @@ public class EmployeeInfo extends JPanel {
 
                         }
                     });
-                    dateCellPanel.add(okButton);
+                    buttonsPanel.add(okButton);
 
-                    tempDateFrame.setPreferredSize(new Dimension(250,300));
+                    JButton clearButton =new JButton("Стереть");
+                    clearButton.setBackground(Color.WHITE);
+                    clearButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            truckLicence_table.setValueAt(null,truckLicence_table.getSelectedRow(),1);
+                            tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+
+                        }
+                    });
+                    buttonsPanel.add(clearButton);
+
+
+                    tempDateFrame.setPreferredSize(new Dimension(260,270));
                     tempDateFrame.setLocation(new Point(300,300));
                     tempDateFrame.setLayout(null);
                     tempDateFrame.pack();
@@ -586,9 +642,15 @@ public class EmployeeInfo extends JPanel {
                     JFrame tempDateFrame = new JFrame();
 
                     JPanel dateCellPanel = new JPanel();
-                    dateCellPanel.setBounds(0,0,250,300);
+                    dateCellPanel.setBounds(0,0,250,200);
                     dateCellPanel.setBackground(Color.WHITE);
                     tempDateFrame.add(dateCellPanel);
+
+                    JPanel buttonsPanel = new JPanel();
+                    buttonsPanel.setBounds(0,200,250,30);
+                    buttonsPanel.setBackground(Color.WHITE);
+                    buttonsPanel.setLayout(new GridLayout(1,2));
+                    tempDateFrame.add(buttonsPanel);
 
                     UtilDateModel cellModel = new UtilDateModel();
                     Properties pr = new Properties();
@@ -600,7 +662,7 @@ public class EmployeeInfo extends JPanel {
                     dateCellPanel.add(cellDatePicker);
 
                     JButton okButton = new JButton("OK");
-                    okButton.setBounds(100,280,100,50);
+                    okButton.setBackground(Color.WHITE);
                     okButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -617,9 +679,21 @@ public class EmployeeInfo extends JPanel {
 
                         }
                     });
-                    dateCellPanel.add(okButton);
+                    buttonsPanel.add(okButton);
 
-                    tempDateFrame.setPreferredSize(new Dimension(250,300));
+                    JButton clearButton =new JButton("Стереть");
+                    clearButton.setBackground(Color.WHITE);
+                    clearButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            drivingLicence_table.setValueAt(null,drivingLicence_table.getSelectedRow(),1);
+                            tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+
+                        }
+                    });
+                    buttonsPanel.add(clearButton);
+
+                    tempDateFrame.setPreferredSize(new Dimension(260,270));
                     tempDateFrame.setLocation(new Point(300,300));
                     tempDateFrame.setLayout(null);
                     tempDateFrame.pack();
@@ -690,23 +764,41 @@ public class EmployeeInfo extends JPanel {
                     if (editUser){
                         String updateQuery =
                                 "UPDATE dbo.Employees SET FullNameRu = N'" + nameRus_text.getText() +
-                                        "', JobTitleId = " + selectJobId(positionRus_box) +
+                                        "', JobTitleId = " + setJobId(positionRus_box) +
                                         ", CrewId = " + setCrewID(crewRus_box) +
-                                        ", DepartmentId = " + setDepartmentName(departmentRus_box) +
+                                        ", DepartmentId = " + setDepartmentID(departmentRus_box) +
                                         ", SupervisorId = " + setSupervisorID(supervisor_box) +
                                         ", Terminated = " + setTerminatedStatus(terminatedStatus_box) +
-                                        ", kumtor_A = '" + truckLicence_table.getValueAt(0,1) + "' " +
-                                        ", kumtor_B = '" + truckLicence_table.getValueAt(1,1) + "' " +
-                                        ", kumtor_V = '" + truckLicence_table.getValueAt(2,1) + "' " +
+                                        ", kumtor_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) +
+                                        ", kumtor_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) +
+                                        ", kumtor_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) +
+                                        ", kumtor_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) +
+                                        ", kumtor_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) +
+                                        ", kumtor_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) +
+                                        ", kumtor_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) +
+                                        ", gos_A = " + checkTablesContent(drivingLicence_table.getValueAt(0,1)) +
+                                        ", gos_A1 = " + checkTablesContent(drivingLicence_table.getValueAt(1,1)) +
+                                        ", gos_B = " + checkTablesContent(drivingLicence_table.getValueAt(2,1)) +
+                                        ", gos_B1 = " + checkTablesContent(drivingLicence_table.getValueAt(3,1)) +
+                                        ", gos_C = " + checkTablesContent(drivingLicence_table.getValueAt(4,1)) +
+                                        ", gos_C1 = " + checkTablesContent(drivingLicence_table.getValueAt(5,1)) +
+                                        ", gos_D = " + checkTablesContent(drivingLicence_table.getValueAt(6,1)) +
+                                        ", gos_D1 = " + checkTablesContent(drivingLicence_table.getValueAt(7,1)) +
+                                        ", gos_BE = " + checkTablesContent(drivingLicence_table.getValueAt(8,1)) +
+                                        ", gos_CE = " + checkTablesContent(drivingLicence_table.getValueAt(9,1)) +
+                                        ", gos_C1E = " + checkTablesContent(drivingLicence_table.getValueAt(10,1)) +
+                                        ", gos_DE = " + checkTablesContent(drivingLicence_table.getValueAt(11,1)) +
+                                        ", gos_D1E = " + checkTablesContent(drivingLicence_table.getValueAt(12,1)) +
                                         " WHERE EmployeeID = " + tableID_text.getText();
 
                         System.out.println(updateQuery);
+                        search_button.setEnabled(true);
+                        clearFields();
 
                         try{
                             PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
                             updateEmployee.executeUpdate();
                             JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике изменена успешна");
-                            clearFields();
                         }catch (SQLException ex){
                             ex.printStackTrace();
                         }
@@ -718,19 +810,41 @@ public class EmployeeInfo extends JPanel {
                             final ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
                             if (!employeeExist_result.next())
                             {
-                                String insert_query = "INSERT INTO dbo.Employees (EmployeeID, LastName, FirstName, ReportsTo, Shift, " +
-                                        "Terminated, Transfered, Driverschk, LightTtruck, MineResc, CraneTr, " +
-                                        "Department, SafteyOrin, RusTitle) "+
-                                        "VALUES ('" + tableID_text.getText() + "', " +
-                                        "'" + nameRus_text.getText() + "', " +
-                                        "'" + nameRus_text.getText() + "', " +
+                                String insert_query = "INSERT INTO dbo.Employees " +
+                                        "(EmployeeID, FullName, FullNameRu, JobTitleId, SupervisorId, CrewId, DepartmentId, Terminated, " +
+                                        "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
+                                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E ) " +
+                                        "VALUES (" +
+                                        tableID_text.getText() + ", N'" +
+                                        nameRus_text.getText() + "', N'" +
+                                        nameRus_text.getText() + "', " +
+                                        setJobId(positionRus_box) + ", " +
                                         setSupervisorID(supervisor_box) + ", " +
-                                        "" + setCrewID(crewRus_box) + ", " +
-                                        setTerminatedStatus(terminatedStatus_box) +
-                                        ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " + 0 + ", " +
-                                        "" + setDepartmentName(departmentRus_box) + ", " +
-                                        "'" + lastOr_text.getText() + "', " +
-                                        "'" + positionRus_box.getSelectedItem() + "')";
+                                        setCrewID(crewRus_box) + ", " +
+                                        setDepartmentID(departmentRus_box) + ", " +
+                                        setTerminatedStatus(terminatedStatus_box) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
+                                        checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(3,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(4,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(5,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(6,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(7,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(8,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
+                                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ")";
+
+                                System.out.println(insert_query);
                                 PreparedStatement insertEmployee = MineOperations.conn.prepareStatement(insert_query);
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
                                 insertEmployee.executeQuery();
@@ -759,15 +873,6 @@ public class EmployeeInfo extends JPanel {
                 clearFields();
             }
         });
-
-        /*
-        photoPath = new JTextField();
-        //photoPath.setEnabled(false);
-        photoPath.setForeground(Color.BLACK);
-        photoPath.setDisabledTextColor(Color.BLACK);
-        PhotoPathPanel.add(photoPath);
-        //inputPanel.add(photoPath);
-        */
 
         select_button = new JButton("Выбрать фото");
         select_button.setForeground(Color.BLACK);
@@ -918,6 +1023,7 @@ public class EmployeeInfo extends JPanel {
 
         search_button.setEnabled(true);
         add_button.setEnabled(true);
+        surnameSearch_button.setEnabled(true);
 
         save_button.setEnabled(false);
         edit_button.setEnabled(false);
@@ -980,6 +1086,7 @@ public class EmployeeInfo extends JPanel {
         drivingLicence_table.setEnabled(true);
 
         search_button.setEnabled(false);
+        surnameSearch_button.setEnabled(false);
         tableID_label.setForeground(Color.BLACK);
     }
 
@@ -1027,7 +1134,7 @@ public class EmployeeInfo extends JPanel {
         return departmentName;
     }
 
-    private int setDepartmentName(JComboBox inputBox){
+    private int setDepartmentID(JComboBox inputBox){
 
         int deptID = 0;
         String departQuery = "SELECT * FROM dbo.Departments WHERE DepartmentNameRu = N'" + (String) inputBox.getSelectedItem()+"'";
@@ -1039,7 +1146,7 @@ public class EmployeeInfo extends JPanel {
 
             while(departmentResult.next())
             {
-                deptID = departmentResult.getInt("DepartmentID");
+                deptID = departmentResult.getInt("DepartmentId");
             }
 
         } catch (SQLException ex){
@@ -1149,7 +1256,7 @@ public class EmployeeInfo extends JPanel {
         return jobTitle;
     }
 
-    private int selectJobId(JComboBox inputBox){
+    private int setJobId(JComboBox inputBox){
         int jobId = 0;
 
         String jobID_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleNameRu = N'" + (String) inputBox.getSelectedItem() + "'";
@@ -1212,6 +1319,20 @@ public class EmployeeInfo extends JPanel {
         }
 
         return isexist;
+    }
+
+    private String checkTablesContent(Object objectInput){
+
+        String returnString;
+
+        if (objectInput == null){
+            System.out.println( "1111");
+            return null;
+        } else {
+            System.out.println( "2222");
+            returnString = "'" + objectInput.toString() + "'";
+            return returnString;
+        }
     }
 
     private class SearchBySurname extends JFrame{
