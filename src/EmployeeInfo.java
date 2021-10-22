@@ -25,7 +25,6 @@ public class EmployeeInfo extends JPanel {
 
     private final JTextField
             nameRus_text,
-            lastOr_text = null,
             tableID_text;
 
     private final JButton
@@ -46,9 +45,6 @@ public class EmployeeInfo extends JPanel {
             supervisor_box,
             terminatedStatus_box;
 
-    private DefaultComboBoxModel shiftsModelBox;
-
-    UtilDateModel model;
     JDatePickerImpl LastOr_dtp = null;
 
     private BufferedImage logo_image, profile_image;
@@ -105,12 +101,9 @@ public class EmployeeInfo extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("1234");
-                //new SearchByName().setVisible(true);
                 SearchBySurname searchBySurname = new SearchBySurname(tableID_text.getText());
                 searchBySurname.pack();
                 searchBySurname.setVisible(true);
-
-                //MineOperations.card.show(MineOperations.cardPane,"Search By Name");
             }
         });
 
@@ -253,16 +246,12 @@ public class EmployeeInfo extends JPanel {
 
                             String lastOr_string = searchResults.getString("SafetyOrientation");
                             LastOr_dtp.getJFormattedTextField().setText(lastOr_string);
-
-
-
                             edit_button.setEnabled(true);
                         }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
 
                     }
-
                     setVisible(true);
                 }
             }

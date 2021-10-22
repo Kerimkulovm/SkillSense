@@ -280,84 +280,84 @@ public class ViewQualifications  extends JPanel{
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
+    class TrucksTableModel extends AbstractTableModel {
+        private String[] columnNames = {"Транспорт","Учеба","Одобрен","Квалифицирован"};
+        private Object[][] data = {{"CAT-785C", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT-789C", new Boolean(false), new Boolean(false), new Boolean(false) },
+                {"CAT-789D", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT D10R/T", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 834H/K", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 16 H/M", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 24M", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 330", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 374", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 992K", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT M320 D2", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"CAT 998K", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"Liebherr R 9350", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"Hitachi-3600-6", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"ДСК", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"Трал CAT 777B", new Boolean(false), new Boolean(false), new Boolean(false)},
+                {"Liebherr R 9350-411", new Boolean(false), new Boolean(false), new Boolean(false)}};
+
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return data.length;
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+            return data[row][col];
+        }
+
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * editable.
+         */
+        public boolean isCellEditable(int row, int col) {
+            //Note that the data/cell address is constant,
+            //no matter where the cell appears onscreen.
+            if (col < 1) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        /*
+         * Don't need to implement this method unless your table's
+         * data can change.
+         */
+        public void setValueAt(Object value, int row, int col) {
+            data[row][col] = value;
+            fireTableCellUpdated(row, col);
+        }
+
+        static class DateRenderer extends DefaultTableCellRenderer {
+            DateFormat formatter;
+            public DateRenderer() { super(); }
+
+            public void setValue(Object value) {
+                if (formatter==null) {
+                    formatter = DateFormat.getDateInstance();
+                }
+                setText((value == null) ? "" : formatter.format(value));
+            }
+        }
+    }
 }
 //String[] mineTransport_arr = new String[]{"CAT-785C", "CAT-789C", "CAT-789D" , "CAT D10R/T",
 //        "CAT 834H/K", "CAT 16 H/M", "CAT 24M", "CAT 330", "CAT 374", "CAT 992K", "CAT M320 D2",
 //        "CAT 998K", "Liebherr R 9350", "Hitachi-3600-6", "ДСК","Трал CAT 777B", "Liebherr R 9350-411"};
 
-class TrucksTableModel extends AbstractTableModel {
-    private String[] columnNames = {"Транспорт","Учеба","Одобрен","Квалифицирован"};
-    private Object[][] data = {{"CAT-785C", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT-789C", new Boolean(false), new Boolean(false), new Boolean(false) },
-            {"CAT-789D", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT D10R/T", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 834H/K", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 16 H/M", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 24M", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 330", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 374", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 992K", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT M320 D2", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"CAT 998K", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"Liebherr R 9350", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"Hitachi-3600-6", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"ДСК", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"Трал CAT 777B", new Boolean(false), new Boolean(false), new Boolean(false)},
-            {"Liebherr R 9350-411", new Boolean(false), new Boolean(false), new Boolean(false)}};
-
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-
-    public int getRowCount() {
-        return data.length;
-    }
-
-    public String getColumnName(int col) {
-        return columnNames[col];
-    }
-
-    public Object getValueAt(int row, int col) {
-        return data[row][col];
-    }
-
-    public Class getColumnClass(int c) {
-        return getValueAt(0, c).getClass();
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * editable.
-     */
-    public boolean isCellEditable(int row, int col) {
-        //Note that the data/cell address is constant,
-        //no matter where the cell appears onscreen.
-        if (col < 1) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * data can change.
-     */
-    public void setValueAt(Object value, int row, int col) {
-        data[row][col] = value;
-        fireTableCellUpdated(row, col);
-    }
-
-    static class DateRenderer extends DefaultTableCellRenderer {
-        DateFormat formatter;
-        public DateRenderer() { super(); }
-
-        public void setValue(Object value) {
-            if (formatter==null) {
-                formatter = DateFormat.getDateInstance();
-            }
-            setText((value == null) ? "" : formatter.format(value));
-        }
-    }
-}
 
