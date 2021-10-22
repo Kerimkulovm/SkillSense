@@ -27,7 +27,6 @@ public class MineOperations extends JFrame {
         employeeInfoPanel = new EmployeeInfo();
     }
 
-    public static EnterMenu enterMenuPanel = new EnterMenu();
     public static OperationsDaily operationsDailyPanel = new OperationsDaily();
     public static EnterSRT enterSRTPanel = new EnterSRT();
     public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
@@ -54,12 +53,10 @@ public class MineOperations extends JFrame {
 
         cardPane.setLayout(card);
         cardPane.add(homePagePanel,"Home Page");
-        cardPane.add(enterMenuPanel, "Enter Data");
         cardPane.add(employeeInfoPanel, "Employee Info");
         cardPane.add(operationsDailyPanel, "Operations Daily");
         cardPane.add(enterSRTPanel,"Enter SRT");
         cardPane.add(viewQualificationsPanel,"View Qualifications");
-
         cardPane.add(CoursesPanel, "Courses");
 
         application_frame.add(cardPane);

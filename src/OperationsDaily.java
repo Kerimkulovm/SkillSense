@@ -311,7 +311,7 @@ public class OperationsDaily extends JPanel {
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Enter Data");
+                MineOperations.card.show(MineOperations.cardPane,"Home Page");
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

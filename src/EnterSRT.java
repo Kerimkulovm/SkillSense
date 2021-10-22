@@ -33,12 +33,13 @@ public class EnterSRT extends JPanel {
 
         JButton exit_button = new JButton("Exit | Выход");
         exit_button.setBounds(730, 60, 150, 30);
+        exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Enter Data");
+                MineOperations.card.show(MineOperations.cardPane,"Home Page");
             }
         });
     }

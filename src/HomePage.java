@@ -21,7 +21,7 @@ public class HomePage extends JPanel {
     private JButton enterData_button;
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
-    private JButton reports_button;
+    private JButton instructorClassification_button;
     private JButton classificationCourse_button;
     private JButton employeeInfo_button;
     private JButton operations_button;
@@ -74,17 +74,6 @@ public class HomePage extends JPanel {
         });
 
 
-        enterData_button = new JButton("<html> <big>  Ввод/Просмотр Общих Данных </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
-        buttons_panel.add(enterData_button);
-        enterData_button.setHorizontalAlignment(SwingConstants.LEFT);
-        enterData_button.setBackground(Color.WHITE);
-        enterData_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Enter Data");
-            }
-        });
-
         operations_button = new JButton("<html> <big>  Ввод Ежедневной Информации </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
         buttons_panel.add(operations_button);
         operations_button.setHorizontalAlignment(SwingConstants.LEFT);
@@ -96,7 +85,7 @@ public class HomePage extends JPanel {
             }
         });
 
-        viewFiles_button = new JButton("<html> <big> Просмотр данных по оборудованию  </big> <br /> (Обзор квалификации по сменам и часов работ по оборудованию) </html>");
+        viewFiles_button = new JButton("<html> <big> Квалификации Сотрудников  </big> <br /> (Обзор квалификации по сменам и часов работ по оборудованию) </html>");
         buttons_panel.add(viewFiles_button);
         viewFiles_button.setHorizontalAlignment(SwingConstants.LEFT);
         viewFiles_button.setBackground(Color.WHITE);
@@ -108,17 +97,23 @@ public class HomePage extends JPanel {
         });
 
 
-        viewSchedule_button = new JButton("<html> <big> Повторное планирование по ТБ  </big> <br /> </html>");
+        viewSchedule_button = new JButton("<html> <big> SRT </big> <br /> (Ввод данных по ТБ) </html>");
         buttons_panel.add(viewSchedule_button);
         viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
         viewSchedule_button.setBackground(Color.WHITE);
+        viewSchedule_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane, "Enter SRT");
+            }
+        });
 
-        reports_button = new JButton("<html> <big> Отчеты </big> <br />  </html>");
-        buttons_panel.add(reports_button);
-        reports_button.setHorizontalAlignment(SwingConstants.LEFT);
-        reports_button.setBackground(Color.WHITE);
+        instructorClassification_button = new JButton("<html> <big> У.К. 'Инструктор' </big> <br /> (Управление классификаторами инструкторов) </html>");
+        buttons_panel.add(instructorClassification_button);
+        instructorClassification_button.setHorizontalAlignment(SwingConstants.LEFT);
+        instructorClassification_button.setBackground(Color.WHITE);
 
-        classificationCourse_button = new JButton("<html> <big> Классификатор 'Курсы' </big> <br />  </html>");
+        classificationCourse_button = new JButton("<html> <big> У.К. 'Курсы' </big> <br /> (Управление классификаторами курсов) </html>");
         buttons_panel.add(classificationCourse_button);
         classificationCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
         classificationCourse_button.setBackground(Color.WHITE);
