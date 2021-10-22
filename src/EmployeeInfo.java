@@ -59,6 +59,8 @@ public class EmployeeInfo extends JPanel {
     private boolean editUser;
     JFileChooser fileChooser;
 
+    DatabaseQueries databaseQueries = new DatabaseQueries();
+
     public EmployeeInfo()
     {
         try {
@@ -68,7 +70,6 @@ public class EmployeeInfo extends JPanel {
         }
 
         setLayout(null);
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JLabel titleEng = new JLabel("<html><big>Информация о сотрудниках</big><br />Поиск данных сотрудника</html>");
@@ -123,135 +124,36 @@ public class EmployeeInfo extends JPanel {
                 if (tableID_text.getText().equals("") )
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
                 else {
-                    try {
-                        Statement searchStatement = MineOperations.conn.createStatement();
-                        String query_text =
-                                "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
-                        ResultSet searchResults = searchStatement.executeQuery(query_text);
 
-                        if (!searchResults.next())
-                            JOptionPane.showMessageDialog(MineOperations.cardPane, "Сотрудник не найден!");
-                        else {
-                            String employeeRusName_string = searchResults.getString("FullNameRu");
-                            nameRus_text.setText(employeeRusName_string);
+                    databaseQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(databaseQueries.getEmployeeName());
+                    enableComboText(supervisor_box).setSelectedItem((databaseQueries.getSuperVisorName()));
+                    enableComboText(positionRus_box).setSelectedItem(databaseQueries.getJobName());
+                    enableComboText(departmentRus_box).setSelectedItem(databaseQueries.getDepartmentName());
+                    enableComboText(terminatedStatus_box).setSelectedItem(databaseQueries.getTerminatedStatus());
+                    enableComboText(crewRus_box).setSelectedItem(databaseQueries.getCrewName());
 
-                            String supervisor_string = findSupervisorName(searchResults.getInt("SupervisorId"));
-                            enableComboText(supervisor_box).setSelectedItem((supervisor_string));
-
-                            String positionRus_string = findJobName(searchResults.getInt("JobTitleId"));
-                            enableComboText(positionRus_box).setSelectedItem(positionRus_string);
-
-                            String departmentID_string = findDepartment(searchResults.getInt("DepartmentId"));
-                            enableComboText(departmentRus_box).setSelectedItem(departmentID_string);
-
-                            String terminatedStatus_string = findTerminatedStatus(searchResults.getInt("Terminated"));
-                            enableComboText(terminatedStatus_box).setSelectedItem(terminatedStatus_string);
-
-                            String crewID_string = findCrew(searchResults.getInt("CrewId"));
-                            enableComboText(crewRus_box).setSelectedItem(crewID_string);
-
-                            Date kumtor_A_date = searchResults.getDate("kumtor_A");
-                            truckLicence_table.setValueAt(kumtor_A_date, 0, 1);
-
-                            Date kumtor_B_date = searchResults.getDate("kumtor_B");
-                            truckLicence_table.setValueAt(kumtor_B_date,1,1);
-
-                            Date kumtor_V_date = searchResults.getDate("kumtor_V");
-                            truckLicence_table.setValueAt(kumtor_V_date, 2, 1);
-
-                            Date kumtor_G_date = searchResults.getDate("kumtor_G");
-                            truckLicence_table.setValueAt(kumtor_G_date, 3, 1);
-
-                            Date kumtor_D_date = searchResults.getDate("kumtor_D");
-                            truckLicence_table.setValueAt(kumtor_D_date, 4, 1);
-
-                            Date kumtor_E_date = searchResults.getDate("kumtor_E");
-                            truckLicence_table.setValueAt(kumtor_E_date, 5, 1);
-
-                            Date kumtor_E1_date = searchResults.getDate("kumtor_E1");
-                            truckLicence_table.setValueAt(kumtor_E1_date, 6, 1);
-
-                            Date gos_A_date = searchResults.getDate("gos_A");
-                            drivingLicence_table.setValueAt(gos_A_date,0,1);
-
-                            Date gos_A1_date = searchResults.getDate("gos_A1");
-                            drivingLicence_table.setValueAt(gos_A1_date,1,1);
-
-                            Date gos_B_date = searchResults.getDate("gos_B");
-                            drivingLicence_table.setValueAt(gos_B_date,2,1);
-
-                            Date gos_B1_date = searchResults.getDate("gos_B1");
-                            drivingLicence_table.setValueAt(gos_B1_date,3,1);
-
-                            Date gos_C_date = searchResults.getDate("gos_C");
-                            drivingLicence_table.setValueAt(gos_C_date,4,1);
-
-                            Date gos_C1_date = searchResults.getDate("gos_C1");
-                            drivingLicence_table.setValueAt(gos_C1_date,5,1);
-
-                            Date gos_D_date = searchResults.getDate("gos_D");
-                            drivingLicence_table.setValueAt(gos_D_date,6,1);
-
-                            Date gos_D1_date = searchResults.getDate("gos_D1");
-                            drivingLicence_table.setValueAt(gos_D1_date,7,1);
-
-                            Date gos_BE_date = searchResults.getDate("gos_BE");
-                            drivingLicence_table.setValueAt(gos_BE_date,8,1);
-
-                            Date gos_CE_date = searchResults.getDate("gos_CE");
-                            drivingLicence_table.setValueAt(gos_CE_date,9,1);
-
-                            Date gos_C1E_date = searchResults.getDate("gos_C1E");
-                            drivingLicence_table.setValueAt(gos_C1E_date,10,1);
-
-                            Date gos_DE_date = searchResults.getDate("gos_DE");
-                            drivingLicence_table.setValueAt(gos_DE_date,11,1);
-
-                            Date gos_D1E_date = searchResults.getDate("gos_D1E");
-                            drivingLicence_table.setValueAt(gos_D1E_date,12,1);
-
-
-                            //Downloading Photo
-                            if (searchResults.getBlob("Photo") != null) {
-                                InputStream is = null;
-                                try {
-                                    Blob aBlob = searchResults.getBlob("Photo");
-                                    byte[] imageByte = aBlob.getBytes(1, (int) aBlob.length());
-                                    is = new ByteArrayInputStream(imageByte);
-                                } catch (NullPointerException ex) {
-                                    System.out.println(ex.getMessage());
-                                    System.out.print("Caught the NullPointerException");
-                                }
-
-                                BufferedImage imagef = null;
-                                try {
-                                    imagef = ImageIO.read(is);
-                                } catch (IOException ex) {
-                                    ex.printStackTrace();
-                                } catch (NullPointerException ex) {
-                                    ex.printStackTrace();
-                                }
-
-                                JLabel label = new JLabel(new ImageIcon(imagef));
-
-                                photoPanel.removeAll();
-                                photoPanel.add(label);
-                                revalidate();
-                                repaint();
-                            } else {
-                                photoPanel.removeAll();
-                                revalidate();
-                                repaint();
-                            }
-
-                            String lastOr_string = searchResults.getString("SafetyOrientation");
-                            LastOr_dtp.getJFormattedTextField().setText(lastOr_string);
-                            edit_button.setEnabled(true);
-                        }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-
+                    for (int i = 0; i < truckLicence_table.getRowCount(); i++){
+                        truckLicence_table.setValueAt(databaseQueries.truckLicence_table.getValueAt(i,1), i, 1);
                     }
+
+                    for (int i = 0; i <  drivingLicence_table.getRowCount(); i++){
+                        drivingLicence_table.setValueAt(databaseQueries.drivingLicence_table.getValueAt(i,1), i, 1);
+                    }
+
+                    if (databaseQueries.getPhotoLabel() != null){
+                        photoPanel.removeAll();
+                        photoPanel.add(databaseQueries.getPhotoLabel());
+                        revalidate();
+                        repaint();
+                    } else {
+                        photoPanel.removeAll();
+                        revalidate();
+                        repaint();
+                    }
+
+                    LastOr_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
+                    edit_button.setEnabled(true);
                     setVisible(true);
                 }
             }
@@ -759,46 +661,18 @@ public class EmployeeInfo extends JPanel {
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
                 } else {
                     if (editUser){
-                        String updateQuery =
-                                "UPDATE dbo.Employees SET FullNameRu = N'" + nameRus_text.getText() +
-                                        "', JobTitleId = " + setJobId(positionRus_box) +
-                                        ", CrewId = " + setCrewID(crewRus_box) +
-                                        ", DepartmentId = " + setDepartmentID(departmentRus_box) +
-                                        ", SupervisorId = " + setSupervisorID(supervisor_box) +
-                                        ", Terminated = " + setTerminatedStatus(terminatedStatus_box) +
-                                        ", kumtor_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) +
-                                        ", kumtor_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) +
-                                        ", kumtor_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) +
-                                        ", kumtor_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) +
-                                        ", kumtor_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) +
-                                        ", kumtor_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) +
-                                        ", kumtor_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) +
-                                        ", gos_A = " + checkTablesContent(drivingLicence_table.getValueAt(0,1)) +
-                                        ", gos_A1 = " + checkTablesContent(drivingLicence_table.getValueAt(1,1)) +
-                                        ", gos_B = " + checkTablesContent(drivingLicence_table.getValueAt(2,1)) +
-                                        ", gos_B1 = " + checkTablesContent(drivingLicence_table.getValueAt(3,1)) +
-                                        ", gos_C = " + checkTablesContent(drivingLicence_table.getValueAt(4,1)) +
-                                        ", gos_C1 = " + checkTablesContent(drivingLicence_table.getValueAt(5,1)) +
-                                        ", gos_D = " + checkTablesContent(drivingLicence_table.getValueAt(6,1)) +
-                                        ", gos_D1 = " + checkTablesContent(drivingLicence_table.getValueAt(7,1)) +
-                                        ", gos_BE = " + checkTablesContent(drivingLicence_table.getValueAt(8,1)) +
-                                        ", gos_CE = " + checkTablesContent(drivingLicence_table.getValueAt(9,1)) +
-                                        ", gos_C1E = " + checkTablesContent(drivingLicence_table.getValueAt(10,1)) +
-                                        ", gos_DE = " + checkTablesContent(drivingLicence_table.getValueAt(11,1)) +
-                                        ", gos_D1E = " + checkTablesContent(drivingLicence_table.getValueAt(12,1)) +
-                                        " WHERE EmployeeID = " + tableID_text.getText();
 
-                        System.out.println(updateQuery);
-                        search_button.setEnabled(true);
-                        clearFields();
+                        databaseQueries.setFullName(nameRus_text.getText());
+                        databaseQueries.setJobID(positionRus_box);
+                        databaseQueries.setCrewID(crewRus_box);
+                        databaseQueries.setTerminatedID(terminatedStatus_box);
+                        databaseQueries.setDepartmentID(departmentRus_box);
+                        databaseQueries.setSupervisorID(supervisor_box);
+                        databaseQueries.setDrivingLicence_table(drivingLicence_table);
+                        databaseQueries.setTruckLicence_table(truckLicence_table);
+                        databaseQueries.setLastSafetyOr(LastOr_dtp);
 
-                        try{
-                            PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
-                            updateEmployee.executeUpdate();
-                            JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике изменена успешна");
-                        }catch (SQLException ex){
-                            ex.printStackTrace();
-                        }
+                        databaseQueries.updateEmployee();
 
                     } else {
                         final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
@@ -1160,26 +1034,6 @@ public class EmployeeInfo extends JPanel {
         return deptID;
     }
 
-    private String findCrew(int crewID){
-        String crewName = "";
-        String crewID_query = "SELECT * FROM dbo.Crews WHERE CrewId = " + crewID;
-
-        try {
-
-            Statement crewName_statement = MineOperations.conn.createStatement();
-            ResultSet crewName_result = crewName_statement.executeQuery(crewID_query);
-
-            while (crewName_result.next()){
-                crewName = crewName_result.getString("CrewName");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return crewName;
-    }
-
     private int setCrewID(JComboBox inputBox){
 
         int crewID = 0;
@@ -1198,26 +1052,6 @@ public class EmployeeInfo extends JPanel {
         }
 
         return crewID;
-    }
-
-    private String findSupervisorName(int reportsID){
-
-        String supervisorName = "";
-        String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE SupervisorId = " + reportsID;
-
-        try{
-
-            Statement supervisorName_statement = MineOperations.conn.createStatement();
-            ResultSet supervisorName_result = supervisorName_statement.executeQuery(supervisorName_query);
-
-            while(supervisorName_result.next()){
-                supervisorName = supervisorName_result.getString("SupervisorNameRu");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-        return supervisorName;
     }
 
     private int setSupervisorID(JComboBox inputBox){
@@ -1241,25 +1075,6 @@ public class EmployeeInfo extends JPanel {
         return supervisorID;
     }
 
-    private String findJobName(int jobID){
-        String jobTitle = "";
-        String jobTitle_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleId = '" + jobID + "'";
-
-        try{
-
-            Statement jobTitle_statement = MineOperations.conn.createStatement();
-            ResultSet jobTitle_result = jobTitle_statement.executeQuery(jobTitle_query);
-
-            while(jobTitle_result.next()){
-                jobTitle = jobTitle_result.getString("JobTitleNameRu");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-        return jobTitle;
-    }
-
     private int setJobId(JComboBox inputBox){
         int jobId = 0;
 
@@ -1278,19 +1093,6 @@ public class EmployeeInfo extends JPanel {
             ex.printStackTrace();
         }
         return jobId;
-    }
-
-    private String findTerminatedStatus(int inputNum){
-
-        String status = "";
-
-        if (inputNum == 0){
-            status = "Работает";
-        } else {
-            status = "Уволен";
-        }
-
-        return status;
     }
 
     private int setTerminatedStatus(JComboBox inputBox){
@@ -1330,10 +1132,8 @@ public class EmployeeInfo extends JPanel {
         String returnString;
 
         if (objectInput == null){
-            System.out.println( "1111");
             return null;
         } else {
-            System.out.println( "2222");
             returnString = "'" + objectInput.toString() + "'";
             return returnString;
         }
