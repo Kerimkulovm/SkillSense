@@ -302,6 +302,14 @@ public class EmployeeInfo extends JPanel {
         uploadPhotoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(uploadPhotoPanel);
 
+        PhotoPathPanel = new JPanel();
+        PhotoPathPanel = new JPanel();
+        PhotoPathPanel.setBackground(Color.WHITE);
+        PhotoPathPanel.setBounds(705, 350, 120, 30);
+        PhotoPathPanel.setLayout(new BorderLayout());
+        PhotoPathPanel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(PhotoPathPanel);
+
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
         driverLicenceInfo_panel.setBounds(340, 390, 305, 200);
@@ -873,6 +881,13 @@ public class EmployeeInfo extends JPanel {
                 clearFields();
             }
         });
+
+        photoPath = new JTextField();
+        //photoPath.setEnabled(false);
+        photoPath.setForeground(Color.BLACK);
+        photoPath.setDisabledTextColor(Color.BLACK);
+        PhotoPathPanel.add(photoPath);
+        //inputPanel.add(photoPath);
 
         select_button = new JButton("Выбрать фото");
         select_button.setForeground(Color.BLACK);

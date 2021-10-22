@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +22,9 @@ public class HomePage extends JPanel {
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
     private JButton reports_button;
-    private JButton classifCourse_button;
-    private JButton exit_button;
+    private JButton classificationCourse_button;
+    private JButton employeeInfo_button;
+    private JButton operations_button;
     private JButton test_button;
 
     public HomePage()
@@ -62,6 +62,18 @@ public class HomePage extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        employeeInfo_button = new JButton("<html> <big> Просмотр Данных о Сотрудниках </big><br />(Просмотреть/Изменить/Данные о Сотрудниках)</html>");
+        buttons_panel.add(employeeInfo_button);
+        employeeInfo_button.setHorizontalAlignment(SwingConstants.LEFT);
+        employeeInfo_button.setBackground(Color.WHITE);
+        employeeInfo_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Employee Info");
+            }
+        });
+
+
         enterData_button = new JButton("<html> <big>  Ввод/Просмотр Общих Данных </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
         buttons_panel.add(enterData_button);
         enterData_button.setHorizontalAlignment(SwingConstants.LEFT);
@@ -70,6 +82,17 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Enter Data");
+            }
+        });
+
+        operations_button = new JButton("<html> <big>  Ввод Ежедневной Информации </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
+        buttons_panel.add(operations_button);
+        operations_button.setHorizontalAlignment(SwingConstants.LEFT);
+        operations_button.setBackground(Color.WHITE);
+        operations_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane, "Operations Daily");
             }
         });
 
@@ -95,26 +118,14 @@ public class HomePage extends JPanel {
         reports_button.setHorizontalAlignment(SwingConstants.LEFT);
         reports_button.setBackground(Color.WHITE);
 
-        classifCourse_button = new JButton("<html> <big> Классификатор 'Курсы' </big> <br />  </html>");
-        buttons_panel.add(classifCourse_button);
-        classifCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
-        classifCourse_button.setBackground(Color.WHITE);
-        classifCourse_button.addActionListener(new ActionListener() {
+        classificationCourse_button = new JButton("<html> <big> Классификатор 'Курсы' </big> <br />  </html>");
+        buttons_panel.add(classificationCourse_button);
+        classificationCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
+        classificationCourse_button.setBackground(Color.WHITE);
+        classificationCourse_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Courses");
-            }
-        });
-
-        exit_button = new JButton("<html> <big> Выход из программы </big> <br />  </html> ");
-        exit_button.setForeground(Color.RED);
-        buttons_panel.add(exit_button);
-        exit_button.setHorizontalAlignment(SwingConstants.LEFT);
-        exit_button.setBackground(Color.WHITE);
-        exit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.application_frame.dispatchEvent(new WindowEvent(MineOperations.application_frame, WindowEvent.WINDOW_CLOSING));
             }
         });
     }

@@ -32,7 +32,6 @@ public class MineOperations extends JFrame {
     public static EnterSRT enterSRTPanel = new EnterSRT();
     public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
 
-    public static SearchByName SearchByNamePanel = new SearchByName();
     public static Courses CoursesPanel = new Courses();
 
     public static CardLayout card;
@@ -61,7 +60,6 @@ public class MineOperations extends JFrame {
         cardPane.add(enterSRTPanel,"Enter SRT");
         cardPane.add(viewQualificationsPanel,"View Qualifications");
 
-        cardPane.add(SearchByNamePanel, "Search By Name");
         cardPane.add(CoursesPanel, "Courses");
 
         application_frame.add(cardPane);
