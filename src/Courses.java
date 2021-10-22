@@ -9,9 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 public class Courses extends JPanel {
 
     private BufferedImage logo_image;
-
+    private JTextField newCourse_text = null;
 
     private JPanel coursesList_panel;
     private JTable listOfCourses_table;
@@ -29,6 +27,9 @@ public class Courses extends JPanel {
     private List<Integer> coursesActive_list = new ArrayList<>();
 
     private JButton  add_button = null;
+    private JButton  save_button = null;
+    private JButton  cancel_button = null;
+
 
     public Courses()
     {
@@ -79,7 +80,7 @@ public class Courses extends JPanel {
 
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 635, 500, 30);
+        buttons_panel.setBounds(20, 635, 100, 30);
         buttons_panel.setLayout(new GridLayout(1, 5));
         buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(buttons_panel);
@@ -96,7 +97,10 @@ public class Courses extends JPanel {
         add_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                System.out.println("1234");
+                Courses.createNewCourse newCourse = new Courses.createNewCourse();
+                newCourse.pack();
+                newCourse.setVisible(true);
             }
         });
 
@@ -194,5 +198,82 @@ public class Courses extends JPanel {
         g.fillRect(0, 0, 900, 100);
 
         g.drawImage(logo_image, 0, 0, 150, 100, this);
+    }
+
+    private class createNewCourse extends JFrame{
+
+        private List<String> employeeNames_list = new ArrayList<>();
+        private List<Integer> employeeID_list = new ArrayList<>();
+
+        private JPanel  newCoursePanel, newCourseButtonsPanel;
+
+        private int numOfRows = 1, numOfColumns = 2;
+
+        public createNewCourse(){
+
+            buildFrame();
+
+            this.setPreferredSize(new Dimension(400, 200));
+            this.setFocusableWindowState(true);
+            this.setAutoRequestFocus(true);
+            this.setLocation(900,40);
+            this.setLayout(null);
+        }
+
+        private void buildFrame(){
+
+            newCoursePanel = new JPanel();
+            newCoursePanel.setBackground(Color.WHITE);
+            newCoursePanel.setBounds(2,2,250,30);
+            newCoursePanel.setLayout(new BoxLayout(newCoursePanel, BoxLayout.X_AXIS));
+            newCoursePanel.setBorder(new LineBorder(Color.BLACK));
+            newCoursePanel.setVisible(true);
+            this.add(newCoursePanel);
+
+            JLabel newCourse_label = new JLabel("Наименование: ");
+            newCoursePanel.add(newCourse_label);
+
+
+            newCourse_text = new JTextField();
+            newCourse_text.setEnabled(true);
+            newCourse_text.setForeground(Color.BLACK);
+            newCourse_text.setDisabledTextColor(Color.BLACK);
+            newCoursePanel.add(newCourse_text);
+
+            newCourseButtonsPanel = new JPanel();
+            newCourseButtonsPanel.setBackground(Color.WHITE);
+            newCourseButtonsPanel.setBounds(2,35,250,30);
+            newCourseButtonsPanel.setLayout(new BoxLayout(newCourseButtonsPanel, BoxLayout.X_AXIS));
+            newCourseButtonsPanel.setBorder(new LineBorder(Color.BLACK));
+            newCourseButtonsPanel.setVisible(true);
+            this.add(newCourseButtonsPanel);
+
+            save_button = new JButton("Сохранить");
+            save_button.setBackground(Color.GREEN);
+            save_button.setForeground(Color.BLACK);
+            save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+            newCourseButtonsPanel.add(save_button);
+            save_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("save");
+                }
+            });
+
+            cancel_button = new JButton("Отмена");
+            cancel_button.setBackground(Color.yellow);
+            cancel_button.setForeground(Color.black);
+            cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+            newCourseButtonsPanel.add(cancel_button);
+            cancel_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    dispose();
+                }
+            });
+
+        }
+
+
     }
 }
