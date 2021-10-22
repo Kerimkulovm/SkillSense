@@ -9,7 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -257,6 +259,48 @@ public class Courses extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     System.out.println("save");
+                    if (newCourse_text.getText().equals("") ){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название курса");
+                    } else {
+                            int maxCourse = 0;
+                            String checkCourse_query = "SELECT * FROM dbo.Courses WHERE Course = '" + newCourse_text.getText() + "'";
+                            try {
+                                Statement checkCourse_st = MineOperations.conn.createStatement();
+                                ResultSet courseExist_result = checkCourse_st.executeQuery(checkCourse_query);
+                                if (!courseExist_result.next()) {
+                                    String MaxCourse_query = "SELECT max (coarseNo) as coarseNo FROM dbo.Courses";
+                                    try{
+                                        Statement maxCourse_st = MineOperations.conn.createStatement();
+                                        ResultSet maxCourse_result = maxCourse_st.executeQuery(MaxCourse_query);
+                                        if (maxCourse_result.next()) {
+                                            maxCourse = maxCourse_result.getInt(1);
+                                            System.out.println("maxId = " + maxCourse);
+                                        }
+                                    }catch (SQLException ex) {
+                                        ex.printStackTrace();
+                                    }
+
+                                    maxCourse++;
+                                    String insert_query = "INSERT INTO dbo.Courses " +
+                                            "(coarseNo, Course  , isActive ) " +
+                                            "VALUES (" + maxCourse +  ",N'" +
+                                            newCourse_text.getText() + "', 1)";
+
+                                    System.out.println(insert_query);
+                                    PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
+                                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно добавлен");
+                                    insertCourse.executeUpdate();
+                                    dispose();
+                                } else {
+                                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
+                                                newCourse_text.getText() + " уже существует");
+
+                                }
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+
+                    }
                 }
             });
 
