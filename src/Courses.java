@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +20,15 @@ public class Courses extends JPanel {
 
     private BufferedImage logo_image;
 
-    private JLabel tableID_label;
 
     private JPanel coursesList_panel;
-    private JButton search_by_name_button;
-    static JTable fio_table;
-    DefaultTableModel model = null;
-    JTable table = null;
-
     private JTable listOfCourses_table;
     private int numOfRows = 1, numOfColumns = 2;
+    private List<Integer> coursesNum_list = new ArrayList<>();
     private List<String> coursesName_list = new ArrayList<>();
     private List<Integer> coursesActive_list = new ArrayList<>();
+
+    private JButton  add_button = null;
 
     public Courses()
     {
@@ -76,13 +76,39 @@ public class Courses extends JPanel {
 
         createTable();
 
+
+        JPanel buttons_panel = new JPanel(new GridLayout());
+        buttons_panel.setBackground(Color.WHITE);
+        buttons_panel.setBounds(20, 635, 500, 30);
+        buttons_panel.setLayout(new GridLayout(1, 5));
+        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(buttons_panel);
+
+
+
+
+
+        add_button = new JButton("Создать");
+        add_button.setBackground(Color.GREEN);
+        add_button.setForeground(Color.BLACK);
+        add_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        buttons_panel.add(add_button);
+        add_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+
+
     }
 
     private void createTable(){
 
         try{
             Statement searchStatement = MineOperations.conn.createStatement();
-            String query_text = "select Course, isActive from Courses where course is not null order by CoarseNo";
+            String query_text = "select coarseNo, Course, isActive from Courses where course is not null order by CoarseNo";
 
             System.out.println(query_text);
             ResultSet rs = searchStatement.executeQuery(query_text);
@@ -90,7 +116,10 @@ public class Courses extends JPanel {
             if (rs.next()){
 
                 do {
-                    System.out.println("RR");
+
+                    int courseNum = rs.getInt("coarseNo");
+                    coursesNum_list.add(courseNum);
+
                     String courseName = rs.getString("Course");
                     coursesName_list.add(courseName);
 
@@ -106,11 +135,10 @@ public class Courses extends JPanel {
         numOfRows = coursesName_list.size();
 
 
-        DefaultTableModel listOfCourses_model = new DefaultTableModel(numOfRows ,numOfColumns){
-            public boolean isCellEditable(int row, int column){
-                return false;
-            }
-        };
+
+        DefaultTableModel listOfCourses_model = new DefaultTableModel(numOfRows ,numOfColumns);
+
+
         DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
         centerRederer.setHorizontalAlignment(JLabel.CENTER);
 
@@ -133,6 +161,11 @@ public class Courses extends JPanel {
         tabCol0.setPreferredWidth(10);
 
         for (int i = 0; i < numOfRows; i++){
+            listOfCourses_table.setValueAt(coursesNum_list.get(i),i,0);
+        }
+
+
+        for (int i = 0; i < numOfRows; i++){
             listOfCourses_table.setValueAt(coursesName_list.get(i),i,0);
         }
 
@@ -141,7 +174,8 @@ public class Courses extends JPanel {
         tabCol1.setHeaderValue("Активный");
 
         for (int i = 0; i < numOfRows; i++){
-            listOfCourses_table.setValueAt(coursesActive_list.get(i),i,1);
+            String v = coursesActive_list.get(i) == 0 ? "Нет" : "Да";
+            listOfCourses_table.setValueAt(v ,i,1);
         }
 
 
