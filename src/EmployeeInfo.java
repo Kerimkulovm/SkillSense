@@ -675,59 +675,19 @@ public class EmployeeInfo extends JPanel {
                         databaseQueries.updateEmployee();
 
                     } else {
-                        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + tableID_text.getText();
-                        try {
-                            final Statement checkEmployee_st = MineOperations.conn.createStatement();
-                            final ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
-                            if (!employeeExist_result.next())
-                            {
-                                String insert_query = "INSERT INTO dbo.Employees " +
-                                        "(EmployeeID, FullName, FullNameRu, JobTitleId, SupervisorId, CrewId, DepartmentId, Terminated, " +
-                                        "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
-                                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E ) " +
-                                        "VALUES (" +
-                                        tableID_text.getText() + ", N'" +
-                                        nameRus_text.getText() + "', N'" +
-                                        nameRus_text.getText() + "', " +
-                                        setJobId(positionRus_box) + ", " +
-                                        setSupervisorID(supervisor_box) + ", " +
-                                        setCrewID(crewRus_box) + ", " +
-                                        setDepartmentID(departmentRus_box) + ", " +
-                                        setTerminatedStatus(terminatedStatus_box) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
-                                        checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(3,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(4,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(5,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(6,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(7,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(8,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
-                                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ")";
 
-                                System.out.println(insert_query);
-                                PreparedStatement insertEmployee = MineOperations.conn.prepareStatement(insert_query);
-                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
-                                insertEmployee.executeQuery();
-                                clearFields();
-                            } else {
-                                do {
-                                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер: " +
-                                    tableID_text.getText() + " уже занят. Пожалуйста введите другой");
-                                } while (employeeExist_result.next());
-                            }
-                        } catch (SQLException ignored) {
-                        }
+                        databaseQueries.setEmployeeID(tableID_text.getText());
+                        databaseQueries.setFullName(nameRus_text.getText());
+                        databaseQueries.setJobID(positionRus_box);
+                        databaseQueries.setCrewID(crewRus_box);
+                        databaseQueries.setTerminatedID(terminatedStatus_box);
+                        databaseQueries.setDepartmentID(departmentRus_box);
+                        databaseQueries.setSupervisorID(supervisor_box);
+                        databaseQueries.setDrivingLicence_table(drivingLicence_table);
+                        databaseQueries.setTruckLicence_table(truckLicence_table);
+                        databaseQueries.setLastSafetyOr(LastOr_dtp);
+
+                        databaseQueries.createEmployee();
                     }
                 }
             }
@@ -869,12 +829,6 @@ public class EmployeeInfo extends JPanel {
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
-    private String checkNullVariable(String inputString){
-        String outPutString = "Нет данных";
-        System.out.println("dddd" + inputString);
-        return Objects.requireNonNullElse(inputString, outPutString);
-    }
-
     private JComboBox enableComboText(JComboBox inputCombobox){
         inputCombobox.setRenderer(new DefaultListCellRenderer() {
             @Override
@@ -991,122 +945,6 @@ public class EmployeeInfo extends JPanel {
         LastOr_dtp.setEnabled(true);
     }
 
-    private String findDepartment(int departmentID){
-
-        String departmentName = "";
-        String departmentID_query = "SELECT * FROM dbo.Departments WHERE DepartmentID = " + departmentID;
-
-        try {
-
-            Statement departmentName_statement = MineOperations.conn.createStatement();
-            ResultSet departmentName_result = departmentName_statement.executeQuery(departmentID_query);
-
-            while(departmentName_result.next()){
-                departmentName = departmentName_result.getString("DepartmentNameRu");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return departmentName;
-    }
-
-    private int setDepartmentID(JComboBox inputBox){
-
-        int deptID = 0;
-        String departQuery = "SELECT * FROM dbo.Departments WHERE DepartmentNameRu = N'" + (String) inputBox.getSelectedItem()+"'";
-
-
-        try {
-            Statement departmentSt = MineOperations.conn.createStatement();
-            ResultSet departmentResult = departmentSt.executeQuery(departQuery);
-
-            while(departmentResult.next())
-            {
-                deptID = departmentResult.getInt("DepartmentId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return deptID;
-    }
-
-    private int setCrewID(JComboBox inputBox){
-
-        int crewID = 0;
-        String crew_query = "SELECT * FROM dbo.Crews WHERE CrewName = N'" + (String) inputBox.getSelectedItem() + "'";
-
-        try{
-            Statement crew_statement = MineOperations.conn.createStatement();
-            ResultSet crew_results = crew_statement.executeQuery(crew_query);
-
-            while (crew_results.next()){
-                crewID = crew_results.getInt("CrewId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return crewID;
-    }
-
-    private int setSupervisorID(JComboBox inputBox){
-
-        int supervisorID = 0;
-        String supervisorID_query = "SELECT * FROM dbo.Supervisors WHERE SupervisorNameRu = N'" + (String) inputBox.getSelectedItem() + "'";
-
-        try {
-
-            Statement supervisorID_statement = MineOperations.conn.createStatement();
-            ResultSet supervisorID_result = supervisorID_statement.executeQuery(supervisorID_query);
-
-            while (supervisorID_result.next()){
-                supervisorID = supervisorID_result.getInt("SupervisorId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return supervisorID;
-    }
-
-    private int setJobId(JComboBox inputBox){
-        int jobId = 0;
-
-        String jobID_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleNameRu = N'" + (String) inputBox.getSelectedItem() + "'";
-
-        try {
-
-            Statement jobID_statement = MineOperations.conn.createStatement();
-            ResultSet jobID_result = jobID_statement.executeQuery(jobID_query);
-
-            while (jobID_result.next()){
-                jobId = jobID_result.getInt("JobTitleId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-        return jobId;
-    }
-
-    private int setTerminatedStatus(JComboBox inputBox){
-
-        String inputString = (String) inputBox.getSelectedItem();
-        int terminatedID = 0;
-
-        if (Objects.equals(inputString, "Уволен")){
-            terminatedID = 1;
-        }
-
-        return terminatedID;
-    }
-
     private boolean isUserExist(String userid){
 
         boolean  isexist = false;
@@ -1125,18 +963,6 @@ public class EmployeeInfo extends JPanel {
         }
 
         return isexist;
-    }
-
-    private String checkTablesContent(Object objectInput){
-
-        String returnString;
-
-        if (objectInput == null){
-            return null;
-        } else {
-            returnString = "'" + objectInput.toString() + "'";
-            return returnString;
-        }
     }
 
     private class SearchBySurname extends JFrame{
@@ -1251,29 +1077,9 @@ public class EmployeeInfo extends JPanel {
             if (surname == null){
                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите фамилию или имя");
             } else {
-                try{
-                    Statement searchStatement = MineOperations.conn.createStatement();
-                    String query_text = "SELECT FullNameRu, EmployeeID  FROM dbo.Employees " +
-                            "WHERE EmployeeID is not null and FullNameRu like N'%"+surname+"%' order by FullNameRu desc";
-
-                    System.out.println(query_text);
-                    ResultSet rs = searchStatement.executeQuery(query_text);
-
-                    if (rs.next()){
-                        System.out.println("RR");
-                        do {
-                            String fullNameRu = rs.getString("FullNameRu");
-                            employeeNames_list.add(fullNameRu);
-
-                            int employeeID = rs.getInt("EmployeeID");
-                            employeeID_list.add(employeeID);
-
-                        }while (rs.next());
-                    }
-                } catch (Exception ex){
-
-                }
-
+                databaseQueries.findBySurname(surname);
+                employeeNames_list = databaseQueries.getListOfSurnames();
+                employeeID_list = databaseQueries.getListOfID();
                 numOfRows = employeeNames_list.size();
             }
         }

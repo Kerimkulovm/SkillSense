@@ -7,13 +7,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class DatabaseQueries {
 
     Statement employeeSearchStatement;
     PreparedStatement updateEmployee;
+    PreparedStatement insertEmployee;
 
     String employeeID;
 
@@ -61,6 +64,9 @@ public class DatabaseQueries {
     Date kumtor_E1_date;
 
     JLabel photoLabel = new JLabel();
+
+    List<String> employeeNames_list = new ArrayList<>();
+    List<Integer> employeeID_list = new ArrayList<>();
 
     public void queryEmployeeData(String EmployeeID) {
 
@@ -418,6 +424,9 @@ public class DatabaseQueries {
         lastSafetyOr = inputPicker.getJFormattedTextField().getText();
     }
 
+    public void setEmployeeID(String employeeID_input){
+        employeeID = employeeID_input;
+    }
 
     public String checkTablesContent(Object objectInput){
 
@@ -433,8 +442,97 @@ public class DatabaseQueries {
 
     public void createEmployee(){
 
-        String insertQuery = "";
+        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + employeeID;
 
+        try {
 
+            final Statement checkEmployee_st = MineOperations.conn.createStatement();
+            final ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
+
+            if (!employeeExist_result.next()){
+                String insertQuery = "INSERT INTO dbo.Employees " +
+                        "(EmployeeID, FullName, FullNameRu, JobTitleId, SupervisorId, CrewId, DepartmentId, Terminated, SafetyOrientation, " +
+                        "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
+                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E ) " +
+                        "VALUES (" +
+                        employeeID + ", N'" +
+                        fullName + "', N'" +
+                        fullName + "', " +
+                        jobTitleID + ", " +
+                        supervisorID + ", " +
+                        crewID + ", " +
+                        departmentID + ", " +
+                        terminatedID + ", " +
+                        checkTablesContent(lastSafetyOr) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
+                        checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(3,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(4,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(5,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(6,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(7,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(8,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
+                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ")";
+
+                System.out.println(insertQuery);
+                insertEmployee = MineOperations.conn.prepareStatement(insertQuery);
+                insertEmployee.executeUpdate();
+                JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
+
+            } else {
+                do {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер: " +
+                            employeeID + " уже занят. Пожалуйста введите другой");
+                } while (employeeExist_result.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public void findBySurname(String surname_input){
+
+        try{
+            Statement searchStatement = MineOperations.conn.createStatement();
+            String query_text = "SELECT FullNameRu, EmployeeID  FROM dbo.Employees " +
+                    "WHERE EmployeeID is not null and FullNameRu like N'%"+ surname_input +"%' order by FullNameRu desc";
+
+            System.out.println(query_text);
+            ResultSet rs = searchStatement.executeQuery(query_text);
+
+            if (rs.next()){
+                System.out.println("RR");
+                do {
+                    String fullNameRu = rs.getString("FullNameRu");
+                    employeeNames_list.add(fullNameRu);
+
+                    int employeeID = rs.getInt("EmployeeID");
+                    employeeID_list.add(employeeID);
+
+                }while (rs.next());
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public List<String> getListOfSurnames() {
+        return employeeNames_list;
+    }
+
+    public List<Integer> getListOfID(){
+        return employeeID_list;
     }
 }
