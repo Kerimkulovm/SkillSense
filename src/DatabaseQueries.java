@@ -326,7 +326,6 @@ public class DatabaseQueries {
         fullName = fullName_input;
     }
 
-
     public void setJobID(JComboBox inputBox){
 
         String jobID_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleNameRu = N'" + (String) inputBox.getSelectedItem() + "'";
@@ -535,4 +534,116 @@ public class DatabaseQueries {
     public List<Integer> getListOfID(){
         return employeeID_list;
     }
+
+    public boolean ifUserExists( String userID){
+
+        boolean isExists = false;
+        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + userID;
+
+        try {
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            while(rs.next()){
+                isExists = true;
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return isExists;
+    }
+
+    public JComboBox loadSupervisorBox( JComboBox inputBox) {
+
+        try{
+
+            String reportsTo_query = "SELECT * FROM dbo.Supervisors";
+            Statement reportsTo_statement = MineOperations.conn.createStatement();
+            ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
+
+            while(reportsTo_result.next()){
+                String addReportsTo = reportsTo_result.getString("SupervisorNameRu");
+                inputBox.addItem(addReportsTo);
+            }
+        }
+
+        catch (SQLException e){
+
+        }
+
+        return inputBox;
+    }
+
+    public JComboBox loadJobTitlesBox(JComboBox inputBox){
+
+        try {
+
+            String positionRus_query = "SELECT * FROM dbo.JobTitles";
+            Statement positionRus_statement = MineOperations.conn.createStatement();
+            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
+
+            while(positionRus_result.next())
+            {
+                String addPositionRusItem = positionRus_result.getString("JobTitleNameRu");
+                if (addPositionRusItem != null){
+                    inputBox.addItem(addPositionRusItem);
+                } else continue;
+            }
+        }
+        catch (SQLException ignored){
+
+        }
+        return inputBox;
+    }
+
+    public JComboBox loadDepartmentsBox(JComboBox inputBox){
+
+        try{
+            String departmentRus_query = "SELECT * FROM dbo.Departments";
+            Statement departmentRus_statement = MineOperations.conn.createStatement();
+            ResultSet departmentRus_result = departmentRus_statement.executeQuery(departmentRus_query);
+
+            while(departmentRus_result.next()){
+                String addDepartmentRus = departmentRus_result.getString("DepartmentNameRu");
+                int isActive = departmentRus_result.getInt("IsActive");
+
+                if (isActive == 1){
+                    inputBox.addItem(addDepartmentRus);
+                } else continue;
+            }
+        }
+
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputBox;
+    }
+
+    public JComboBox loadCrewBox(JComboBox inputBox){
+
+        try {
+
+            String crews_query = "SELECT * FROM dbo.Crews";
+            Statement crews_statement = MineOperations.conn.createStatement();
+            ResultSet crews_results = crews_statement.executeQuery(crews_query);
+
+            while (crews_results.next()){
+                String addCrew = crews_results.getString("CrewName");
+                int isActive = crews_results.getInt("IsActive");
+
+                if (isActive == 1){
+                    inputBox.addItem(addCrew);
+                } else continue;
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputBox;
+    }
+
 }

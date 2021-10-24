@@ -242,23 +242,7 @@ public class EmployeeInfo extends JPanel {
         positionRus_box = new JComboBox();
         positionRus_box.setBackground(Color.WHITE);
         positionRus_box.setEnabled(false);
-        try {
-
-            String positionRus_query = "SELECT * FROM dbo.JobTitles";
-            Statement positionRus_statement = MineOperations.conn.createStatement();
-            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
-
-            while(positionRus_result.next())
-            {
-                String addPositionRusItem = positionRus_result.getString("JobTitleNameRu");
-                if (addPositionRusItem != null){
-                    positionRus_box.addItem(addPositionRusItem);
-                } else continue;
-            }
-        }
-        catch (SQLException ignored){
-
-        }
+        positionRus_box = databaseQueries.loadJobTitlesBox(positionRus_box);
         positionRus_panel.add(positionRus_box);
         inputPanel.add(positionRus_box);
 
@@ -273,21 +257,7 @@ public class EmployeeInfo extends JPanel {
         supervisor_box = new JComboBox();
         supervisor_box.setBackground(Color.WHITE);
         supervisor_box.setEnabled(false);
-        try{
-
-            String reportsTo_query = "SELECT * FROM dbo.Supervisors";
-            Statement reportsTo_statement = MineOperations.conn.createStatement();
-            ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
-
-            while(reportsTo_result.next()){
-                String addReportsTo = reportsTo_result.getString("SupervisorNameRu");
-                supervisor_box.addItem(addReportsTo);
-            }
-        }
-
-        catch (SQLException e){
-
-        }
+        supervisor_box = databaseQueries.loadSupervisorBox(supervisor_box);
         reportsTo_panel.add(supervisor_box);
         inputPanel.add(supervisor_box);
 
@@ -302,25 +272,8 @@ public class EmployeeInfo extends JPanel {
         departmentRus_box = new JComboBox();
         departmentRus_box.setBackground(Color.WHITE);
         departmentRus_box.setEnabled(false);
+        departmentRus_box = databaseQueries.loadDepartmentsBox(departmentRus_box);
 
-        try{
-            String departmentRus_query = "SELECT * FROM dbo.Departments";
-            Statement departmentRus_statement = MineOperations.conn.createStatement();
-            ResultSet departmentRus_result = departmentRus_statement.executeQuery(departmentRus_query);
-
-            while(departmentRus_result.next()){
-                String addDepartmentRus = departmentRus_result.getString("DepartmentNameRu");
-                int isActive = departmentRus_result.getInt("IsActive");
-
-                if (isActive == 1){
-                    departmentRus_box.addItem(addDepartmentRus);
-                } else continue;
-            }
-        }
-
-        catch (SQLException ex){
-            ex.printStackTrace();
-        }
 
         departmentRus_panel.add(departmentRus_box);
         inputPanel.add(departmentRus_box);
@@ -336,24 +289,7 @@ public class EmployeeInfo extends JPanel {
         crewRus_box = new JComboBox();
         crewRus_box.setBackground(Color.WHITE);
         crewRus_box.setEnabled(false);
-        try {
-
-            String crews_query = "SELECT * FROM dbo.Crews";
-            Statement crews_statement = MineOperations.conn.createStatement();
-            ResultSet crews_results = crews_statement.executeQuery(crews_query);
-
-            while (crews_results.next()){
-                String addCrew = crews_results.getString("CrewName");
-                int isActive = crews_results.getInt("IsActive");
-
-                if (isActive == 1){
-                    crewRus_box.addItem(addCrew);
-                } else continue;
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
+        crewRus_box = databaseQueries.loadCrewBox(crewRus_box);
 
         shiftEng_panel.add(crewRus_box);
         inputPanel.add(crewRus_box);
@@ -752,14 +688,13 @@ public class EmployeeInfo extends JPanel {
         upload_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("ЗАгр");
                 if (photoPath.getText().equals("No File Uploaded")) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Файл не выбран");
                 }else
                 if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")){
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
                 }else
-                if (!isUserExist(tableID_text.getText())){
+                if (!databaseQueries.ifUserExists(tableID_text.getText())){
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Табельный номер " + tableID_text.getText() + " не существует!" );
                 }
                 else {
@@ -943,26 +878,6 @@ public class EmployeeInfo extends JPanel {
         truckLicence_table.setEnabled(true);
 
         LastOr_dtp.setEnabled(true);
-    }
-
-    private boolean isUserExist(String userid){
-
-        boolean  isexist = false;
-        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + userid;
-
-        try {
-            Statement st = MineOperations.conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
-
-            while(rs.next()){
-                isexist = true;
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return isexist;
     }
 
     private class SearchBySurname extends JFrame{
