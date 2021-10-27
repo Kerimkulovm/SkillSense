@@ -2,6 +2,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.nimbus.State;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Objects;
 public class DatabaseQueries {
 
     Statement employeeSearchStatement;
+    Statement courseSearchStatement;
     PreparedStatement updateEmployee;
     PreparedStatement insertEmployee;
 
@@ -66,6 +68,7 @@ public class DatabaseQueries {
     JLabel photoLabel = new JLabel();
 
     List<String> employeeNames_list = new ArrayList<>();
+    List<String> courses_list = new ArrayList<>();
     List<Integer> employeeID_list = new ArrayList<>();
 
     public void queryEmployeeData(String EmployeeID) {
@@ -646,4 +649,177 @@ public class DatabaseQueries {
         return inputBox;
     }
 
+    public List<String> loadCourses(){
+
+        try {
+
+            String courses_query = "select * from dbo.Courses Where isActive = " + 1 + " AND Course is not null";
+            Statement courseSearchStatement = MineOperations.conn.createStatement();
+            ResultSet coursesResult = courseSearchStatement.executeQuery(courses_query);
+
+            if (coursesResult.next()){
+                do{
+                    String courseName= coursesResult.getString("Course");
+                    courses_list.add(courseName);
+                } while (coursesResult.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return courses_list;
+    }
+
+    public JTable loadAcceptedQualifications(JTable inputTable){
+
+        for (int i = 0; i < inputTable.getRowCount(); i++){
+            inputTable.setValueAt(false,i,1);
+            inputTable.setValueAt(false,i,2);
+            inputTable.setValueAt(false,i,3);
+            inputTable.setValueAt(false,i,4);
+            inputTable.setValueAt("",i,5);
+        }
+
+            try {
+                String acceptedQialifications_query = "select * from Qualified where EmployeeID = " + employeeID;
+                Statement acceptedSearchStatement = MineOperations.conn.createStatement();
+                ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQialifications_query);
+
+                if (acceptedQResult.next()){
+                    do {
+
+                         int QualifiedID = acceptedQResult.getInt("Equipment");
+                         String courseName = "";
+                         Date acceptedDate = acceptedQResult.getDate("Date");
+                         int experienced = acceptedQResult.getInt("Experienced");
+                         int qualified = acceptedQResult.getInt("Qualified");
+                         int approved = acceptedQResult.getInt("Approved");
+                         int training = acceptedQResult.getInt("Training");
+
+                         Statement courseSearchSt = MineOperations.conn.createStatement();
+                         ResultSet courseNames = courseSearchSt.executeQuery("select * from dbo.Courses where CoarseNo = " +  QualifiedID);
+                         while(courseNames.next()){
+                             System.out.println("select * from dbo.Courses where CoarseNo = " +  QualifiedID);
+                             courseName = courseNames.getString("Course");
+                             System.out.println("Qualified " + courseName);
+                         }
+
+                         for (int i = 0; i < inputTable.getRowCount(); i++){
+
+                             if (Objects.equals((String) inputTable.getValueAt(i, 0), courseName)){
+
+                                 System.out.println("Course Selected " + courseName);
+
+                                 //Set checkbox for experienced
+                                 if (experienced == 0){
+                                     inputTable.setValueAt(false, i,1);
+                                 } else {
+                                     inputTable.setValueAt(true, i,1);
+                                 }
+
+                                 if (qualified == 0){
+                                     inputTable.setValueAt(false, i,2);
+                                 } else {
+                                     inputTable.setValueAt(true, i,2);
+                                 }
+
+                                 if (approved == 0){
+                                     inputTable.setValueAt(false, i,3);
+                                 } else {
+                                     inputTable.setValueAt(true, i,3);
+                                 }
+
+                                 if (training == 0){
+                                     inputTable.setValueAt(false, i,4);
+                                 } else {
+                                     inputTable.setValueAt(true, i,4);
+                                 }
+
+                                 inputTable.setValueAt(acceptedDate, i, 5);
+
+                             }
+                         }
+
+                    } while (acceptedQResult.next());
+                }
+
+            } catch (SQLException ex){
+                ex.printStackTrace();
+            }
+
+        return inputTable;
+
+    }
+
+    public JTable saveAcceptedQualifications(JTable inputTable){
+
+        try{
+            String deleteQuery = "DELETE FROM Qualified WHERE EmployeeID= " + employeeID +"  and Equipment in (select distinct CoarseNo from Courses where isActive = 1)";
+            PreparedStatement deleteQualifications_st = MineOperations.conn.prepareStatement(deleteQuery);
+            deleteQualifications_st.executeUpdate();
+
+
+            PreparedStatement insertQStatement;
+
+            for (int i = 0; i < inputTable.getRowCount(); i++){
+                  if (inputTable.getValueAt(i,5) != ""){
+                      String insertQuery = "INSERT INTO dbo.Qualified " +
+                              "(RecID, Equipment, EmployeeID, Date, Experienced, Qualified, Approved, Training) " +
+                                      "VALUES (" + 0 + ", " +
+                                      convertQualificationName((String) inputTable.getValueAt(i,0)) + ", " +
+                                      employeeID + ", " +
+                                      checkTablesContent(inputTable.getValueAt(i,5)) + ", " +
+                                      convertQualifiedBoolean((Boolean)inputTable.getValueAt(i,1)) + ", " +
+                                      convertQualifiedBoolean((Boolean)inputTable.getValueAt(i, 2)) + ", " +
+                                      convertQualifiedBoolean((Boolean)inputTable.getValueAt(i,3)) + ", " +
+                                      convertQualifiedBoolean((Boolean)inputTable.getValueAt(i, 4)) + ")";
+
+                      System.out.println(insertQuery);
+                      insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
+                      insertQStatement.executeUpdate();
+                  }
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputTable;
+    }
+
+    public int convertQualificationName(String inputString){
+
+        int qualifID = 0;
+        String QUI_query = "SELECT * FROM dbo.Courses WHERE Course = N'" + inputString+"'";
+
+        try {
+
+            Statement QID_st = MineOperations.conn.createStatement();
+            ResultSet QID_resultSet = QID_st.executeQuery(QUI_query);
+
+            while (QID_resultSet.next()){
+                qualifID = QID_resultSet.getInt("CoarseNo");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        System.out.println(QUI_query);
+        System.out.println(qualifID);
+        return qualifID;
+    }
+
+    private int convertQualifiedBoolean(boolean inputBool){
+        int boolInt = 0;
+
+        if (!inputBool){
+            boolInt = 0;
+        } else {
+            boolInt = 1;
+        }
+
+        return boolInt;
+    }
 }

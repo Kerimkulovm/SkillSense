@@ -47,11 +47,11 @@ public class EmployeeInfo extends JPanel {
 
     JDatePickerImpl LastOr_dtp = null;
 
-    private BufferedImage logo_image, profile_image;
+    private BufferedImage logo_image;
     private JPanel photoPanel;
     private JPanel uploadPhotoPanel;
     private JPanel PhotoPathPanel;
-    JPanel pobj, innerPanel;
+    private JPanel pobj;
     private JTextField  photoPath;
 
     private JTable truckLicence_table, drivingLicence_table;
@@ -101,7 +101,6 @@ public class EmployeeInfo extends JPanel {
         surnameSearch_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("1234");
                 SearchBySurname searchBySurname = new SearchBySurname(tableID_text.getText());
                 searchBySurname.pack();
                 searchBySurname.setVisible(true);
@@ -194,7 +193,7 @@ public class EmployeeInfo extends JPanel {
         this.add(uploadPhotoPanel);
 
         PhotoPathPanel = new JPanel();
-        PhotoPathPanel = new JPanel();
+        PhotoPathPanel.setVisible(false);
         PhotoPathPanel.setBackground(Color.WHITE);
         PhotoPathPanel.setBounds(705, 350, 120, 30);
         PhotoPathPanel.setLayout(new BorderLayout());
@@ -203,14 +202,14 @@ public class EmployeeInfo extends JPanel {
 
         JPanel driverLicenceInfo_panel = new JPanel();
         driverLicenceInfo_panel.setBackground(Color.WHITE);
-        driverLicenceInfo_panel.setBounds(340, 390, 305, 200);
+        driverLicenceInfo_panel.setBounds(360, 390, 380, 200);
         driverLicenceInfo_panel.setLayout(new BorderLayout());
         driverLicenceInfo_panel.setBorder(new LineBorder(Color.orange));
         this.add(driverLicenceInfo_panel);
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
-        licenceInfoPanel.setBounds(20, 390,315,200);
+        licenceInfoPanel.setBounds(20, 390,330,200);
         licenceInfoPanel.setLayout(new BorderLayout());
         licenceInfoPanel.setBorder(new LineBorder(Color.orange));
         this.add(licenceInfoPanel);
@@ -274,7 +273,6 @@ public class EmployeeInfo extends JPanel {
         departmentRus_box.setEnabled(false);
         departmentRus_box = databaseQueries.loadDepartmentsBox(departmentRus_box);
 
-
         departmentRus_panel.add(departmentRus_box);
         inputPanel.add(departmentRus_box);
 
@@ -316,7 +314,6 @@ public class EmployeeInfo extends JPanel {
         lastOr_panel.add(lastOr_label);
         lastOr_panel.setBackground(Color.WHITE);
         infoLabels.add(lastOr_panel);
-
 
         UtilDateModel model = new UtilDateModel();
         Properties p = new Properties();
@@ -396,12 +393,22 @@ public class EmployeeInfo extends JPanel {
                         public void actionPerformed(ActionEvent e) {
                             Date selectedDate;
                             selectedDate = cellModel.getValue();
+                            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                            DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd");
-                            String convertedDate = dateformatter.format(selectedDate);
+                            if (cellModel.getValue() == null){
 
-                            System.out.println(convertedDate);
-                            truckLicence_table.setValueAt(convertedDate,truckLicence_table.getSelectedRow(),1);
+                                Date today = Calendar.getInstance().getTime();
+                                String todayDate = dateFormatter.format(today);
+                                System.out.println(todayDate);
+                                truckLicence_table.setValueAt(todayDate,truckLicence_table.getSelectedRow(),1);
+
+                            } else {
+
+                                String convertedDate = dateFormatter.format(selectedDate);
+                                System.out.println(convertedDate);
+                                truckLicence_table.setValueAt(convertedDate,truckLicence_table.getSelectedRow(),1);
+
+                            }
                             System.out.println(truckLicence_table.getValueAt(truckLicence_table.getSelectedRow(), 1));
                             tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
 
@@ -503,12 +510,20 @@ public class EmployeeInfo extends JPanel {
                         public void actionPerformed(ActionEvent e) {
                             Date selectedDate;
                             selectedDate = cellModel.getValue();
+                            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                            DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd");
-                            String convertedDate = dateformatter.format(selectedDate);
+                            if ( cellModel.getValue() == null ){
+                                Date today = Calendar.getInstance().getTime();
+                                String todayDate = dateFormatter.format(today);
+                                drivingLicence_table.setValueAt(todayDate,drivingLicence_table.getSelectedRow(),1);
+                                System.out.println(todayDate);
+                            }
+                            else {
+                                String convertedDate = dateFormatter.format(selectedDate);
+                                System.out.println(convertedDate);
+                                drivingLicence_table.setValueAt(convertedDate,drivingLicence_table.getSelectedRow(),1);
+                            }
 
-                            System.out.println(convertedDate);
-                            drivingLicence_table.setValueAt(convertedDate,drivingLicence_table.getSelectedRow(),1);
                             System.out.println(drivingLicence_table.getValueAt(drivingLicence_table.getSelectedRow(), 1));
                             tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
 
@@ -566,8 +581,8 @@ public class EmployeeInfo extends JPanel {
         edit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editFields();
                 editUser = true;
+                editFields();
             }
         });
 
@@ -579,8 +594,8 @@ public class EmployeeInfo extends JPanel {
         add_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                enableFields();
                 editUser = false;
+                enableFields();
             }
         });
 
@@ -625,11 +640,13 @@ public class EmployeeInfo extends JPanel {
 
                         databaseQueries.createEmployee();
                     }
+
+                    clearFields();
                 }
             }
         });
 
-        cancel_button = new JButton("Отмена");
+        cancel_button = new JButton("Сброс");
         cancel_button.setBackground(Color.RED);
         cancel_button.setForeground(Color.WHITE);
         cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
@@ -651,6 +668,7 @@ public class EmployeeInfo extends JPanel {
         select_button = new JButton("Выбрать фото");
         select_button.setForeground(Color.BLACK);
         select_button.setBackground(Color.WHITE);
+        select_button.setEnabled(false);
         select_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         uploadPhotoPanel.add(select_button);
         select_button.addActionListener(new ActionListener() {
@@ -683,6 +701,7 @@ public class EmployeeInfo extends JPanel {
         upload_button = new JButton("Загрузить");
         upload_button.setForeground(Color.BLACK);
         upload_button.setBackground(Color.WHITE);
+        upload_button.setEnabled(false);
         upload_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         uploadPhotoPanel.add(upload_button);
         upload_button.addActionListener(new ActionListener() {
@@ -828,6 +847,13 @@ public class EmployeeInfo extends JPanel {
 
         LastOr_dtp.setEnabled(false);
         LastOr_dtp.getJFormattedTextField().setText("");
+
+        select_button.setEnabled(false);
+        upload_button.setEnabled(false);
+
+        photoPanel.removeAll();
+        revalidate();
+        repaint();
     }
 
     private void enableFields(){
@@ -835,6 +861,9 @@ public class EmployeeInfo extends JPanel {
         edit_button.setEnabled(false);
         delete_button.setEnabled(false);
         add_button.setEnabled(false);
+
+        search_button.setEnabled(false);
+        surnameSearch_button.setEnabled(false);
 
         save_button.setEnabled(true);
 
@@ -852,8 +881,11 @@ public class EmployeeInfo extends JPanel {
         truckLicence_table.setEnabled(true);
         drivingLicence_table.setEnabled(true);
 
-        search_button.setEnabled(false);
-        surnameSearch_button.setEnabled(false);
+        System.out.println("Enabling buttons");
+
+        select_button.setEnabled(true);
+        upload_button.setEnabled(true);
+
         tableID_label.setForeground(Color.BLACK);
     }
 
@@ -862,9 +894,11 @@ public class EmployeeInfo extends JPanel {
         tableID_label.setForeground(Color.BLACK);
 
         search_button.setEnabled(false);
+        surnameSearch_button.setEnabled(false);
         add_button.setEnabled(false);
         edit_button.setEnabled(false);
         delete_button.setEnabled(false);
+
         save_button.setEnabled(true);
 
         nameRus_text.setEnabled(true);
@@ -878,6 +912,9 @@ public class EmployeeInfo extends JPanel {
         truckLicence_table.setEnabled(true);
 
         LastOr_dtp.setEnabled(true);
+
+        select_button.setEnabled(true);
+        upload_button.setEnabled(true);
     }
 
     private class SearchBySurname extends JFrame{

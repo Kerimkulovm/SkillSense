@@ -1,36 +1,47 @@
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 public class ViewQualifications  extends JPanel{
 
     private JButton search_button;
+    private JButton editButton;
+    private JButton saveButton;
+    private JButton cancelButton;
+    private JButton  surnameSearch_button;
 
-    private JTextField tableID_text,
-    nameRus_text;
+    public DatabaseQueries databaseQueries = new DatabaseQueries();
+
+    private JTextField tableID_text;
+    private JTextField nameRus_text;
+
+    private List<String> coursesList = new ArrayList<>();
+
+    public int numOfCourses;
 
     private JLabel tableID_label;
 
     private BufferedImage logo_image;
 
-    private JComboBox departmentRus_box,
-            shiftRus_box,
-            positionRus_box,
-            terminatedStatus_box;
+    private TrucksTableModel courses_tableModel;
+    private JTable courseQualifications_table;
+    private JTable practiceHours_table;
 
-    private DefaultComboBoxModel shiftsModelBox;
+
 
     public ViewQualifications(){
 
@@ -56,7 +67,7 @@ public class ViewQualifications  extends JPanel{
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
         searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
-        searchEmployee_panel.setBounds(20, 120, 450, 50);
+        searchEmployee_panel.setBounds(20, 120, 520, 50);
         this.add(searchEmployee_panel);
 
         JPanel tableID_panel = new JPanel();
@@ -65,6 +76,20 @@ public class ViewQualifications  extends JPanel{
         tableID_panel.setBackground(Color.WHITE);
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
+
+        surnameSearch_button = new JButton("Ф.И.О.");
+        surnameSearch_button.setForeground(Color.RED);
+        surnameSearch_button.setBackground(Color.WHITE);
+        tableID_panel.add(surnameSearch_button);
+        searchEmployee_panel.add(surnameSearch_button);
+        surnameSearch_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchBySurname searchBySurname = new SearchBySurname(tableID_text.getText());
+                searchBySurname.pack();
+                searchBySurname.setVisible(true);
+            }
+        });
 
         tableID_text = new JTextField();
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
@@ -76,6 +101,19 @@ public class ViewQualifications  extends JPanel{
         search_button.setBackground(Color.WHITE);
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
+        search_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
+                } else {
+                    databaseQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(databaseQueries.getEmployeeName());
+                    courseQualifications_table = databaseQueries.loadAcceptedQualifications(courseQualifications_table);
+                    editButton.setEnabled(true);
+                }
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,7 +121,7 @@ public class ViewQualifications  extends JPanel{
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
         employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Персональная Информация"));
-        employeeInfo_panel.setBounds(20, 175, 450, 155);
+        employeeInfo_panel.setBounds(20, 175, 520, 50);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -99,24 +137,82 @@ public class ViewQualifications  extends JPanel{
 
         JPanel photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(480, 120, 210, 260);
+        photoPanel.setBounds(550, 120, 210, 260);
         photoPanel.setLayout(new BorderLayout());
         photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
-        JPanel transportAccessPanel = new JPanel();
-        transportAccessPanel.setBackground(Color.WHITE);
-        transportAccessPanel.setBounds(20, 335,450,310);
-        transportAccessPanel.setLayout(new BorderLayout());
-        transportAccessPanel.setBorder(new LineBorder(Color.orange));
-        this.add(transportAccessPanel);
+        JPanel courseAccessPanel = new JPanel();
+        courseAccessPanel.setBackground(Color.WHITE);
+        courseAccessPanel.setBounds(20, 235,520,450);
+        courseAccessPanel.setLayout(new BorderLayout());
+        courseAccessPanel.setBorder(new LineBorder(Color.orange));
+        this.add(courseAccessPanel);
 
-        JPanel equipmentPanel = new JPanel();
-        equipmentPanel.setBackground(Color.WHITE);
-        equipmentPanel.setBounds(480, 390, 210, 200);
-        equipmentPanel.setLayout(new BorderLayout());
-        equipmentPanel.setBorder(new LineBorder(Color.orange));
-        this.add(equipmentPanel);
+
+        JPanel practiceHoursPanel = new JPanel();
+        practiceHoursPanel.setBackground(Color.WHITE);
+        practiceHoursPanel.setBounds(550, 390, 300, 200);
+        practiceHoursPanel.setLayout(new BorderLayout());
+        practiceHoursPanel.setBorder(new LineBorder(Color.orange));
+        this.add(practiceHoursPanel);
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setBackground(Color.WHITE);
+        buttonsPanel.setBounds(550,600, 210,80);
+        buttonsPanel.setLayout(new GridLayout(2,1));
+        buttonsPanel.setBorder(new LineBorder(Color.orange));
+        this.add(buttonsPanel);
+
+        JPanel firstLineButtons = new JPanel();
+        firstLineButtons.setBackground(Color.WHITE);
+        firstLineButtons.setLayout(new GridLayout(1,2));
+        buttonsPanel.add(firstLineButtons);
+
+        JPanel secondLineButtons = new JPanel();
+        secondLineButtons.setBackground(Color.WHITE);
+        secondLineButtons.setLayout(new BorderLayout());
+        buttonsPanel.add(secondLineButtons);
+
+        editButton = new JButton("Изменить");
+        editButton.setForeground(Color.BLUE);
+        editButton.setBackground(Color.WHITE);
+        firstLineButtons.add(editButton);
+        editButton.setEnabled(false);
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editFields();
+            }
+        });
+
+        saveButton = new JButton("Сохранить");
+        saveButton.setForeground(Color.GREEN);
+        saveButton.setBackground(Color.WHITE);
+        saveButton.setEnabled(false);
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                courseQualifications_table = databaseQueries.saveAcceptedQualifications(courseQualifications_table);
+                JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике успешно изменена!");
+                clearFields();
+            }
+        });
+        firstLineButtons.add(saveButton);
+
+        cancelButton = new JButton("Сброс");
+        cancelButton.setForeground(Color.RED);
+        cancelButton.setBackground(Color.WHITE);
+        secondLineButtons.add(cancelButton);
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearFields();
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -135,124 +231,150 @@ public class ViewQualifications  extends JPanel{
         inputPanel.add(nameRus_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Initialize practice hours table
+        List<String> practiceHours_list;
+        DefaultTableModel practiceHours_model = new DefaultTableModel();
 
-        JPanel positionRus_panel = new JPanel();
-        JLabel positionRus_label = new JLabel("Должность: ");
-        positionRus_panel.add(positionRus_label);
-        positionRus_panel.setBackground(Color.WHITE);
-        infoLabels.add(positionRus_panel);
 
-        positionRus_box = new JComboBox();
-        positionRus_box.setBackground(Color.WHITE);
-        positionRus_box.setEnabled(false);
-        try {
+        practiceHours_table = new JTable();
 
-            String positionRus_query = "SELECT * FROM dbo.EnTitles";
-            Statement positionRus_statement = MineOperations.conn.createStatement();
-            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
 
-            while(positionRus_result.next())
-            {
-                String addPositionRusItem = positionRus_result.getString("RusTitle");
-                positionRus_box.addItem(addPositionRusItem);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Initialize table of accepted course qualifications
+        List<String> employeeQualifiedCourses_list = databaseQueries.loadCourses();
+        numOfCourses = employeeQualifiedCourses_list.size();
+
+        courses_tableModel = new TrucksTableModel();
+        courseQualifications_table = new JTable(courses_tableModel);
+        courseQualifications_table.setEnabled(false);
+        courseQualifications_table.setRowHeight(20);
+        courseQualifications_table.setBackground(Color.WHITE);
+        DefaultTableCellRenderer courseQualification_cellRenderer = new DefaultTableCellRenderer();
+        courseQualification_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
+        courseQualifications_table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (editButton.isEnabled()){
+                    if (e.getClickCount() == 1){
+                        if (courseQualifications_table.getSelectedColumn() > 0 && courseQualifications_table.getSelectedColumn() < 5){
+                            if (!(Boolean) courseQualifications_table.getValueAt(courseQualifications_table.getSelectedRow(), courseQualifications_table.getSelectedColumn())){
+                                courseQualifications_table.setValueAt(false, courseQualifications_table.getSelectedRow(), courseQualifications_table.getSelectedColumn());
+                                courseQualifications_table.setValueAt("", courseQualifications_table.getSelectedRow(), 5);
+                            } else {
+                                int c = 0;
+                                for (int i = 1; i < 5; i ++){
+                                    if ((Boolean) courseQualifications_table.getValueAt(courseQualifications_table.getSelectedRow(), i)){
+                                        c++;
+                                        if (c == 2){
+                                            System.out.println("Two boxes are selected");
+                                            for (int j = 1; j < 5; j++){
+                                                courseQualifications_table.setValueAt(false, courseQualifications_table.getSelectedRow(), j);
+                                            }
+                                            courseQualifications_table.setValueAt(true, courseQualifications_table.getSelectedRow(), courseQualifications_table.getSelectedColumn());
+                                        }
+                                    }
+                                }
+
+                                JFrame tempDateFrame = new JFrame();
+
+                                JPanel dateCellPanel = new JPanel();
+                                dateCellPanel.setBounds(0,0,250,200);
+                                dateCellPanel.setBackground(Color.WHITE);
+                                tempDateFrame.add(dateCellPanel);
+
+                                JPanel buttonsPanel = new JPanel();
+                                buttonsPanel.setBounds(0,200,250,30);
+                                buttonsPanel.setBackground(Color.WHITE);
+                                buttonsPanel.setLayout(new GridLayout(1,2));
+                                tempDateFrame.add(buttonsPanel);
+
+                                UtilDateModel cellModel = new UtilDateModel();
+                                Properties pr = new Properties();
+                                pr.put("text.today", "Today");
+                                pr.put("text.month", "Month");
+                                pr.put("text.year", "Year");
+
+                                JDatePanelImpl cellDatePicker = new JDatePanelImpl(cellModel,pr);
+                                dateCellPanel.add(cellDatePicker);
+
+                                JButton okButton = new JButton("OK");
+                                okButton.setBackground(Color.WHITE);
+                                okButton.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        Date selectedDate;
+                                        selectedDate = cellModel.getValue();
+                                        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        if (cellModel.getValue() == null){
+                                            Date today = Calendar.getInstance().getTime();
+                                            String todayDate = dateFormatter.format(today);
+
+                                            System.out.println(todayDate);
+                                            courseQualifications_table.setValueAt(todayDate, courseQualifications_table.getSelectedRow(),5);
+
+                                        } else {
+                                            String convertedDate = dateFormatter.format(selectedDate);
+                                            System.out.println(convertedDate);
+                                            courseQualifications_table.setValueAt(convertedDate, courseQualifications_table.getSelectedRow(),5);
+                                        }
+                                        System.out.println(courseQualifications_table.getValueAt(courseQualifications_table.getSelectedRow(), 5));
+                                        tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+                                    }
+                                });
+
+                                buttonsPanel.add(okButton);
+
+                                JButton clearButton =new JButton("Стереть");
+                                clearButton.setBackground(Color.WHITE);
+                                clearButton.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        courseQualifications_table.setValueAt(null, courseQualifications_table.getSelectedRow(),5);
+                                        courseQualifications_table.setValueAt(false, courseQualifications_table.getSelectedRow(), courseQualifications_table.getSelectedColumn());
+                                        tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
+                                    }
+                                });
+                                buttonsPanel.add(clearButton);
+
+                                tempDateFrame.setPreferredSize(new Dimension(260,270));
+                                tempDateFrame.setLocation(new Point(300,300));
+                                tempDateFrame.setLayout(null);
+                                tempDateFrame.pack();
+                                tempDateFrame.setVisible(true);
+                            }
+                        }
+                    }
+                }
             }
-        }
-        catch (SQLException ignored){
-
-        }
-        positionRus_panel.add(positionRus_box);
-        inputPanel.add(positionRus_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel departmentRus_panel = new JPanel();
-        JLabel departmentRus_label = new JLabel("Отдел: ");
-        departmentRus_panel.add(departmentRus_label);
-        departmentRus_panel.setBackground(Color.WHITE);
-        infoLabels.add(departmentRus_panel);
-
-        departmentRus_box = new JComboBox();
-        departmentRus_box.setBackground(Color.WHITE);
-        departmentRus_box.setEnabled(false);
-
-        try{
-
-            String departmentRus_query = "SELECT * FROM dbo.Departments";
-            Statement departmentRus_statement = MineOperations.conn.createStatement();
-            ResultSet departmentRus_result = departmentRus_statement.executeQuery((departmentRus_query));
-
-            while(departmentRus_result.next()){
-                String addDepartmentRus = departmentRus_result.getString("DepartmentNameRu");
-                departmentRus_box.addItem(addDepartmentRus);
-            }
-        }
-
-        catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        departmentRus_panel.add(departmentRus_box);
-        inputPanel.add(departmentRus_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel shiftEng_panel = new JPanel();
-        JLabel shift_label = new JLabel("Смена: ");
-        shiftEng_panel.add(shift_label);
-        shiftEng_panel.setBackground(Color.WHITE);
-        infoLabels.add(shiftEng_panel);
-
-        String[] shifts = new String[]{"Нет данных","A   Crew","B   Crew","C   Crew","D   Crew"};
-        shiftsModelBox = new DefaultComboBoxModel(shifts);
-        shiftRus_box = new JComboBox(shiftsModelBox);
-        shiftRus_box.setBackground(Color.WHITE);
-        shiftRus_box.setEnabled(false);
-        shiftEng_panel.add(shiftRus_box);
-        inputPanel.add(shiftRus_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel terminated_panel = new JPanel();
-        JLabel terminated_label = new JLabel("Статус: ");
-        terminated_panel.add(terminated_label);
-        terminated_panel.setBackground(Color.WHITE);
-        infoLabels.add(terminated_panel);
-
-        String[] status = new String[]{"Работает","Уволен"};
-        terminatedStatus_box = new JComboBox(status);
-        terminatedStatus_box.setBackground(Color.WHITE);
-        terminatedStatus_box.setEnabled(false);
-        terminated_panel.add(terminatedStatus_box);
-        inputPanel.add(terminatedStatus_box);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //Initialize table
-        JTable transportQualifications_table = new JTable(new TrucksTableModel());
-        transportQualifications_table.setRowHeight(20);
-        transportQualifications_table.setBackground(Color.WHITE);
+        });
 
         //Set Column Width
         TableColumn column = null;
-        for (int i = 0; i < 4; i++) {
-            column = transportQualifications_table.getColumnModel().getColumn(i);
+        for (int i = 0; i < 6; i++) {
+            column = courseQualifications_table.getColumnModel().getColumn(i);
             if (i == 0) {
-                column.setPreferredWidth(100); //third column is bigger
+                column.setPreferredWidth(300); //third column is bigger
+                column.setCellRenderer(courseQualification_cellRenderer);
+            } else if (i == 5){
+                column.setPreferredWidth(100);
+                column.setCellRenderer(courseQualification_cellRenderer);
             } else {
-                column.setPreferredWidth(50);
+                column.setPreferredWidth(30);
             }
         }
 
         //Cell Selection
         String.format("Lead Selection: %d, %d. ",
-                transportQualifications_table.getSelectionModel().getLeadSelectionIndex(),
-                transportQualifications_table.getColumnModel().getSelectionModel().getLeadSelectionIndex());
+                courseQualifications_table.getSelectionModel().getLeadSelectionIndex(),
+                courseQualifications_table.getColumnModel().getSelectionModel().getLeadSelectionIndex());
 
-        JScrollPane tQ_sctollPane = new JScrollPane(transportQualifications_table);
-        transportQualifications_table.setFillsViewportHeight(true);
-        transportAccessPanel.add(tQ_sctollPane);
+        JScrollPane tQ_sctollPane = new JScrollPane(courseQualifications_table);
+        courseQualifications_table.setFillsViewportHeight(true);
+        courseAccessPanel.add(tQ_sctollPane);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton exit_button = new JButton("Выход");
@@ -263,9 +385,38 @@ public class ViewQualifications  extends JPanel{
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                clearFields();
                 MineOperations.card.show(MineOperations.cardPane,"Home Page");
             }
         });
+    }
+
+    public void editFields(){
+        courseQualifications_table.setEnabled(true);
+        saveButton.setEnabled(true);
+        search_button.setEnabled(false);
+    }
+
+    public void clearFields(){
+
+        editButton.setEnabled(false);
+        saveButton.setEnabled(false);
+
+        nameRus_text.setText("");
+        tableID_text.setText("");
+
+        for (int i = 0; i < courseQualifications_table.getRowCount(); i++){
+            courseQualifications_table.setValueAt(false, i,1);
+            courseQualifications_table.setValueAt(false, i,2);
+            courseQualifications_table.setValueAt(false, i,3);
+            courseQualifications_table.setValueAt(false, i,4);
+            courseQualifications_table.setValueAt("", i,5);
+        }
+
+        courseQualifications_table.setEnabled(false);
+
+        search_button.setEnabled(true);
+
     }
 
     protected void paintComponent(Graphics g){
@@ -280,25 +431,28 @@ public class ViewQualifications  extends JPanel{
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
-    class TrucksTableModel extends AbstractTableModel {
-        private String[] columnNames = {"Транспорт","Учеба","Одобрен","Квалифицирован"};
-        private Object[][] data = {{"CAT-785C", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT-789C", new Boolean(false), new Boolean(false), new Boolean(false) },
-                {"CAT-789D", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT D10R/T", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 834H/K", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 16 H/M", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 24M", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 330", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 374", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 992K", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT M320 D2", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"CAT 998K", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"Liebherr R 9350", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"Hitachi-3600-6", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"ДСК", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"Трал CAT 777B", new Boolean(false), new Boolean(false), new Boolean(false)},
-                {"Liebherr R 9350-411", new Boolean(false), new Boolean(false), new Boolean(false)}};
+    public class TrucksTableModel extends AbstractTableModel {
+
+        private final String[] columnNames = {"Транспорт","E","Q","A", "T", "Дата"};
+        private final Object[][] data = new Object[numOfCourses][6];
+
+        public TrucksTableModel(){
+
+            coursesList = databaseQueries.loadCourses();
+
+            for (String s:coursesList) {
+                System.out.println(s);
+            }
+
+            for (int i = 0; i < numOfCourses; i++){
+                data[i][0] = coursesList.get(i);
+                data[i][1] = false;
+                data[i][2] = false;
+                data[i][3] = false;
+                data[i][4] = false;
+                data[i][5] = "";
+            }
+        }
 
         public int getColumnCount() {
             return columnNames.length;
@@ -354,10 +508,128 @@ public class ViewQualifications  extends JPanel{
                 setText((value == null) ? "" : formatter.format(value));
             }
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
+
+    private class SearchBySurname extends JFrame{
+
+        private JTable listOfEmployees_table;
+
+        private List<String> employeeNames_list = new ArrayList<>();
+        private List<Integer> employeeID_list = new ArrayList<>();
+
+        private JPanel pageTitlePanel, tablePanel, backgroundPanel;
+
+        private JLabel foundEmployees_JLabel;
+
+        private int numOfRows = 1, numOfColumns = 2;
+
+        public SearchBySurname(String surname){
+
+            findSurnames(surname);
+            buildFrame();
+            createTable();
+
+            this.setPreferredSize(new Dimension(400, 600));
+            this.setFocusableWindowState(true);
+            this.setAutoRequestFocus(true);
+            this.setLocation(900,40);
+            this.setLayout(null);
+        }
+
+        private void buildFrame(){
+
+            pageTitlePanel = new JPanel();
+            pageTitlePanel.setBounds(0,0,400,50);
+            pageTitlePanel.setBackground(Color.WHITE);
+            pageTitlePanel.setVisible(true);
+            this.add(pageTitlePanel);
+
+            foundEmployees_JLabel = new JLabel("Найденные Сотрудники");
+            foundEmployees_JLabel.setFont(new Font("Helvetica",Font.BOLD, 20));
+            pageTitlePanel.add(foundEmployees_JLabel);
+
+            tablePanel = new JPanel();
+            tablePanel.setBackground(Color.WHITE);
+            tablePanel.setBounds(25,50,350,500);
+            tablePanel.setLayout(new BorderLayout());
+            tablePanel.setBorder(new LineBorder(Color.BLACK));
+            tablePanel.setVisible(true);
+            this.add(tablePanel);
+
+            backgroundPanel = new JPanel();
+            backgroundPanel.setBounds(0,0,400,600);
+            backgroundPanel.setBackground(Color.WHITE);
+            this.add(backgroundPanel);
+        }
+
+        private void createTable(){
+
+            DefaultTableModel listOfEmployees_model = new DefaultTableModel(numOfRows ,numOfColumns){
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            };
+            DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
+            centerRederer.setHorizontalAlignment(JLabel.CENTER);
+
+            listOfEmployees_table = new JTable(listOfEmployees_model);
+            listOfEmployees_table.setBorder(new LineBorder(Color.BLACK));
+            listOfEmployees_table.setBackground(Color.WHITE);
+            listOfEmployees_table.setRowHeight(25);
+            listOfEmployees_table.setVisible(true);
+
+            JTableHeader listHeader= listOfEmployees_table.getTableHeader();
+            listHeader.setBorder(new LineBorder(Color.BLACK));
+            listHeader.setBackground(Color.WHITE);
+            listHeader.setFont(new Font("Helvetica", Font.BOLD,12));
+
+            TableColumnModel listOfEmployees_columns = listHeader.getColumnModel();
+
+            TableColumn tabCol0 = listOfEmployees_columns.getColumn(0);
+            tabCol0.setHeaderValue("Табельный No");
+            tabCol0.setCellRenderer(centerRederer);
+            tabCol0.setPreferredWidth(10);
+
+            for (int i = 0; i < numOfRows; i++){
+                listOfEmployees_table.setValueAt(employeeID_list.get(i),i,0);
+            }
+
+            TableColumn tabCol1 = listOfEmployees_columns.getColumn(1);
+            tabCol1.setCellRenderer(centerRederer);
+            tabCol1.setHeaderValue("Ф.И.О");
+
+            for (int i = 0; i < numOfRows; i++){
+                listOfEmployees_table.setValueAt(employeeNames_list.get(i),i,1);
+            }
+
+
+            listOfEmployees_table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 1){
+                        int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
+                        System.out.println(listOfEmployees_table.getValueAt(index1, 0));
+                        tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                    }
+                }
+            });
+
+            tablePanel.add(new JScrollPane(listOfEmployees_table));
+        }
+
+        private void findSurnames(String surname){
+
+            if (surname == null){
+                JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите фамилию или имя");
+            } else {
+                databaseQueries.findBySurname(surname);
+                employeeNames_list = databaseQueries.getListOfSurnames();
+                employeeID_list = databaseQueries.getListOfID();
+                numOfRows = employeeNames_list.size();
+            }
+        }
+    }
+
+
 }
-//String[] mineTransport_arr = new String[]{"CAT-785C", "CAT-789C", "CAT-789D" , "CAT D10R/T",
-//        "CAT 834H/K", "CAT 16 H/M", "CAT 24M", "CAT 330", "CAT 374", "CAT 992K", "CAT M320 D2",
-//        "CAT 998K", "Liebherr R 9350", "Hitachi-3600-6", "ДСК","Трал CAT 777B", "Liebherr R 9350-411"};
-
-
