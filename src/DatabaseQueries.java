@@ -5,9 +5,11 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.State;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -821,5 +823,53 @@ public class DatabaseQueries {
         }
 
         return boolInt;
+    }
+
+    public JTable loadPracticedHoursJTable(JTable inputTable){
+
+        for (int i = 0; i < inputTable.getRowCount(); i++){
+            inputTable.setValueAt("",i,0);
+            inputTable.setValueAt(null,i,1);
+            inputTable.setValueAt(null,i,2);
+            inputTable.setValueAt(null,i,3);
+            inputTable.setValueAt(null,i,4);
+
+        }
+
+         try {
+            String loadHours_query = "select t.employeeID, t.coarse, c.Course, sum(thours) as thours, sum(Phours) as Phours, sum(ExpHours) as Ehours, sum(fhours) as fhours   from TrainingData t " +
+                    "left join dbo.Courses c on c.coarseNo = t.coarse " +
+                    "where c.IsActive = 1 and  t.employeeID = '" + employeeID + "' " +
+                    "group by  t.employeeID, t.coarse, c.Course";
+
+             System.out.println(loadHours_query);
+
+            Statement practicedHoursStatement = MineOperations.conn.createStatement();
+            ResultSet practicedHoursResult = practicedHoursStatement.executeQuery(loadHours_query);
+
+            int courseNum = 0;
+             DecimalFormat format = new DecimalFormat("0.#");
+             while (practicedHoursResult.next()){
+
+                String courseName = practicedHoursResult.getString("Course");
+                double tHours = practicedHoursResult.getDouble("thours");
+                double pHours = practicedHoursResult.getDouble("Phours");
+                double eHours = practicedHoursResult.getDouble("Ehours");
+                double fHours = practicedHoursResult.getDouble("fhours");
+
+                inputTable.setValueAt(courseName,courseNum,0);
+                inputTable.setValueAt(format.format(tHours),courseNum,1);
+                inputTable.setValueAt(format.format(pHours),courseNum,2);
+                inputTable.setValueAt(format.format(eHours),courseNum,3);
+                inputTable.setValueAt(format.format(fHours),courseNum,4);
+                courseNum++;
+             }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputTable;
     }
 }

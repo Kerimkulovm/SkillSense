@@ -49,9 +49,7 @@ public class Courses extends JPanel {
 
         }
 
-
         setLayout(null);
-
         JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Курсы'</big></html>");
         titleEng.setBounds(160, 0, 600, 100);
         titleEng.setBackground(Color.WHITE);
@@ -73,13 +71,9 @@ public class Courses extends JPanel {
             }
         });
 
-
-
-
-
         coursesList_panel = new JPanel();
         coursesList_panel.setBackground(Color.WHITE);
-        coursesList_panel.setBounds(20, 120, 550, 500);
+        coursesList_panel.setBounds(20, 120, 650, 500);
         coursesList_panel.setLayout(new BorderLayout());
         coursesList_panel.setBorder(new LineBorder(Color.BLACK));
         coursesList_panel.setVisible(true);
@@ -94,8 +88,6 @@ public class Courses extends JPanel {
         buttons_panel.setLayout(new GridLayout(1, 5));
         buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(buttons_panel);
-
-
 
         edit_button = new JButton("Изменить");
         edit_button.setBackground(Color.GREEN);
@@ -112,8 +104,6 @@ public class Courses extends JPanel {
             }
         });
 
-
-
         add_button = new JButton("Создать");
         add_button.setBackground(Color.GREEN);
         add_button.setForeground(Color.BLACK);
@@ -122,7 +112,6 @@ public class Courses extends JPanel {
         add_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("1234");
                 Courses.createNewCourse newCourse = new Courses.createNewCourse();
                 newCourse.pack();
                 newCourse.setVisible(true);
@@ -139,7 +128,6 @@ public class Courses extends JPanel {
             Statement searchStatement = MineOperations.conn.createStatement();
             String query_text = "select coarseNo, Course, isActive from Courses where course is not null order by CoarseNo";
 
-            System.out.println(query_text);
             ResultSet rs = searchStatement.executeQuery(query_text);
 
             if (rs.next()){
@@ -162,9 +150,6 @@ public class Courses extends JPanel {
         }
 
         numOfRows = coursesName_list.size();
-
-
-
         DefaultTableModel listOfCourses_model = new DefaultTableModel(numOfRows ,numOfColumns);
 
 
@@ -188,7 +173,6 @@ public class Courses extends JPanel {
         tabCol0.setHeaderValue("Номер");
         tabCol0.setCellRenderer(centerRederer);
         tabCol0.setPreferredWidth(10);
-
         for (int i = 0; i < numOfRows; i++){
             listOfCourses_table.setValueAt(coursesNum_list.get(i),i,0);
         }
@@ -196,8 +180,7 @@ public class Courses extends JPanel {
         TableColumn tabCol1 = listOfCourses_columns.getColumn(1);
         tabCol1.setHeaderValue("Курс");
         tabCol1.setCellRenderer(centerRederer);
-        tabCol1.setPreferredWidth(10);
-
+        tabCol1.setPreferredWidth(200);
         for (int i = 0; i < numOfRows; i++){
             listOfCourses_table.setValueAt(coursesName_list.get(i),i,1);
         }
@@ -205,16 +188,13 @@ public class Courses extends JPanel {
         TableColumn tabCol2 = listOfCourses_columns.getColumn(2);
         tabCol2.setCellRenderer(centerRederer);
         tabCol2.setHeaderValue("Активный");
-
+        tabCol2.setPreferredWidth(10);
         for (int i = 0; i < numOfRows; i++){
             String v = coursesActive_list.get(i) == 0 ? "Нет" : "Да";
             listOfCourses_table.setValueAt(v ,i,2);
         }
 
-
-
         coursesList_panel.add(new JScrollPane(listOfCourses_table));
-
         listOfCourses_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -230,7 +210,6 @@ public class Courses extends JPanel {
             }
         });
     }
-
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // paint children
@@ -367,11 +346,8 @@ public class Courses extends JPanel {
 
         private List<String> employeeNames_list = new ArrayList<>();
         private List<Integer> employeeID_list = new ArrayList<>();
-
         private JPanel  newCoursePanel, newCourseButtonsPanel;
-
         private int numOfRows = 1, numOfColumns = 2;
-
         public editCourse(){
 
             buildFrame();
@@ -391,12 +367,12 @@ public class Courses extends JPanel {
             newCoursePanel.setLayout(new BoxLayout(newCoursePanel, BoxLayout.X_AXIS));
             newCoursePanel.setBorder(new LineBorder(Color.BLACK));
             newCoursePanel.setVisible(true);
+
             this.add(newCoursePanel);
 
             JLabel newCourse_label = new JLabel(hiddenCourseName_text.getText());
 
             newCoursePanel.add(newCourse_label);
-
 
             String[] status = new String[]{"Да","Нет"};
             isActive_box = new JComboBox(status);

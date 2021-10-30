@@ -41,7 +41,9 @@ public class ViewQualifications  extends JPanel{
     private JTable courseQualifications_table;
     private JTable practiceHours_table;
 
+    private JPanel photoPanel;
 
+    List<String> employeeQualifiedCourses_list = databaseQueries.loadCourses();
 
     public ViewQualifications(){
 
@@ -110,6 +112,19 @@ public class ViewQualifications  extends JPanel{
                     databaseQueries.queryEmployeeData(tableID_text.getText());
                     nameRus_text.setText(databaseQueries.getEmployeeName());
                     courseQualifications_table = databaseQueries.loadAcceptedQualifications(courseQualifications_table);
+                    practiceHours_table = databaseQueries.loadPracticedHoursJTable(practiceHours_table);
+
+                    if (databaseQueries.getPhotoLabel() != null){
+                        photoPanel.removeAll();
+                        photoPanel.add(databaseQueries.getPhotoLabel());
+                        revalidate();
+                        repaint();
+                    }else {
+                        photoPanel.removeAll();
+                        revalidate();
+                        repaint();
+                    }
+
                     editButton.setEnabled(true);
                 }
             }
@@ -135,7 +150,7 @@ public class ViewQualifications  extends JPanel{
         inputPanel.setBackground(Color.WHITE);
         employeeInfo_panel.add(inputPanel);
 
-        JPanel photoPanel = new JPanel();
+        photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
         photoPanel.setBounds(550, 120, 210, 260);
         photoPanel.setLayout(new BorderLayout());
@@ -232,19 +247,54 @@ public class ViewQualifications  extends JPanel{
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Initialize practice hours table
-        List<String> practiceHours_list;
-        DefaultTableModel practiceHours_model = new DefaultTableModel();
+        DefaultTableModel practiceHours_model = new DefaultTableModel(50,5);
+        DefaultTableCellRenderer practiceHoursRendered = new DefaultTableCellRenderer();
+        practiceHoursRendered.setHorizontalAlignment(JLabel.CENTER);
 
+        practiceHours_table = new JTable(practiceHours_model);
+        practiceHours_table.setBorder(new LineBorder(Color.BLACK));
+        practiceHours_table.setEnabled(false);
+        practiceHours_table.setBackground(Color.WHITE);
+        practiceHours_table.setRowHeight(20);
 
-        practiceHours_table = new JTable();
+        JTableHeader practiceHours_header = practiceHours_table.getTableHeader();
+        practiceHours_header.setBorder(new LineBorder(Color.BLACK));
+        practiceHours_header.setBackground(Color.WHITE);
+        practiceHours_header.setFont(new Font("Helvetica", Font.BOLD,12));
 
+        TableColumnModel practiceHours_columns = practiceHours_header.getColumnModel();
 
+        TableColumn tabCol0 = practiceHours_columns.getColumn(0);
+        tabCol0.setHeaderValue("Транспорт");
+        tabCol0.setCellRenderer(practiceHoursRendered);
+        tabCol0.setPreferredWidth(50);
 
+        TableColumn tabCol1 = practiceHours_columns.getColumn(1);
+        tabCol1.setHeaderValue("Th");
+        tabCol1.setCellRenderer(practiceHoursRendered);
+        tabCol1.setPreferredWidth(10);
+
+        TableColumn tabCol2 = practiceHours_columns.getColumn(2);
+        tabCol2.setHeaderValue("Ph");
+        tabCol2.setCellRenderer(practiceHoursRendered);
+        tabCol2.setPreferredWidth(10);
+
+        TableColumn tabCol3 = practiceHours_columns.getColumn(3);
+        tabCol3.setHeaderValue("Eh");
+        tabCol3.setCellRenderer(practiceHoursRendered);
+        tabCol3.setPreferredWidth(10);
+
+        TableColumn tabCol4 = practiceHours_columns.getColumn(4);
+        tabCol4.setHeaderValue("Fh");
+        tabCol4.setCellRenderer(practiceHoursRendered);
+        tabCol4.setPreferredWidth(10);
+
+        JScrollPane practice_scrollPane = new JScrollPane(practiceHours_table);
+        practice_scrollPane.setBackground(Color.WHITE);
+        practiceHoursPanel.add(practice_scrollPane);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Initialize table of accepted course qualifications
-        List<String> employeeQualifiedCourses_list = databaseQueries.loadCourses();
         numOfCourses = employeeQualifiedCourses_list.size();
-
         courses_tableModel = new TrucksTableModel();
         courseQualifications_table = new JTable(courses_tableModel);
         courseQualifications_table.setEnabled(false);
@@ -374,8 +424,6 @@ public class ViewQualifications  extends JPanel{
         courseQualifications_table.setFillsViewportHeight(true);
         courseAccessPanel.add(tQ_sctollPane);
 
-
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
@@ -413,7 +461,18 @@ public class ViewQualifications  extends JPanel{
             courseQualifications_table.setValueAt("", i,5);
         }
 
+        for (int i = 0; i < practiceHours_table.getRowCount(); i++){
+            practiceHours_table.setValueAt("",i,0);
+            practiceHours_table.setValueAt(null,i,1);
+            practiceHours_table.setValueAt(null,i,2);
+            practiceHours_table.setValueAt(null,i,3);
+            practiceHours_table.setValueAt(null,i,4);
+        }
+
         courseQualifications_table.setEnabled(false);
+        photoPanel.removeAll();
+        revalidate();
+        repaint();
 
         search_button.setEnabled(true);
 
@@ -433,7 +492,7 @@ public class ViewQualifications  extends JPanel{
 
     public class TrucksTableModel extends AbstractTableModel {
 
-        private final String[] columnNames = {"Транспорт","E","Q","A", "T", "Дата"};
+        private final String[] columnNames = {"Курс","E","Q","A", "T", "Дата"};
         private final Object[][] data = new Object[numOfCourses][6];
 
         public TrucksTableModel(){
