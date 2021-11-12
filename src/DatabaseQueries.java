@@ -968,10 +968,7 @@ public class DatabaseQueries {
     public boolean saveSRT(String empId, int CourseId, int instructorId, String lastDate, int mark_text, int fHours, int tHours){
         boolean res = false;
         try{
-            /*String deleteQuery = "DELETE FROM SRT WHERE employeeId= '" + empId +"'  and coarse = " + CourseId + " and lastDate = '"+lastDate+"'";
-            PreparedStatement deleteQualifications_st = MineOperations.conn.prepareStatement(deleteQuery);
-            deleteQualifications_st.executeUpdate();
-*/
+
             int m = getMaxIDFromTable("SRT");
             m++;
             PreparedStatement insertQStatement;
@@ -1009,5 +1006,32 @@ public class DatabaseQueries {
             ex.printStackTrace();
         }
         return m;
+    }
+
+    public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, int tHours, int fHours, int pHours, int expHours){
+        boolean res = false;
+        try{
+            System.out.println(tHours);
+            System.out.println(fHours);
+            System.out.println(pHours);
+            System.out.println(expHours);
+            int m = getMaxIDFromTable("TrainingData");
+            m++;
+            PreparedStatement insertQStatement;
+            String insertQuery = "INSERT INTO dbo.TrainingData " +
+                        "(RecId, EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
+                    "VALUES (" + m + ", " + empId + ", '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
+                     CourseId + ", " + instructorId + ")";
+
+            System.out.println(insertQuery);
+            insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
+            insertQStatement.executeUpdate();
+            res = true;
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return res;
     }
 }

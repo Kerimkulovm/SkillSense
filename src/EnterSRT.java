@@ -20,7 +20,7 @@ public class EnterSRT extends JPanel {
     private final JTextField
             nameRus_text,
             theoryHours_text,
-            practHours_text,
+            fieldHours_text,
             mark_text,
             tableID_text;
 
@@ -56,7 +56,7 @@ public class EnterSRT extends JPanel {
         setLayout(null);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Annual training</big><br /> Ежегодное обучение</html>");
+        JLabel titleEng = new JLabel("<html><big>Ежегодное обучение</big></html>");
         titleEng.setBounds(160, 0, 500, 100);
         titleEng.setBackground(Color.WHITE);
         titleEng.setForeground(Color.WHITE);
@@ -65,7 +65,7 @@ public class EnterSRT extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton exit_button = new JButton("Exit | Выход");
+        JButton exit_button = new JButton("Выход");
         exit_button.setBounds(730, 60, 150, 30);
         exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
@@ -152,7 +152,7 @@ public class EnterSRT extends JPanel {
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Информация по ТБ"));
+        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Информация по курсам"));
         employeeInfo_panel.setBounds(20, 175, 500, 210);
         this.add(employeeInfo_panel);
 
@@ -242,7 +242,7 @@ public class EnterSRT extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel theoryHours_panel = new JPanel();
-        JLabel theoryHours_label = new JLabel("Часы в классе: ");
+        JLabel theoryHours_label = new JLabel("Теория: ");
         theoryHours_panel.add(theoryHours_label);
         theoryHours_panel.setBackground(Color.WHITE);
         infoLabels.add(theoryHours_panel);
@@ -259,18 +259,18 @@ public class EnterSRT extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel practHours_panel = new JPanel();
-        JLabel practHours_label = new JLabel("Прак раб с тр: ");
-        practHours_panel.add(practHours_label);
-        practHours_panel.setBackground(Color.WHITE);
-        infoLabels.add(practHours_panel);
+        JPanel fieldHours_panel = new JPanel();
+        JLabel fieldHours_label = new JLabel("Работа с тренером: ");
+        fieldHours_panel.add(fieldHours_label);
+        fieldHours_panel.setBackground(Color.WHITE);
+        infoLabels.add(fieldHours_panel);
 
-        practHours_text = new JTextField();
-        practHours_text.setForeground(Color.BLACK);
-        practHours_text.setDisabledTextColor(Color.BLACK);
-        practHours_text.setText("0");
-        practHours_panel.add(practHours_text);
-        inputPanel.add(practHours_text);
+        fieldHours_text = new JTextField();
+        fieldHours_text.setForeground(Color.BLACK);
+        fieldHours_text.setDisabledTextColor(Color.BLACK);
+        fieldHours_text.setText("0");
+        fieldHours_panel.add(fieldHours_text);
+        inputPanel.add(fieldHours_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,7 +332,7 @@ public class EnterSRT extends JPanel {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, введите данные сотрудника");
                 }else if (courseId == 0 || instructorId == 0) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните поля 'Курс' и 'Инструктор'");
-                }else if ((practHours_text.getText().equals("0") || practHours_text.getText().equals(""))
+                }else if ((fieldHours_text.getText().equals("0") || fieldHours_text.getText().equals(""))
                         && (theoryHours_text.getText().equals("0") || theoryHours_text.getText().equals("")) ) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните часы корректно");
                 } else {
@@ -341,7 +341,7 @@ public class EnterSRT extends JPanel {
 
                     boolean res = false;
                     res = databaseQueries.saveSRT(tableID_text.getText(), courseId, instructorId, LastDate_dtp.getJFormattedTextField().getText(), Integer.parseInt(mark_text.getText()),
-                            Integer.parseInt(practHours_text.getText()), Integer.parseInt(theoryHours_text.getText()) );
+                            Integer.parseInt(fieldHours_text.getText()), Integer.parseInt(theoryHours_text.getText()) );
 
                     if (res) JOptionPane.showMessageDialog(MineOperations.cardPane, "Запись сохранена успешно!");
 
@@ -400,7 +400,7 @@ public class EnterSRT extends JPanel {
         tableID_text.setText("");
         nameRus_text.setText("");
         theoryHours_text.setText("0");
-        practHours_text.setText("0");
+        fieldHours_text.setText("0");
         mark_text.setText("0");
         LastDate_dtp.getJFormattedTextField().setText("");
 
