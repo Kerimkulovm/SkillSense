@@ -969,12 +969,12 @@ public class DatabaseQueries {
         boolean res = false;
         try{
 
-            int m = getMaxIDFromTable("SRT");
-            m++;
+            //int m = getMaxIDFromTable("SRT");
+           // m++;
             PreparedStatement insertQStatement;
             String insertQuery = "INSERT INTO dbo.SRT " +
-                    "(RecId, EmployeeID, LastDate, ScheduledDate, coarse, payslip, FieldHours, Thours, Instructor, Mark) " +
-                    "VALUES (" + m + ", " + empId + ", '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
+                    "( EmployeeID, LastDate, ScheduledDate, coarse, payslip, FieldHours, Thours, Instructor, Mark) " +
+                    "VALUES ( " + empId + ", '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
                     CourseId + ", 0,  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
 
             System.out.println(insertQuery);
@@ -1015,12 +1015,12 @@ public class DatabaseQueries {
             System.out.println(fHours);
             System.out.println(pHours);
             System.out.println(expHours);
-            int m = getMaxIDFromTable("TrainingData");
-            m++;
+            //int m = getMaxIDFromTable("TrainingData");
+            //m++;
             PreparedStatement insertQStatement;
             String insertQuery = "INSERT INTO dbo.TrainingData " +
-                        "(RecId, EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
-                    "VALUES (" + m + ", " + empId + ", '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
+                        "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
+                    "VALUES ( " + empId + ", '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
                      CourseId + ", " + instructorId + ")";
 
             System.out.println(insertQuery);

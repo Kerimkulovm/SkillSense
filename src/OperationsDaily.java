@@ -345,6 +345,8 @@ public class OperationsDaily extends JPanel {
                         && (fieldHours_text.getText().equals("0") || fieldHours_text.getText().equals(""))
                         && (expHours_text.getText().equals("0") || expHours_text.getText().equals(""))) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните часы корректно.");
+                }else if (Date_dtp.getJFormattedTextField().getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните дату.");
                 } else {
 
 

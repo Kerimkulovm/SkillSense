@@ -335,6 +335,8 @@ public class EnterSRT extends JPanel {
                 }else if ((fieldHours_text.getText().equals("0") || fieldHours_text.getText().equals(""))
                         && (theoryHours_text.getText().equals("0") || theoryHours_text.getText().equals("")) ) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните часы корректно");
+                }else if (LastDate_dtp.getJFormattedTextField().getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните дату.");
                 } else {
 
 
