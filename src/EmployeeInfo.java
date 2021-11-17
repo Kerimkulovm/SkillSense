@@ -618,7 +618,7 @@ public class EmployeeInfo extends JPanel {
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);
-                        databaseQueries.setSupervisorID(supervisor_box);
+                        databaseQueries.setReportsTo(supervisor_box);
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
@@ -633,7 +633,7 @@ public class EmployeeInfo extends JPanel {
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);
-                        databaseQueries.setSupervisorID(supervisor_box);
+                        databaseQueries.setReportsTo(supervisor_box);
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
