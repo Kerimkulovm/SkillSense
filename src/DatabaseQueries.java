@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class DatabaseQueries {
 
-    Statement employeeSearchStatement;
+    Statement st;
     Statement courseSearchStatement;
     PreparedStatement updateEmployee;
     PreparedStatement insertEmployee;
@@ -79,9 +79,9 @@ public class DatabaseQueries {
         employeeID = EmployeeID;
 
         try {
-            employeeSearchStatement = MineOperations.conn.createStatement();
+            st = MineOperations.conn.createStatement();
             String id_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + employeeID;
-            ResultSet employeeSearch_resultSet = employeeSearchStatement.executeQuery(id_query);
+            ResultSet employeeSearch_resultSet = st.executeQuery(id_query);
 
             if (!employeeSearch_resultSet.next()){
                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Сотрудник не найден!");
@@ -516,9 +516,10 @@ public class DatabaseQueries {
 
             System.out.println(query_text);
             ResultSet rs = searchStatement.executeQuery(query_text);
+            employeeNames_list = new ArrayList<>();
+            employeeID_list = new ArrayList<>();
 
             if (rs.next()){
-                System.out.println("RR");
                 do {
                     String fullNameRu = rs.getString("FullNameRu");
                     employeeNames_list.add(fullNameRu);
@@ -685,9 +686,9 @@ public class DatabaseQueries {
         }
 
             try {
-                String acceptedQualifications_query = "select * from Qualified where EmployeeID = " + employeeID;
+                String acceptedQialifications_query = "select * from Qualified where EmployeeID = " + employeeID;
                 Statement acceptedSearchStatement = MineOperations.conn.createStatement();
-                ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQualifications_query);
+                ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQialifications_query);
 
                 if (acceptedQResult.next()){
                     do {
@@ -874,6 +875,169 @@ public class DatabaseQueries {
         return inputTable;
     }
 
+    public JComboBox loadCourseNameBox(JComboBox inputBox){
+
+        try {
+
+            String positionRus_query = " select 0 CoarseNo, N'Нет данных' Equipment, N'Нет данных' Course, 1 isActive\n" +
+                    " union all \n" +
+                    " SELECT * FROM dbo.Courses where isactive = 1";
+            Statement positionRus_statement = MineOperations.conn.createStatement();
+            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
+
+            while(positionRus_result.next())
+            {
+                String addCourseNameItem = positionRus_result.getString("Course");
+                Integer addCourseId = positionRus_result.getInt("CoarseNo");
+                if (addCourseNameItem != null){
+                    inputBox.addItem(new Item(addCourseId, addCourseNameItem));
+                } else continue;
+            }
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return inputBox;
+    }
+
+    public JComboBox loadTrainerBox( JComboBox inputBox) {
+
+        try{
+
+            String Trainer_query = "  select 0 InstructoId, N'Нет данных' InstructorName, N'Нет данных' Instructor, 1 isActive\n" +
+                    " union all \n" +
+                    " SELECT * FROM dbo.Instructor where isactive = 1";
+            Statement rs = MineOperations.conn.createStatement();
+            ResultSet reportsTo_result = rs.executeQuery((Trainer_query));
+
+            while(reportsTo_result.next()){
+                String addTrainer = reportsTo_result.getString("Instructor");
+                Integer addTrainerId = reportsTo_result.getInt("InstructoId");
+               // inputBox.addItem(addTrainer);
+                inputBox.addItem(new Item(addTrainerId, addTrainer));
+            }
+        }
+
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return inputBox;
+    }
+    public String getLastDate(String idUser, int idCourse){
+
+        String lastDate_query = " select max(LastDate) as lastDate from SRT where employeeId = '"+idUser+"' and coarse = " + idCourse;
+        System.out.println(lastDate_query);
+        String lastDate = "";
+        try {
+
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(lastDate_query);
+
+            while (rs.next()){
+                lastDate = rs.getString("lastDate");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return lastDate;
+    }
+
+    class Item {
+
+        private int id;
+        private String description;
+
+        public Item(int id, String description) {
+            this.id = id;
+            this.description = description;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
+    }
+
+    public boolean saveSRT(String empId, int CourseId, int instructorId, String lastDate, int mark_text, int fHours, int tHours){
+        boolean res = false;
+        try{
+
+            //int m = getMaxIDFromTable("SRT");
+           // m++;
+            PreparedStatement insertQStatement;
+            String insertQuery = "INSERT INTO dbo.SRT " +
+                    "( EmployeeID, LastDate, ScheduledDate, coarse, payslip, FieldHours, Thours, Instructor, Mark) " +
+                    "VALUES ( " + empId + ", '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
+                    CourseId + ", 0,  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
+
+            System.out.println(insertQuery);
+            insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
+            insertQStatement.executeUpdate();
+            res = true;
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return res;
+    }
+
+    private int getMaxIDFromTable(String tableName) {
+        int m =0;
+        String MaxId_query = "  select max(RecId) as RecId from dbo." + tableName  ;
+        System.out.println(MaxId_query);
+        try {
+
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(MaxId_query);
+
+            while (rs.next()){
+                m = rs.getInt("RecId");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return m;
+    }
+
+    public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, int tHours, int fHours, int pHours, int expHours){
+        boolean res = false;
+        try{
+            System.out.println(tHours);
+            System.out.println(fHours);
+            System.out.println(pHours);
+            System.out.println(expHours);
+            //int m = getMaxIDFromTable("TrainingData");
+            //m++;
+            PreparedStatement insertQStatement;
+            String insertQuery = "INSERT INTO dbo.TrainingData " +
+                        "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
+                    "VALUES ( " + empId + ", '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
+                     CourseId + ", " + instructorId + ")";
+
+            System.out.println(insertQuery);
+            insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
+            insertQStatement.executeUpdate();
+            res = true;
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return res;
+    }
+
     public List<String> loadInstructors(List<String> inputList){
 
         inputList.clear();
@@ -1030,6 +1194,4 @@ public class DatabaseQueries {
 
         return status;
     }
-
-
 }
