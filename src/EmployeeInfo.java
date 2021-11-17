@@ -614,7 +614,7 @@ public class EmployeeInfo extends JPanel {
                     if (editUser){
 
                         databaseQueries.setFullName(nameRus_text.getText());
-                        databaseQueries.setJobID(positionRus_box);
+                        //databaseQueries.setJobID(positionRus_box);
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);
@@ -629,7 +629,7 @@ public class EmployeeInfo extends JPanel {
 
                         databaseQueries.setEmployeeID(tableID_text.getText());
                         databaseQueries.setFullName(nameRus_text.getText());
-                        databaseQueries.setJobID(positionRus_box);
+                        //databaseQueries.setJobID(positionRus_box);
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);

@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 import java.awt.*;
@@ -241,7 +242,7 @@ public class Positions extends JPanel {
             });
 
         }
-
     }
+
 
 }

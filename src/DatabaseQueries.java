@@ -27,8 +27,7 @@ public class DatabaseQueries {
     int ReportsTo;
     String superVisorName;
 
-    int jobTitleID;
-    String jobName;
+    String jobTitle;
 
     int departmentID;
     String departmentName;
@@ -85,11 +84,11 @@ public class DatabaseQueries {
             } else {
                 fullName = employeeSearch_resultSet.getString("LastName");
                 ReportsTo = findSupervisorName(employeeSearch_resultSet.getInt("ReportsTo"));
-                jobTitleID = findJobName(employeeSearch_resultSet.getInt("JobTitleId"));
-                departmentID = findDepartmentName(employeeSearch_resultSet.getInt("DepartmentId"));
+                jobTitle = employeeSearch_resultSet.getString("RusTitle");
+                departmentID = findDepartmentName(employeeSearch_resultSet.getInt("Department"));
                 terminatedID = findTerminatedStatus(employeeSearch_resultSet.getInt("Terminated"));
-                crewID = findCrewName(employeeSearch_resultSet.getInt("CrewId"));
-                lastSafetyOr = employeeSearch_resultSet.getString("SafetyOrientation");
+                crewID = findCrewName(employeeSearch_resultSet.getInt("Shiftn"));
+                lastSafetyOr = employeeSearch_resultSet.getString("SafteyOrin");
 
                 kumtor_A_date = employeeSearch_resultSet.getDate("kumtor_A");
                 truckLicence_table.setValueAt(kumtor_A_date, 0, 1);
@@ -164,7 +163,7 @@ public class DatabaseQueries {
 
     private int findSupervisorName(int supervisorID_input) {
 
-        String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE supervisorID = " + supervisorID_input;
+        String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE SupervisorId = " + supervisorID_input;
 
         try {
 
@@ -181,6 +180,7 @@ public class DatabaseQueries {
         return supervisorID_input;
     }
 
+    /*
     private int findJobName(int jobTitleID_input){
 
         String jobTitle_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleId = '" + jobTitleID_input + "'";
@@ -201,9 +201,11 @@ public class DatabaseQueries {
         return jobTitleID_input;
     }
 
+     */
+
     private int findDepartmentName(int departmentID_input){
 
-        String departmentID_query = "SELECT * FROM dbo.Departments WHERE DepartmentID = " + departmentID_input;
+        String departmentID_query = "SELECT * FROM dbo.Departments WHERE DeptID = " + departmentID_input;
 
         try {
 
@@ -211,7 +213,7 @@ public class DatabaseQueries {
             ResultSet departmentName_result = departmentName_statement.executeQuery(departmentID_query);
 
             while(departmentName_result.next()){
-                departmentName = departmentName_result.getString("DepartmentNameRu");
+                departmentName = departmentName_result.getString("russian");
             }
 
         } catch (SQLException ex){
@@ -234,7 +236,7 @@ public class DatabaseQueries {
 
     private int findCrewName(int crewID_input){
 
-        String crewID_query = "SELECT * FROM dbo.Crews WHERE CrewId = " + crewID_input;
+        String crewID_query = "SELECT * FROM dbo.Crews WHERE CrewNo = " + crewID_input;
 
         try {
 
@@ -242,7 +244,7 @@ public class DatabaseQueries {
             ResultSet crewName_result = crewName_statement.executeQuery(crewID_query);
 
             while (crewName_result.next()){
-                crewName = crewName_result.getString("CrewName");
+                crewName = crewName_result.getString("Crew");
             }
 
         } catch (SQLException ex){
@@ -260,8 +262,9 @@ public class DatabaseQueries {
         return Objects.requireNonNullElse(superVisorName, "Нет данных");
     }
 
+
     public String getJobName(){
-        return Objects.requireNonNullElse(jobName, "Нет данных");
+        return Objects.requireNonNullElse(jobTitle, "Нет данных");
     }
 
     public String getDepartmentName(){
@@ -286,12 +289,12 @@ public class DatabaseQueries {
 
         String updateQuery =
                 "UPDATE dbo.Employees SET LastName = N'" + fullName + "', " +
-                        "JobTitleId = " + jobTitleID + ", " +
-                        "CrewId = " + crewID + ", " +
-                        "DepartmentId = " + departmentID + ", " +
+                        "RusTitle = N'" + jobTitle + "', " +
+                        "Shiftn = " + crewID + ", " +
+                        "Department = " + departmentID + ", " +
                         "ReportsTo = " + ReportsTo + ", " +
                         "Terminated = " + terminatedID + ", " +
-                        "SafetyOrientation = " + checkTablesContent(lastSafetyOr) + ", " +
+                        "SafteyOrin = " + checkTablesContent(lastSafetyOr) + ", " +
                         "kumtor_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
                         "kumtor_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
                         "kumtor_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
@@ -329,6 +332,7 @@ public class DatabaseQueries {
         fullName = fullName_input;
     }
 
+    /*
     public void setJobID(JComboBox inputBox){
 
         String jobID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + (String) inputBox.getSelectedItem() + "'";
@@ -339,7 +343,7 @@ public class DatabaseQueries {
             ResultSet jobID_result = jobID_statement.executeQuery(jobID_query);
 
             while (jobID_result.next()){
-                jobTitleID = jobID_result.getInt("JobTitleId");
+                jobTitle = jobID_result.getInt("JobTitleId");
             }
 
         } catch (SQLException ex){
@@ -347,16 +351,18 @@ public class DatabaseQueries {
         }
     }
 
+     */
+
     public void setCrewID(JComboBox inputBox){
 
-        String crew_query = "SELECT * FROM dbo.Crews WHERE CrewName = N'" + (String) inputBox.getSelectedItem() + "'";
+        String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + (String) inputBox.getSelectedItem() + "'";
 
         try{
             Statement crew_statement = MineOperations.conn.createStatement();
             ResultSet crew_results = crew_statement.executeQuery(crew_query);
 
             while (crew_results.next()){
-                crewID = crew_results.getInt("CrewId");
+                crewID = crew_results.getInt("CrewNo");
             }
 
         } catch (SQLException ex){
@@ -366,7 +372,7 @@ public class DatabaseQueries {
 
     public void setDepartmentID(JComboBox inputBox){
 
-        String departQuery = "SELECT * FROM dbo.Departments WHERE DepartmentNameRu = N'" + (String) inputBox.getSelectedItem()+"'";
+        String departQuery = "SELECT * FROM dbo.Departments WHERE russian = N'" + (String) inputBox.getSelectedItem()+"'";
 
         try {
             Statement departmentSt = MineOperations.conn.createStatement();
@@ -374,7 +380,7 @@ public class DatabaseQueries {
 
             while(departmentResult.next())
             {
-                departmentID = departmentResult.getInt("DepartmentId");
+                departmentID = departmentResult.getInt("DeptId");
             }
 
         } catch (SQLException ex){
@@ -392,7 +398,7 @@ public class DatabaseQueries {
             ResultSet supervisorID_result = supervisorID_statement.executeQuery(supervisorID_query);
 
             while (supervisorID_result.next()){
-                ReportsTo = supervisorID_result.getInt("ReportsTo");
+                ReportsTo = supervisorID_result.getInt("SupervisorId");
             }
 
         } catch (SQLException ex){
@@ -448,19 +454,20 @@ public class DatabaseQueries {
 
         try {
 
-            final Statement checkEmployee_st = MineOperations.conn.createStatement();
-            final ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
+            Statement checkEmployee_st = MineOperations.conn.createStatement();
+            ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
 
             if (!employeeExist_result.next()){
                 String insertQuery = "INSERT INTO dbo.Employees " +
-                        "(EmployeeID, FullName, LastName, JobTitleId, ReportsTo, CrewId, DepartmentId, Terminated, SafetyOrientation, " +
+                        "(EmployeeID, LastName, FirstName, RusTitle, ReportsTo, Shiftn, Department, Terminated, SafteyOrin, " +
                         "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
-                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E ) " +
+                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E, Transfered," +
+                        "Driverschk, LightTtruck, MineResc, CraneTr) " +
                         "VALUES (" +
                         employeeID + ", N'" +
                         fullName + "', N'" +
                         fullName + "', " +
-                        jobTitleID + ", " +
+                        jobTitle + ", " +
                         ReportsTo + ", " +
                         crewID + ", " +
                         departmentID + ", " +
@@ -485,7 +492,7 @@ public class DatabaseQueries {
                         checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
                         checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
                         checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
-                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ")";
+                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ",0,0,0,0,0)";
 
                 System.out.println(insertQuery);
                 insertEmployee = MineOperations.conn.prepareStatement(insertQuery);
@@ -568,7 +575,7 @@ public class DatabaseQueries {
             ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
 
             while(reportsTo_result.next()){
-                String addReportsTo = reportsTo_result.getString("SupervisorNameRu");
+                String addReportsTo = reportsTo_result.getString("Russian");
                 inputBox.addItem(addReportsTo);
             }
         }
@@ -590,7 +597,7 @@ public class DatabaseQueries {
 
             while(positionRus_result.next())
             {
-                String addPositionRusItem = positionRus_result.getString("JobTitleNameRu");
+                String addPositionRusItem = positionRus_result.getString("RusTitle");
                 if (addPositionRusItem != null){
                     inputBox.addItem(addPositionRusItem);
                 } else continue;
