@@ -30,8 +30,10 @@ public class MineOperations extends JFrame {
     public static OperationsDaily operationsDailyPanel = new OperationsDaily();
     public static EnterSRT enterSRTPanel = new EnterSRT();
     public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
-
     public static Courses CoursesPanel = new Courses();
+    public static Instructors InstructorsPanel = new Instructors();
+    public static Classificatory ClassificatoryPanel = new Classificatory();
+    public static Positions PositionsPanel = new Positions();
 
     public static CardLayout card;
     public static JPanel cardPane;
@@ -57,7 +59,11 @@ public class MineOperations extends JFrame {
         cardPane.add(operationsDailyPanel, "Operations Daily");
         cardPane.add(enterSRTPanel,"Enter SRT");
         cardPane.add(viewQualificationsPanel,"View Qualifications");
+        cardPane.add(ClassificatoryPanel,"Classificatory");
         cardPane.add(CoursesPanel, "Courses");
+        cardPane.add(InstructorsPanel,"Instructors");
+        cardPane.add(PositionsPanel, "Positions");
+
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);

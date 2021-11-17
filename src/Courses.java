@@ -26,17 +26,19 @@ public class Courses extends JPanel {
     private JTextField hiddenCourseName_text = new JTextField();
     private JTextField hiddenIsActive_text = new JTextField();
 
-    private JPanel coursesList_panel;
+    private final JPanel coursesList_panel;
     private JTable listOfCourses_table;
+    private DefaultTableModel listOfCourses_model;
     private int numOfRows = 1, numOfColumns = 3;
+
     private List<Integer> coursesNum_list = new ArrayList<>();
     private List<String> coursesName_list = new ArrayList<>();
     private List<Integer> coursesActive_list = new ArrayList<>();
 
-    private JButton  add_button = null;
-    private JButton  edit_button = null;
-    private JButton  save_button = null;
-    private JButton  cancel_button = null;
+    private JButton  add_button;
+    private JButton  edit_button;
+    private JButton  save_button;
+    private JButton  cancel_button;
 
     private JComboBox isActive_box;
 
@@ -50,13 +52,15 @@ public class Courses extends JPanel {
         }
 
         setLayout(null);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Курсы'</big></html>");
         titleEng.setBounds(160, 0, 600, 100);
         titleEng.setBackground(Color.WHITE);
         titleEng.setForeground(Color.WHITE);
         titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
         this.add(titleEng);
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
@@ -66,10 +70,10 @@ public class Courses extends JPanel {
         exit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Home Page");
-
+                MineOperations.card.show(MineOperations.cardPane,"Classificatory");
             }
         });
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         coursesList_panel = new JPanel();
         coursesList_panel.setBackground(Color.WHITE);
@@ -81,23 +85,20 @@ public class Courses extends JPanel {
 
         createTable();
 
-
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(20, 635, 300, 30);
         buttons_panel.setLayout(new GridLayout(1, 5));
-        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
         this.add(buttons_panel);
 
         edit_button = new JButton("Изменить");
-        edit_button.setBackground(Color.GREEN);
+        edit_button.setBackground(Color.WHITE);
         edit_button.setForeground(Color.BLACK);
         edit_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         buttons_panel.add(edit_button);
         edit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Edit clicked");
                 Courses.editCourse editCourse = new Courses.editCourse();
                 editCourse.pack();
                 editCourse.setVisible(true);
@@ -105,7 +106,7 @@ public class Courses extends JPanel {
         });
 
         add_button = new JButton("Создать");
-        add_button.setBackground(Color.GREEN);
+        add_button.setBackground(Color.WHITE);
         add_button.setForeground(Color.BLACK);
         add_button.setFont(new Font("Helvetica", Font.BOLD, 10));
         buttons_panel.add(add_button);
@@ -117,12 +118,11 @@ public class Courses extends JPanel {
                 newCourse.setVisible(true);
             }
         });
-
-
-
     }
 
-    private void createTable(){
+    private void loadCourses(){
+
+        coursesActive_list.clear();
 
         try{
             Statement searchStatement = MineOperations.conn.createStatement();
@@ -145,13 +145,24 @@ public class Courses extends JPanel {
 
                 }while (rs.next());
             }
+
         } catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+
+    private void createTable(){
+
+        loadCourses();
 
         numOfRows = coursesName_list.size();
-        DefaultTableModel listOfCourses_model = new DefaultTableModel(numOfRows ,numOfColumns);
 
+        listOfCourses_model = new DefaultTableModel(numOfRows, numOfColumns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
         centerRederer.setHorizontalAlignment(JLabel.CENTER);
@@ -195,6 +206,7 @@ public class Courses extends JPanel {
         }
 
         coursesList_panel.add(new JScrollPane(listOfCourses_table));
+
         listOfCourses_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -225,37 +237,31 @@ public class Courses extends JPanel {
 
     private class createNewCourse extends JFrame{
 
-        private List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
-
         private JPanel  newCoursePanel, newCourseButtonsPanel;
-
-        private int numOfRows = 1, numOfColumns = 2;
 
         public createNewCourse(){
 
             buildFrame();
 
-            this.setPreferredSize(new Dimension(400, 200));
+            this.setTitle("Добавить курс");
+            this.setPreferredSize(new Dimension(400, 120));
+            this.setLayout(new GridLayout(2,1));
             this.setFocusableWindowState(true);
             this.setAutoRequestFocus(true);
             this.setLocation(900,40);
-            this.setLayout(null);
         }
 
         private void buildFrame(){
 
             newCoursePanel = new JPanel();
             newCoursePanel.setBackground(Color.WHITE);
-            newCoursePanel.setBounds(2,2,250,30);
-            newCoursePanel.setLayout(new BoxLayout(newCoursePanel, BoxLayout.X_AXIS));
+            newCoursePanel.setLayout(new BorderLayout());
             newCoursePanel.setBorder(new LineBorder(Color.BLACK));
             newCoursePanel.setVisible(true);
             this.add(newCoursePanel);
 
             JLabel newCourse_label = new JLabel("Наименование: ");
             newCoursePanel.add(newCourse_label);
-
 
             newCourse_text = new JTextField();
             newCourse_text.setEnabled(true);
@@ -265,21 +271,19 @@ public class Courses extends JPanel {
 
             newCourseButtonsPanel = new JPanel();
             newCourseButtonsPanel.setBackground(Color.WHITE);
-            newCourseButtonsPanel.setBounds(2,35,250,30);
-            newCourseButtonsPanel.setLayout(new BoxLayout(newCourseButtonsPanel, BoxLayout.X_AXIS));
+            newCourseButtonsPanel.setLayout(new GridLayout(1,2));
             newCourseButtonsPanel.setBorder(new LineBorder(Color.BLACK));
             newCourseButtonsPanel.setVisible(true);
             this.add(newCourseButtonsPanel);
 
             save_button = new JButton("Сохранить");
-            save_button.setBackground(Color.GREEN);
             save_button.setForeground(Color.BLACK);
+            save_button.setBackground(Color.WHITE);
             save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
             newCourseButtonsPanel.add(save_button);
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("save");
                     if (newCourse_text.getText().equals("") ){
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название курса");
                     } else {
@@ -311,11 +315,14 @@ public class Courses extends JPanel {
                                     PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
                                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно добавлен");
                                     insertCourse.executeUpdate();
+
+                                    listOfCourses_model.addRow(new Object[]{maxCourse, newCourse_text.getText(),"Да"});
+                                    listOfCourses_model.fireTableDataChanged();
                                     dispose();
+
                                 } else {
                                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
                                                 newCourse_text.getText() + " уже существует");
-
                                 }
                             } catch (SQLException ex) {
                                 ex.printStackTrace();
@@ -326,8 +333,8 @@ public class Courses extends JPanel {
             });
 
             cancel_button = new JButton("Отмена");
-            cancel_button.setBackground(Color.yellow);
-            cancel_button.setForeground(Color.black);
+            cancel_button.setBackground(Color.WHITE);
+            cancel_button.setForeground(Color.BLACK);
             cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
             newCourseButtonsPanel.add(cancel_button);
             cancel_button.addActionListener(new ActionListener() {
@@ -336,35 +343,28 @@ public class Courses extends JPanel {
                     dispose();
                 }
             });
-
         }
-
-
     }
 
     private class editCourse extends JFrame{
 
-        private List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
-        private JPanel  newCoursePanel, newCourseButtonsPanel;
-        private int numOfRows = 1, numOfColumns = 2;
         public editCourse(){
 
             buildFrame();
 
-            this.setPreferredSize(new Dimension(400, 200));
+            this.setPreferredSize(new Dimension(400, 150));
             this.setFocusableWindowState(true);
+            this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
             this.setLocation(900,40);
-            this.setLayout(null);
         }
 
         private void buildFrame(){
 
-            newCoursePanel = new JPanel();
+            JPanel newCoursePanel = new JPanel();
             newCoursePanel.setBackground(Color.WHITE);
             newCoursePanel.setBounds(2,2,250,30);
-            newCoursePanel.setLayout(new BoxLayout(newCoursePanel, BoxLayout.X_AXIS));
+            newCoursePanel.setLayout(new GridLayout(2,1));
             newCoursePanel.setBorder(new LineBorder(Color.BLACK));
             newCoursePanel.setVisible(true);
 
@@ -377,38 +377,34 @@ public class Courses extends JPanel {
             String[] status = new String[]{"Да","Нет"};
             isActive_box = new JComboBox(status);
             isActive_box.setBackground(Color.WHITE);
-            //terminatedStatus_box.setEnabled(false);
             newCoursePanel.add(isActive_box);
             isActive_box.getModel().setSelectedItem(hiddenIsActive_text.getText());
 
-            newCourseButtonsPanel = new JPanel();
+            JPanel newCourseButtonsPanel = new JPanel();
             newCourseButtonsPanel.setBackground(Color.WHITE);
-            newCourseButtonsPanel.setBounds(2,35,250,30);
-            newCourseButtonsPanel.setLayout(new BoxLayout(newCourseButtonsPanel, BoxLayout.X_AXIS));
+            newCourseButtonsPanel.setLayout(new GridLayout(1,2));
             newCourseButtonsPanel.setBorder(new LineBorder(Color.BLACK));
             newCourseButtonsPanel.setVisible(true);
             this.add(newCourseButtonsPanel);
 
             save_button = new JButton("Сохранить");
-            save_button.setBackground(Color.GREEN);
             save_button.setForeground(Color.BLACK);
+            save_button.setBackground(Color.WHITE);
             save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
             newCourseButtonsPanel.add(save_button);
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.out.println("save");
-
                     try {
                             Integer isact = isActive_box.getSelectedItem() == "Нет" ? 0 : 1;
                         System.out.println("Isact = " + isact);
                             String insert_query = "update dbo.Courses set isActive = " + isact + " where coarseNo = " + hiddenCourseId_text.getText() ;
-
-
-                            System.out.println(insert_query);
                             PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
                             JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обновлен");
                             insertCourse.executeUpdate();
+
+                            listOfCourses_model.setValueAt(isActive_box.getSelectedItem(),listOfCourses_table.getSelectedRow(),2);
+
                             dispose();
 
                     } catch (SQLException ex) {
@@ -419,8 +415,8 @@ public class Courses extends JPanel {
             });
 
             cancel_button = new JButton("Отмена");
-            cancel_button.setBackground(Color.yellow);
-            cancel_button.setForeground(Color.black);
+            cancel_button.setBackground(Color.WHITE);
+            cancel_button.setForeground(Color.BLACK);
             cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
             newCourseButtonsPanel.add(cancel_button);
             cancel_button.addActionListener(new ActionListener() {

@@ -13,23 +13,19 @@ public class HomePage extends JPanel {
     private BufferedImage safe_image;
 
     private JLabel title_label;
-    private JLabel mineOperations_label;
     private JLabel gorniy_label;
 
     private JPanel buttons_panel;
 
-    private JButton enterData_button;
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
     private JButton instructorClassification_button;
     private JButton classificationCourse_button;
     private JButton employeeInfo_button;
     private JButton operations_button;
-    private JButton test_button;
 
     public HomePage()
     {
-
         try {
             logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
             safe_image = ImageIO.read(new File("textures/logo/safe_logo.jpg"));
@@ -108,10 +104,30 @@ public class HomePage extends JPanel {
             }
         });
 
+
+        classificationCourse_button = new JButton("<html> <big> Классификаторы </big> <br /> (Управление классификаторами курсов, инструкторов) </html>");
+        buttons_panel.add(classificationCourse_button);
+        classificationCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
+        classificationCourse_button.setBackground(Color.WHITE);
+        classificationCourse_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Classificatory");
+            }
+        });
+
+        /*
+
         instructorClassification_button = new JButton("<html> <big> У.К. 'Инструктор' </big> <br /> (Управление классификаторами инструкторов) </html>");
         buttons_panel.add(instructorClassification_button);
         instructorClassification_button.setHorizontalAlignment(SwingConstants.LEFT);
         instructorClassification_button.setBackground(Color.WHITE);
+        instructorClassification_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane, "Instructors");
+            }
+        });
 
         classificationCourse_button = new JButton("<html> <big> У.К. 'Курсы' </big> <br /> (Управление классификаторами курсов) </html>");
         buttons_panel.add(classificationCourse_button);
@@ -123,6 +139,8 @@ public class HomePage extends JPanel {
                 MineOperations.card.show(MineOperations.cardPane,"Courses");
             }
         });
+
+         */
     }
 
     protected void paintComponent(Graphics g) {

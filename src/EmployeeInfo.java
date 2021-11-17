@@ -330,8 +330,8 @@ public class EmployeeInfo extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         DefaultTableModel truckLicence_model = new DefaultTableModel(7,2);
-        DefaultTableCellRenderer centerReder = new DefaultTableCellRenderer();
-        centerReder.setHorizontalAlignment(JLabel.CENTER);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
         truckLicence_table = new JTable(truckLicence_model);
         truckLicence_table.setBorder(new LineBorder(Color.BLACK));
@@ -348,7 +348,7 @@ public class EmployeeInfo extends JPanel {
 
         TableColumn tabCol0 = truckLicence_columns.getColumn(0);
         tabCol0.setHeaderValue("Категория");
-        tabCol0.setCellRenderer(centerReder);
+        tabCol0.setCellRenderer(centerRenderer);
         tabCol0.setPreferredWidth(10);
 
         String[] categories_list = new String[]{"А","Б","В","Г","Д","Е","Е1"};
@@ -358,7 +358,7 @@ public class EmployeeInfo extends JPanel {
 
         TableColumn tabCol1 = truckLicence_columns.getColumn(1);
         tabCol1.setHeaderValue("Дата");
-        tabCol1.setCellRenderer(centerReder);
+        tabCol1.setCellRenderer(centerRenderer);
         truckLicence_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

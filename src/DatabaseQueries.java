@@ -1,3 +1,4 @@
+import com.sun.security.auth.NTUserPrincipal;
 import org.jdatepicker.impl.JDatePickerImpl;
 
 import javax.imageio.ImageIO;
@@ -684,9 +685,9 @@ public class DatabaseQueries {
         }
 
             try {
-                String acceptedQialifications_query = "select * from Qualified where EmployeeID = " + employeeID;
+                String acceptedQualifications_query = "select * from Qualified where EmployeeID = " + employeeID;
                 Statement acceptedSearchStatement = MineOperations.conn.createStatement();
-                ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQialifications_query);
+                ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQualifications_query);
 
                 if (acceptedQResult.next()){
                     do {
@@ -872,4 +873,163 @@ public class DatabaseQueries {
 
         return inputTable;
     }
+
+    public List<String> loadInstructors(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    String instructorName= instructors_results.getString("Инструктор");
+                    inputList.add(instructorName);
+                } while (instructors_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputList;
+    }
+
+    public int getInstructorID(String instructorName){
+
+        int instructorID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Инструктор = N'" + instructorName +"'";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    int instructorId= instructors_results.getInt("InstructoId");
+                    instructorID = instructorId;
+                } while (instructors_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return instructorID;
+    }
+
+    public String getInstructorActivity(String instructorName){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Инструктор = N'" + instructorName +"'";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    int isActiveId= instructors_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (instructors_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    public List<String> loadPositions(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String positions_query = "SELECT * FROM dbo.JobTitles";
+            Statement positions_st = MineOperations.conn.createStatement();
+            ResultSet positions_rs = positions_st.executeQuery(positions_query);
+
+            if (positions_rs.next()){
+                while (positions_rs.next()){
+                    String positionTitle = positions_rs.getString("JobTitleNameRu");
+                    inputList.add(positionTitle);
+                }
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+
+    public int getPositionID(String positionTitle){
+
+        int positionID = 0;
+
+        try {
+            String positionID_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleNameRu = N'" + positionTitle +"'";
+            Statement positionID_statement = MineOperations.conn.createStatement();
+            ResultSet positionID_results = positionID_statement.executeQuery(positionID_query);
+
+            if (positionID_results.next()){
+                do{
+                    int instructorId= positionID_results.getInt("JobTitleId");
+                    positionID = instructorId;
+                } while (positionID_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return positionID;
+    }
+
+    public String getPositionActivity(String positionTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String position_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleNameRu = N'" + positionTitle +"'";
+            Statement position_statement = MineOperations.conn.createStatement();
+            ResultSet position_results = position_statement.executeQuery(position_query);
+
+            if (position_results.next()){
+                do{
+                    int isActiveId= position_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (position_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+
 }

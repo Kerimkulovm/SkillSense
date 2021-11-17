@@ -124,7 +124,6 @@ public class ViewQualifications  extends JPanel{
                         revalidate();
                         repaint();
                     }
-
                     editButton.setEnabled(true);
                 }
             }
