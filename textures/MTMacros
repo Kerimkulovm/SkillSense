@@ -1,0 +1,109 @@
+Sub AddLinesToTrainingData()
+
+Dim con As ADODB.Connection
+Dim rs As ADODB.Recordset
+
+Dim ConnectionString As String
+Dim strQuery As String, cbStringList As String
+
+Set con = CreateObject("ADODB.Connection")
+con.ConnectionString = "DRIVER=SQL Server;SERVER=DESKTOP-P9M9IPC\SQLEXPRESS;UID=MineTraining;APP=Microsoft Office 2003;PWD=qazwsx;DATABASE=MineOperationsTestDb;"
+con.Open
+
+    Set sh1 = ActiveWorkbook.ActiveSheet
+
+
+    Dim i As Long, j As Long, operId As Long, Phours As Integer, ExpHours As Integer, fieldName As String, sqlStr As String
+    Dim numRows As Integer, numLines As Integer, instructor As Integer, Coarse As Integer, equipRow As Integer, h As Integer
+
+    Dim dateStr As String, listOfUsers As String
+
+    numRows = Range("C18", ActiveCell.SpecialCells(xlLastCell)).Rows.Count
+    dateStr = Format(Range("c11").Value, "yyyy\/mm\/dd")
+
+    numLines = 0
+    equipId = 0
+
+    For x = 1 To numRows
+        If sh1.Cells(x, 1).Value <> "" Then
+            i = x
+            equipRow = x - 1
+            Exit For
+        End If
+    Next
+
+
+    j = 5
+
+
+
+
+    For x = 1 To numRows
+
+        If sh1.Cells(x, 1).Value <> "" And sh1.Cells(x, 1).Value <> "0" And sh1.Cells(i, 3).Value <> "" And sh1.Cells(i, 3).Value <> "0" Then
+            operId = sh1.Cells(i, 3).Value
+            j = 5
+            Do While j <= 34
+                Phours = 0
+                ExpHours = 0
+                If sh1.Cells(i, j).Value <> "" And sh1.Cells(equipRow, j).Value <> "" And sh1.Cells(equipRow, j).Value <> "0" Then
+                'Debug.Print "value = " & sh1.Cells(i, j).Value
+                    If sh1.Cells(i, j).Value Like "Q*" And IsNumeric(Replace(sh1.Cells(i, j).Value, "Q", "")) Then
+                        h = Replace(sh1.Cells(i, j).Value, "Q", "")
+                        If h > 0 And h <= 11 Then
+                            ExpHours = h
+                            Phours = 0
+                            instructor = 34
+                        End If
+                    ElseIf sh1.Cells(i, j).Value Like "A*" And IsNumeric(Replace(sh1.Cells(i, j).Value, "A", "")) Then
+                        h = Replace(sh1.Cells(i, j).Value, "A", "")
+                        If h > 0 And h <= 11 Then
+                            ExpHours = 0
+                            Phours = Replace(sh1.Cells(i, j).Value, "A", "")
+                            instructor = 16
+                        End If
+                    End If
+
+                    If ExpHours <> 0 Or Phours <> 0 Then
+                        Coarse = sh1.Cells(equipRow, j).Value
+
+                        Debug.Print "-------"
+
+                        If Not (rs Is Nothing) Then
+                            If (rs.State And adStateOpen) = adStateOpen Then rs.Close
+                            Set rs = Nothing
+                        End If
+
+                        sqlStr = "select * from [TrainingData] where [EmployeeID]= " & operId & " and [Date] = '" & dateStr & "' and [ExpHours] = " & ExpHours & " and [Phours] = " & Phours & " And [Coarse] = " & Coarse
+
+
+                        Set rs = con.Execute(sqlStr)
+
+
+                        If rs.BOF = True Then  'if exsists=true
+                            RecID = RecID + 1
+                            sqlStr = "insert into [TrainingData] ( [Date], [EmployeeID],[ExpHours], [Phours], [Instructor], [Coarse]) values ( '" & dateStr & "', '" & operId & "', '" & ExpHours & "','" & Phours & "','" & instructor & "', '" & Coarse & "')"
+                            Debug.Print sqlStr
+                            con.Execute sqlStr
+                            numLines = numLines + 1
+                            listOfUsers = listOfUsers & operId & " - " & ExpHours + Phours & "?.; "
+                        End If
+                        Exit Do
+                    End If
+
+                End If
+                j = j + 1
+
+            Loop
+
+            i = i + 1
+        End If
+    Next
+Debug.Print listOfUsers
+MsgBox ("Added Rows: " & numLines)
+
+End Sub
+
+
+
+

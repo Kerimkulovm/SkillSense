@@ -1,94 +1,160 @@
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
+import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.util.*;
+import java.util.List;
 
 public class OperationsDaily extends JPanel {
 
+    private final JLabel tableID_label;
+
+    private final JTextField
+            nameRus_text,
+            theoryHours_text,
+            practHours_text,
+            fieldHours_text,
+            expHours_text,
+            tableID_text;
+
+    private final JButton
+            search_button,
+            surnameSearch_button,
+            save_button,
+            cancel_button;
+
+    private JComboBox
+            CourseName_box,
+            trainer_box;
+
+    JDatePickerImpl Date_dtp = null;
+
     private BufferedImage logo_image;
+    private JPanel photoPanel;
 
-    private JLabel tableID_label;
+    private Integer courseId=0;
+    private Integer instructorId=0;
 
-    private JTextField tableID_text;
-    private JTextField nameRus_text;
 
-    private JButton searchButton;
+    DatabaseQueries databaseQueries = new DatabaseQueries();
 
-    public OperationsDaily()
-    {
+    public OperationsDaily(){
+
         try {
             logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
-        } catch (IOException ex) {
+        } catch (IOException ignored) {
 
         }
 
-
         setLayout(null);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Mine Operations Daily Time Form</big><br /> Ввод ежедневной информации</html>");
-        titleEng.setBounds(160, 0, 600, 100);
+        JLabel titleEng = new JLabel("<html><big>Ввод ежедневной информации</big></html>");
+        titleEng.setBounds(160, 0, 500, 100);
         titleEng.setBackground(Color.WHITE);
         titleEng.setForeground(Color.WHITE);
         titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JPanel searchEmployee_panel = new JPanel();
-        searchEmployee_panel.setBackground(Color.white);
-        searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Search Employee"));
-        searchEmployee_panel.setBounds(20, 120, 450, 50);
-        this.add(searchEmployee_panel);
 
-        JPanel tableID_panel = new JPanel();
-        tableID_label = new JLabel("Табельный номер | Employee ID: ");
-        tableID_label.setForeground(Color.RED);
-        tableID_panel.add(tableID_label);
-        tableID_panel.setBackground(Color.WHITE);
-        searchEmployee_panel.add(tableID_label);
-
-        tableID_text = new JTextField(6);
-        ((AbstractDocument) tableID_text.getDocument()).setDocumentFilter(new DocumentFilter() {
-            final Pattern regEx = Pattern.compile("\\d*");
-
+        JButton exit_button = new JButton("Выход");
+        exit_button.setBounds(730, 60, 150, 30);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        add(exit_button);
+        exit_button.addActionListener(new ActionListener() {
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                Matcher matcher = regEx.matcher(text);
-                if (!matcher.matches()) {
-                    return;
-                }
-                super.replace(fb, offset, length, text, attrs);
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Home Page");
             }
         });
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        JPanel searchEmployee_panel = new JPanel();
+        searchEmployee_panel.setBackground(Color.white);
+        searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
+        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
+        searchEmployee_panel.setBounds(20, 120, 500, 50);
+        this.add(searchEmployee_panel);
+
+        JPanel tableID_panel = new JPanel();
+        tableID_label = new JLabel(" Табельный номер:  ");
+        tableID_label.setForeground(Color.RED);
+        tableID_panel.setBackground(Color.WHITE);
+        tableID_panel.add(tableID_label);
+        searchEmployee_panel.add(tableID_label);
+
+        surnameSearch_button = new JButton("Ф.И.О.");
+        surnameSearch_button.setForeground(Color.RED);
+        surnameSearch_button.setBackground(Color.WHITE);
+        tableID_panel.add(surnameSearch_button);
+        searchEmployee_panel.add(surnameSearch_button);
+        surnameSearch_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchBySurname searchBySurname = new SearchBySurname(tableID_text.getText());
+                searchBySurname.pack();
+                searchBySurname.setVisible(true);
+            }
+        });
+
+        tableID_text = new JTextField();
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
 
-        searchButton = new JButton("Search");
-        searchButton.setForeground(Color.RED);
-        tableID_panel.add(searchButton);
-        searchEmployee_panel.add(searchButton);
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("") )
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
+                else {
+
+                    databaseQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(databaseQueries.getEmployeeName());
+                    enableComboText(trainer_box).setSelectedItem((databaseQueries.getSuperVisorName()));
+                    enableComboText(CourseName_box).setSelectedItem(databaseQueries.getJobName());
+
+
+
+                    if (databaseQueries.getPhotoLabel() != null){
+                        photoPanel.removeAll();
+                        photoPanel.add(databaseQueries.getPhotoLabel());
+                        revalidate();
+                        repaint();
+                    } else {
+                        photoPanel.removeAll();
+                        revalidate();
+                        repaint();
+                    }
+
+                    //LastDate_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
+                    setVisible(true);
+                }
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Personal Information"));
-        employeeInfo_panel.setBounds(20, 170, 450, 210);
+        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Информация по курсам"));
+        employeeInfo_panel.setBounds(20, 175, 500, 250);
         this.add(employeeInfo_panel);
 
         JPanel infoLabels = new JPanel();
@@ -102,219 +168,216 @@ public class OperationsDaily extends JPanel {
         inputPanel.setBackground(Color.WHITE);
         employeeInfo_panel.add(inputPanel);
 
-        JPanel photoPanel = new JPanel();
+        photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(480, 120, 390, 450);
-        photoPanel.setLayout(new BoxLayout(photoPanel, BoxLayout.X_AXIS));
-        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Photo"));
+        photoPanel.setBounds(530, 120, 210, 230);
+        photoPanel.setLayout(new BorderLayout());
+        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
         this.add(photoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel dayHoursInfoPanel = new JPanel();
-        dayHoursInfoPanel.setBackground(Color.WHITE);
-        dayHoursInfoPanel.setBounds(20, 390, 450, 180);
-        dayHoursInfoPanel.setLayout(new BoxLayout(dayHoursInfoPanel, BoxLayout.X_AXIS));
-        dayHoursInfoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Day Hours | Ежед. часы"));
-
-        this.add(dayHoursInfoPanel);
-
-        JPanel dayHoursLabels = new JPanel();
-        JPanel dayHoursTexts = new JPanel();
-
-        dayHoursLabels.setLayout(new BoxLayout(dayHoursLabels, BoxLayout.Y_AXIS));
-        dayHoursLabels.setBackground(Color.WHITE);
-        dayHoursInfoPanel.add(dayHoursLabels);
-
-        dayHoursTexts.setLayout(new BoxLayout(dayHoursTexts, BoxLayout.Y_AXIS));
-        dayHoursTexts.setBackground(Color.WHITE);
-        dayHoursInfoPanel.add(dayHoursTexts);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel nameEng_panel = new JPanel();
-        JLabel nameEng_label = new JLabel("Full Name: ");
-        nameEng_panel.add(nameEng_label);
-        nameEng_panel.setBackground(Color.WHITE);
-        infoLabels.add(nameEng_panel);
-
-        JTextField nameEng_text = new JTextField();
-        nameEng_text.setEnabled(false);
-        nameEng_panel.add(nameEng_text);
-        inputPanel.add(nameEng_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
         JPanel nameRus_panel = new JPanel();
         JLabel nameRus_label = new JLabel("Имя и Фамилия: ");
         nameRus_panel.add(nameRus_label);
         nameRus_panel.setBackground(Color.WHITE);
+        nameRus_panel.setForeground(Color.BLACK);
         infoLabels.add(nameRus_panel);
 
         nameRus_text = new JTextField();
+        nameRus_text.setForeground(Color.BLACK);
+        nameRus_text.setDisabledTextColor(Color.BLACK);
         nameRus_text.setEnabled(false);
         nameRus_panel.add(nameRus_text);
         inputPanel.add(nameRus_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel date_panel = new JPanel();
-        JLabel date_label = new JLabel("Date | Дата:");
-        date_panel.add(date_label);
-        date_panel.setBackground(Color.WHITE);
-        infoLabels.add(date_panel);
+        JPanel CourseName_panel = new JPanel();
+        JLabel CourseName_label = new JLabel("Курс: ");
+        CourseName_panel.add(CourseName_label);
+        CourseName_panel.setBackground(Color.WHITE);
+        infoLabels.add(CourseName_panel);
 
-        JTextField date_text = new JTextField();
-        date_text.setEnabled(false);
-        date_panel.add(date_text);
-        inputPanel.add(date_text);
+        CourseName_box = new JComboBox();
+        CourseName_box.setBackground(Color.WHITE);
+        CourseName_box = databaseQueries.loadCourseNameBox(CourseName_box);
+        CourseName_panel.add(CourseName_box);
+        inputPanel.add(CourseName_box);
+        CourseName_box.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                Date_dtp.getJFormattedTextField().setText("");
+                JComboBox c = (JComboBox) e.getSource();
+                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                courseId = item.getId();
+            }
+        });
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        JPanel trainer_panel = new JPanel();
+        JLabel trainer_label = new JLabel("Инструктор: ");
+        trainer_panel.add(trainer_label);
+        trainer_panel.setBackground(Color.WHITE);
+        infoLabels.add(trainer_panel);
+
+        trainer_box = new JComboBox();
+        trainer_box.setBackground(Color.WHITE);
+        trainer_box = databaseQueries.loadTrainerBox(trainer_box);
+        trainer_panel.add(trainer_box);
+        inputPanel.add(trainer_box);
+        trainer_box.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                JComboBox c = (JComboBox) e.getSource();
+                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                System.out.println(item.getId() + " : " + item.getDescription());
+                instructorId = item.getId();
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel course_panel = new JPanel();
-        JLabel course_label = new JLabel("Course | Курс: ");
-        course_panel.add(course_label);
-        course_panel.setBackground(Color.WHITE);
-        infoLabels.add(course_panel);
 
-        JTextField course_text = new JTextField();
-        course_text.setEnabled(false);
-        course_panel.add(course_text);
-        inputPanel.add(course_text);
+        JPanel Date_panel = new JPanel();
+        JLabel Date_label = new JLabel("Дата: ");
+        Date_panel.add(Date_label);
+        Date_panel.setBackground(Color.WHITE);
+        infoLabels.add(Date_panel);
 
+        UtilDateModel model = new UtilDateModel();
+        Properties p = new Properties();
+        p.put("text.today", "Today");
+        p.put("text.month", "Month");
+        p.put("text.year", "Year");
+
+        JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+        Date_dtp = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+        Date_panel.add(Date_dtp);
+        inputPanel.add(Date_dtp);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel instructor_panel = new JPanel();
-        JLabel instructor_label = new JLabel("Instructor | Инструктор: ");
-        instructor_panel.add(instructor_label);
-        instructor_panel.setBackground(Color.WHITE);
-        infoLabels.add(instructor_panel);
+        JPanel theoryHours_panel = new JPanel();
+        JLabel theoryHours_label = new JLabel("Теория: ");
+        theoryHours_panel.add(theoryHours_label);
+        theoryHours_panel.setBackground(Color.WHITE);
+        infoLabels.add(theoryHours_panel);
 
-        JTextField instructor_text = new JTextField();
-        instructor_text.setEnabled(false);
-        instructor_panel.add(instructor_text);
-        inputPanel.add(instructor_text);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel crew_panel = new JPanel();
-        JLabel crew_label = new JLabel("Department | Отдел: ");
-        crew_panel.add(crew_label);
-        crew_panel.setBackground(Color.WHITE);
-        infoLabels.add(crew_panel);
-
-        JTextField crew_text = new JTextField();
-        crew_text.setEnabled(false);
-        crew_panel.add(crew_text);
-        inputPanel.add(crew_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel shift_panel = new JPanel();
-        JLabel shift_label = new JLabel("Shift | Смена :");
-        shift_panel.add(shift_label);
-        shift_panel.setBackground(Color.WHITE);
-        infoLabels.add(shift_panel);
-
-        JTextField shift_text = new JTextField();
-        shift_text.setEnabled(false);
-        shift_panel.add(shift_text);
-        inputPanel.add(shift_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel expHours_panel = new JPanel();
-        JLabel expHours_label = new JLabel("Exp Hours :");
-        expHours_panel.add(expHours_label);
-        expHours_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(expHours_panel);
-
-        JTextField expHours_text = new JTextField();
-        expHours_text.setEnabled(false);
-        expHours_panel.add(expHours_text);
-        dayHoursTexts.add(expHours_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel pracHours_panel = new JPanel();
-        JLabel pracHours_label = new JLabel("Practical Hours | Прак. часы: ");
-        pracHours_panel.add(pracHours_label);
-        pracHours_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(pracHours_panel);
-
-        JTextField pracHours_text = new JTextField();
-        pracHours_text.setEnabled(false);
-        pracHours_panel.add(pracHours_text);
-        dayHoursTexts.add(pracHours_text);
+        theoryHours_text = new JTextField();
+        theoryHours_text.setForeground(Color.BLACK);
+        theoryHours_text.setDisabledTextColor(Color.BLACK);
+        theoryHours_text.setText("0");
+        theoryHours_panel.add(theoryHours_text);
+        inputPanel.add(theoryHours_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel fieldHours_panel = new JPanel();
-        JLabel fieldHours_label = new JLabel("Field Hours | С тренером: ");
+        JLabel fieldHours_label = new JLabel("Работа с тренером: ");
         fieldHours_panel.add(fieldHours_label);
         fieldHours_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(fieldHours_panel);
+        infoLabels.add(fieldHours_panel);
 
-        JTextField fieldHours_text = new JTextField();
-        fieldHours_text.setEnabled(false);
+        fieldHours_text = new JTextField();
+        fieldHours_text.setForeground(Color.BLACK);
+        fieldHours_text.setDisabledTextColor(Color.BLACK);
+        fieldHours_text.setText("0");
         fieldHours_panel.add(fieldHours_text);
-        dayHoursTexts.add(fieldHours_text);
+        inputPanel.add(fieldHours_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel theoryHours_panel = new JPanel();
-        JLabel theoryHours_label = new JLabel("Theory Hours | Теория: ");
-        theoryHours_panel.add(theoryHours_label);
-        theoryHours_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(theoryHours_panel);
+        JPanel practHours_panel = new JPanel();
+        JLabel practHours_label = new JLabel("Практ. часы: ");
+        practHours_panel.add(practHours_label);
+        practHours_panel.setBackground(Color.WHITE);
+        infoLabels.add(practHours_panel);
 
-        JTextField theoryHours_text = new JTextField();
-        theoryHours_text.setEnabled(false);
-        theoryHours_panel.add(theoryHours_text);
-        dayHoursTexts.add(theoryHours_text);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        JPanel mark_panel = new JPanel();
-        JLabel mark_label = new JLabel("Mark | Оценка: ");
-        mark_panel.add(mark_label);
-        mark_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(mark_panel);
-
-        JTextField mark_text = new JTextField();
-        mark_text.setEnabled(false);
-        mark_panel.add(mark_text);
-        dayHoursTexts.add(mark_text);
+        practHours_text = new JTextField();
+        practHours_text.setForeground(Color.BLACK);
+        practHours_text.setDisabledTextColor(Color.BLACK);
+        practHours_text.setText("0");
+        practHours_panel.add(practHours_text);
+        inputPanel.add(practHours_text);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel dayTotal_panel = new JPanel();
-        JLabel dayTotal_label = new JLabel("Day Total | Кол. дней: ");
-        dayTotal_panel.add(dayTotal_label);
-        dayTotal_panel.setBackground(Color.WHITE);
-        dayHoursLabels.add(dayTotal_panel);
+        JPanel expHours_panel = new JPanel();
+        JLabel expHours_label = new JLabel("Опыт. часы: ");
+        expHours_panel.add(expHours_label);
+        expHours_panel.setBackground(Color.WHITE);
+        infoLabels.add(expHours_panel);
 
-        JTextField dayTotal_text = new JTextField();
-        dayTotal_text.setEnabled(false);
-        dayTotal_panel.add(dayTotal_text);
-        dayHoursTexts.add(dayTotal_text);
+        expHours_text = new JTextField();
+        expHours_text.setForeground(Color.BLACK);
+        expHours_text.setDisabledTextColor(Color.BLACK);
+        expHours_text.setText("0");
+        expHours_panel.add(expHours_text);
+        inputPanel.add(expHours_text);
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Панель Управления
+        JPanel buttons_panel = new JPanel(new GridLayout());
+        buttons_panel.setBackground(Color.WHITE);
+        buttons_panel.setBounds(20, 450, 500, 30);
+        buttons_panel.setLayout(new GridLayout(1, 2));
+        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        this.add(buttons_panel);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JButton exit_button = new JButton("Выход");
-        exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
-        add(exit_button);
-        exit_button.addActionListener(new ActionListener() {
+
+
+        save_button = new JButton("Сохранить");
+        save_button.setBackground(Color.WHITE);
+        save_button.setForeground(Color.BLACK);
+        save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        buttons_panel.add(save_button);
+        save_button.addActionListener(new ActionListener() {
             @Override
+
             public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Home Page");
+
+                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")) {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, введите данные сотрудника");
+                }else if (courseId == 0 || instructorId == 0) {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните поля 'Курс' и 'Инструктор'.");
+                }else if ((practHours_text.getText().equals("0") || practHours_text.getText().equals(""))
+                        && (theoryHours_text.getText().equals("0") || theoryHours_text.getText().equals(""))
+                        && (fieldHours_text.getText().equals("0") || fieldHours_text.getText().equals(""))
+                        && (expHours_text.getText().equals("0") || expHours_text.getText().equals(""))) {
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните часы корректно.");
+                }else if (Date_dtp.getJFormattedTextField().getText().equals("")){
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните дату.");
+                } else {
+
+
+
+                    boolean res = false;
+                    res = databaseQueries.saveOperationDaily(tableID_text.getText(), courseId, instructorId, Date_dtp.getJFormattedTextField().getText(),
+                            Integer.parseInt(theoryHours_text.getText()), Integer.parseInt(fieldHours_text.getText()),
+                            Integer.parseInt(practHours_text.getText()), Integer.parseInt(expHours_text.getText()));
+
+                    if (res) JOptionPane.showMessageDialog(MineOperations.cardPane, "Запись сохранена успешно!");
+
+                    clearFields();
+                }
             }
         });
+
+        cancel_button = new JButton("Сброс");
+        cancel_button.setBackground(Color.RED);
+        cancel_button.setForeground(Color.WHITE);
+        cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        buttons_panel.add(cancel_button);
+        cancel_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearFields();
+            }
+        });
+
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
     protected void paintComponent(Graphics g) {
@@ -327,5 +390,159 @@ public class OperationsDaily extends JPanel {
         g.fillRect(0, 0, 900, 100);
 
         g.drawImage(logo_image, 0, 0, 150, 100, this);
+    }
+
+    private JComboBox enableComboText(JComboBox inputCombobox){
+        inputCombobox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public void paint(Graphics g) {
+                setForeground(Color.BLACK);
+                super.paint(g);
+            }
+        });
+        return inputCombobox;
+    }
+
+
+
+    private void clearFields(){
+
+        surnameSearch_button.setEnabled(true);
+
+        tableID_label.setForeground(Color.RED);
+        tableID_text.setText("");
+        nameRus_text.setText("");
+        theoryHours_text.setText("0");
+        practHours_text.setText("0");
+        fieldHours_text.setText("0");
+        expHours_text.setText("0");
+        Date_dtp.getJFormattedTextField().setText("");
+
+        photoPanel.removeAll();
+        revalidate();
+        repaint();
+    }
+
+
+
+    private class SearchBySurname extends JFrame{
+
+        private JTable listOfEmployees_table;
+
+        private List<String> employeeNames_list = new ArrayList<>();
+        private List<Integer> employeeID_list = new ArrayList<>();
+
+        private JPanel pageTitlePanel, tablePanel, backgroundPanel;
+
+        private JLabel foundEmployees_JLabel;
+
+        private int numOfRows = 1, numOfColumns = 2;
+
+        public SearchBySurname(String surname){
+
+            findSurnames(surname);
+            buildFrame();
+            createTable();
+
+            this.setPreferredSize(new Dimension(400, 600));
+            this.setFocusableWindowState(true);
+            this.setAutoRequestFocus(true);
+            this.setLocation(900,40);
+            this.setLayout(null);
+        }
+
+        private void buildFrame(){
+
+            pageTitlePanel = new JPanel();
+            pageTitlePanel.setBounds(0,0,400,50);
+            pageTitlePanel.setBackground(Color.WHITE);
+            pageTitlePanel.setVisible(true);
+            this.add(pageTitlePanel);
+
+            foundEmployees_JLabel = new JLabel("Найденные Сотрудники");
+            foundEmployees_JLabel.setFont(new Font("Helvetica",Font.BOLD, 20));
+            pageTitlePanel.add(foundEmployees_JLabel);
+
+            tablePanel = new JPanel();
+            tablePanel.setBackground(Color.WHITE);
+            tablePanel.setBounds(25,50,350,500);
+            tablePanel.setLayout(new BorderLayout());
+            tablePanel.setBorder(new LineBorder(Color.BLACK));
+            tablePanel.setVisible(true);
+            this.add(tablePanel);
+
+            backgroundPanel = new JPanel();
+            backgroundPanel.setBounds(0,0,400,600);
+            backgroundPanel.setBackground(Color.WHITE);
+            this.add(backgroundPanel);
+        }
+
+        private void createTable(){
+
+            DefaultTableModel listOfEmployees_model = new DefaultTableModel(numOfRows ,numOfColumns){
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            };
+            DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
+            centerRederer.setHorizontalAlignment(JLabel.CENTER);
+
+            listOfEmployees_table = new JTable(listOfEmployees_model);
+            listOfEmployees_table.setBorder(new LineBorder(Color.BLACK));
+            listOfEmployees_table.setBackground(Color.WHITE);
+            listOfEmployees_table.setRowHeight(25);
+            listOfEmployees_table.setVisible(true);
+
+            JTableHeader listHeader= listOfEmployees_table.getTableHeader();
+            listHeader.setBorder(new LineBorder(Color.BLACK));
+            listHeader.setBackground(Color.WHITE);
+            listHeader.setFont(new Font("Helvetica", Font.BOLD,12));
+
+            TableColumnModel listOfEmployees_columns = listHeader.getColumnModel();
+
+            TableColumn tabCol0 = listOfEmployees_columns.getColumn(0);
+            tabCol0.setHeaderValue("Табельный No");
+            tabCol0.setCellRenderer(centerRederer);
+            tabCol0.setPreferredWidth(10);
+
+            for (int i = 0; i < numOfRows; i++){
+                listOfEmployees_table.setValueAt(employeeID_list.get(i),i,0);
+            }
+
+            TableColumn tabCol1 = listOfEmployees_columns.getColumn(1);
+            tabCol1.setCellRenderer(centerRederer);
+            tabCol1.setHeaderValue("Ф.И.О");
+
+            for (int i = 0; i < numOfRows; i++){
+                listOfEmployees_table.setValueAt(employeeNames_list.get(i),i,1);
+            }
+
+
+            listOfEmployees_table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 1){
+                        int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
+                        System.out.println(listOfEmployees_table.getValueAt(index1, 0));
+                        tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                    }
+                }
+            });
+
+            tablePanel.add(new JScrollPane(listOfEmployees_table));
+        }
+
+        private void findSurnames(String surname){
+
+            if (surname == null){
+                JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите фамилию или имя");
+            } else {
+                databaseQueries.findBySurname(surname);
+                employeeNames_list = databaseQueries.getListOfSurnames();
+                employeeID_list = databaseQueries.getListOfID();
+                numOfRows = employeeNames_list.size();
+                System.out.println(numOfRows);
+            }
+        }
     }
 }
