@@ -765,6 +765,7 @@ public class EmployeeInfo extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Home Page");
+
                 clearFields();
             }
         });

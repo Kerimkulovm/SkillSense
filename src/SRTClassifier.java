@@ -14,19 +14,19 @@ import java.util.List;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Instructors extends JPanel {
+public class SRTClassifier extends JPanel {
 
     private BufferedImage logo_image;
 
-    private JTable instructors_table;
-    private DefaultTableModel instructors_tableModel;
+    private JTable srt_table;
+    private DefaultTableModel srt_tableModel;
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
-    public String instructorSelected;
+    public String srtSelected;
 
-    public List<String> instructors_list = new ArrayList<>();
+    public List<String> srt_list = new ArrayList<>();
 
-    public Instructors(){
+    public SRTClassifier(){
 
         try {
             logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
@@ -37,18 +37,18 @@ public class Instructors extends JPanel {
         setLayout(null);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Инструкторы'</big><br /></html>");
+        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'SRT'</big><br /></html>");
         titleEng.setBounds(160, 0, 400, 100);
         titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
         titleEng.setForeground(Color.WHITE);
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JTable instructors_panel = new JTable();
-        instructors_panel.setBackground(Color.WHITE);
-        instructors_panel.setBounds(20,120,650,500);
-        instructors_panel.setLayout(new BorderLayout());
-        this.add(instructors_panel);
+        JTable SRT_panel = new JTable();
+        SRT_panel.setBackground(Color.WHITE);
+        SRT_panel.setBounds(20,120,650,500);
+        SRT_panel.setLayout(new BorderLayout());
+        this.add(SRT_panel);
 
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
@@ -70,9 +70,9 @@ public class Instructors extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         buildTable();
-        JScrollPane instructors_scrollPane = new JScrollPane(instructors_table);
-        instructors_scrollPane.setBackground(Color.WHITE);
-        instructors_panel.add(instructors_scrollPane);
+        JScrollPane SRT_scrollPane = new JScrollPane(srt_table);
+        SRT_scrollPane.setBackground(Color.WHITE);
+        SRT_panel.add(SRT_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton edit_button = new JButton("Изменить");
@@ -82,9 +82,9 @@ public class Instructors extends JPanel {
         edit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
-                editInstructorFrame.setVisible(true);
-                editInstructorFrame.pack();
+                EditSRTFrame editSRTFrame = new EditSRTFrame();
+                editSRTFrame.setVisible(true);
+                editSRTFrame.pack();
             }
         });
 
@@ -95,9 +95,9 @@ public class Instructors extends JPanel {
         create_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AddInstructorFrame createInstructorFrame = new AddInstructorFrame();
-                createInstructorFrame.setVisible(true);
-                createInstructorFrame.pack();
+                AddSRTFrame createSRTFrame = new AddSRTFrame();
+                createSRTFrame.setVisible(true);
+                createSRTFrame.pack();
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,56 +105,56 @@ public class Instructors extends JPanel {
 
     private void buildTable(){
 
-        instructors_list = databaseQueries.loadInstructors(instructors_list);
+        srt_list = databaseQueries.loadSRT(srt_list);
 
-        instructors_tableModel = new DefaultTableModel(instructors_list.size(),3){
+        srt_tableModel = new DefaultTableModel(srt_list.size(),3){
             @Override
             public boolean isCellEditable(int row, int column){
                 return false;
             }
         };
-        DefaultTableCellRenderer instructors_cellRenderer = new DefaultTableCellRenderer();
-        instructors_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
+        DefaultTableCellRenderer SRT_cellRenderer = new DefaultTableCellRenderer();
+        SRT_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        instructors_table = new JTable(instructors_tableModel);
-        instructors_table.setBorder(new LineBorder(Color.BLACK));
-        instructors_table.setBackground(Color.WHITE);
-        instructors_table.setRowHeight(20);
+        srt_table = new JTable(srt_tableModel);
+        srt_table.setBorder(new LineBorder(Color.BLACK));
+        srt_table.setBackground(Color.WHITE);
+        srt_table.setRowHeight(20);
 
-        JTableHeader instructors_header = instructors_table.getTableHeader();
-        instructors_header.setBorder(new LineBorder(Color.BLACK));
-        instructors_header.setBackground(Color.WHITE);
-        instructors_header.setFont(new Font("Helvetica", Font.BOLD,12));
+        JTableHeader SRT_header = srt_table.getTableHeader();
+        SRT_header.setBorder(new LineBorder(Color.BLACK));
+        SRT_header.setBackground(Color.WHITE);
+        SRT_header.setFont(new Font("Helvetica", Font.BOLD,12));
 
-        TableColumnModel instructors_columns = instructors_header.getColumnModel();
+        TableColumnModel SRT_columns = SRT_header.getColumnModel();
 
-        TableColumn tabCol0 = instructors_columns.getColumn(0);
-        tabCol0.setHeaderValue("ID Инструктора");
-        tabCol0.setCellRenderer(instructors_cellRenderer);
+        TableColumn tabCol0 = SRT_columns.getColumn(0);
+        tabCol0.setHeaderValue("ID SRT");
+        tabCol0.setCellRenderer(SRT_cellRenderer);
         tabCol0.setPreferredWidth(50);
 
-        TableColumn tabCol1 = instructors_columns.getColumn(1);
-        tabCol1.setHeaderValue("Инструктор");
-        tabCol1.setCellRenderer(instructors_cellRenderer);
+        TableColumn tabCol1 = SRT_columns.getColumn(1);
+        tabCol1.setHeaderValue("SRT");
+        tabCol1.setCellRenderer(SRT_cellRenderer);
         tabCol1.setPreferredWidth(50);
 
-        TableColumn tabCol2 = instructors_columns.getColumn(2);
+        TableColumn tabCol2 = SRT_columns.getColumn(2);
         tabCol2.setHeaderValue("Статус");
-        tabCol2.setCellRenderer(instructors_cellRenderer);
+        tabCol2.setCellRenderer(SRT_cellRenderer);
         tabCol2.setPreferredWidth(50);
 
-        for (int i = 0; i <  instructors_table.getRowCount();i++){
-            instructors_table.setValueAt(databaseQueries.getInstructorID(instructors_list.get(i)),i,0);
-            instructors_table.setValueAt(instructors_list.get(i),i,1);
-            instructors_table.setValueAt(databaseQueries.getInstructorActivity(instructors_list.get(i)),i,2);
+        for (int i = 0; i <  srt_table.getRowCount(); i++){
+            srt_table.setValueAt(databaseQueries.getSRTID(srt_list.get(i)),i,0);
+            srt_table.setValueAt(srt_list.get(i),i,1);
+            srt_table.setValueAt(databaseQueries.getSRTActivity(srt_list.get(i)),i,2);
         }
 
-        instructors_table.addMouseListener(new MouseAdapter() {
+        srt_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
-                    instructorSelected = (String) instructors_table.getValueAt(instructors_table.getSelectedRow(),1);
-                    System.out.println(instructorSelected);
+                    srtSelected = (String) srt_table.getValueAt(srt_table.getSelectedRow(),1);
+                    System.out.println(srtSelected);
                 }
             }
         });
@@ -176,9 +176,9 @@ public class Instructors extends JPanel {
     }
 
 
-    private class AddInstructorFrame extends JFrame{
+    private class AddSRTFrame extends JFrame{
 
-        public AddInstructorFrame(){
+        public AddSRTFrame(){
 
             this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
@@ -193,17 +193,17 @@ public class Instructors extends JPanel {
 
         private void CreateFrame(){
 
-            JPanel instructorInfo_panel = new JPanel();
-            instructorInfo_panel.setBackground(Color.WHITE);
-            instructorInfo_panel.setLayout(new BorderLayout());
-            this.add(instructorInfo_panel);
+            JPanel SRTInfo_panel = new JPanel();
+            SRTInfo_panel.setBackground(Color.WHITE);
+            SRTInfo_panel.setLayout(new BorderLayout());
+            this.add(SRTInfo_panel);
 
-            JLabel instructor_label = new JLabel("  Ф.И.О Инструктора:  ");
-            instructor_label.setForeground(Color.BLACK);
-            instructorInfo_panel.add(instructor_label, BorderLayout.WEST);
+            JLabel SRT_label = new JLabel("  Ф.И.О Инструктора:  ");
+            SRT_label.setForeground(Color.BLACK);
+            SRTInfo_panel.add(SRT_label, BorderLayout.WEST);
 
-            JTextField instructor_textField = new JTextField();
-            instructorInfo_panel.add(instructor_textField, BorderLayout.CENTER);
+            JTextField SRT_textField = new JTextField();
+            SRTInfo_panel.add(SRT_textField, BorderLayout.CENTER);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,47 +218,47 @@ public class Instructors extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (instructor_textField.getText() == null){
+                    if (SRT_textField.getText() == null){
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите имя инструктора");
                     } else {
-                        int maxIDInstructor = 0;
-                        String checkInstructor_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructor_textField.getText() +"'";
+                        int maxIDSRT = 0;
+                        String checkSRT_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + SRT_textField.getText() +"'";
                         try {
-                            Statement checkInstructor_st = MineOperations.conn.createStatement();
-                            ResultSet instructorExists_rs = checkInstructor_st.executeQuery(checkInstructor_query);
-                            if (!instructorExists_rs.next()){
-                                String maxInstructorId_query = "SELECT max (InstructoId) as InstructoId FROM dbo.Instructor";
+                            Statement checkSRT_st = MineOperations.conn.createStatement();
+                            ResultSet SRTExists_rs = checkSRT_st.executeQuery(checkSRT_query);
+                            if (!SRTExists_rs.next()){
+                                String maxSRTId_query = "SELECT max (ReviewNo) as ReviewNo FROM dbo.SafetyNames";
                                 try{
-                                    Statement maxInstructorId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxInstructorId_rs = maxInstructorId_st.executeQuery(maxInstructorId_query);
-                                    if (maxInstructorId_rs.next()){
-                                        maxIDInstructor = maxInstructorId_rs.getInt(1);
-                                        System.out.println(maxIDInstructor);
+                                    Statement maxSRTId_st = MineOperations.conn.createStatement();
+                                    ResultSet maxSRTd_rs = maxSRTId_st.executeQuery(maxSRTId_query);
+                                    if (maxSRTd_rs.next()){
+                                        maxIDSRT = maxSRTd_rs.getInt(1);
+                                        System.out.println(maxIDSRT);
                                     }
                                 } catch (SQLException ex){
                                     ex.printStackTrace();
                                 }
 
-                                maxIDInstructor++;
+                                maxIDSRT++;
 
-                                String insert_query = "INSERT INTO dbo.Instructor " +
-                                        "(InstructoId, InstructorName, Instructor, isActive) " +
-                                        "VALUES (" + maxIDInstructor + ", N'" + instructor_textField.getText() + "', N'" +  instructor_textField.getText() + "', 1)";
+                                String insert_query = "INSERT INTO dbo.SafetyNames " +
+                                        "(ReviewNo, ReviewName, course, isActive) " +
+                                        "VALUES (" + maxIDSRT + ", N'" + SRT_textField.getText() + "', N'" +  SRT_textField.getText() + "', 1)";
                                 System.out.println(insert_query);
 
-                                PreparedStatement insertInstructor = MineOperations.conn.prepareStatement(insert_query);
-                                insertInstructor.executeUpdate();
+                                PreparedStatement insertSRTr = MineOperations.conn.prepareStatement(insert_query);
+                                insertSRTr.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 
 
-                                instructors_tableModel.addRow(new Object[]{maxIDInstructor,instructor_textField.getText(), "Активен" });
-                                instructors_tableModel.fireTableDataChanged();
+                                srt_tableModel.addRow(new Object[]{maxIDSRT,SRT_textField.getText(), "Активен" });
+                                srt_tableModel.fireTableDataChanged();
 
                                 dispose();
 
                             } else {
-                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор: " +
-                                        instructor_textField.getText() + " уже существует");
+                                JOptionPane.showMessageDialog(MineOperations.cardPane,"SRT: " +
+                                        SRT_textField.getText() + " уже существует");
                             }
                         } catch (SQLException ex) {
                             ex.printStackTrace();
@@ -285,11 +285,11 @@ public class Instructors extends JPanel {
 
     }
 
-    private class EditInstructorFrame extends JFrame{
+    private class EditSRTFrame extends JFrame{
 
 
 
-        public EditInstructorFrame(){
+        public EditSRTFrame(){
 
             this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
@@ -304,18 +304,18 @@ public class Instructors extends JPanel {
 
         private void CreateFrame(){
 
-            JPanel instructorInfo_panel = new JPanel();
-            instructorInfo_panel.setBackground(Color.WHITE);
-            instructorInfo_panel.setLayout(new GridLayout(1,2));
-            this.add(instructorInfo_panel);
+            JPanel SRTInfo_panel = new JPanel();
+            SRTInfo_panel.setBackground(Color.WHITE);
+            SRTInfo_panel.setLayout(new GridLayout(1,2));
+            this.add(SRTInfo_panel);
 
-            JLabel instructor_label = new JLabel(instructorSelected, SwingConstants.CENTER);
-            instructor_label.setForeground(Color.BLACK);
-            instructorInfo_panel.add(instructor_label);
+            JLabel SRT_label = new JLabel(srtSelected, SwingConstants.CENTER);
+            SRT_label.setForeground(Color.BLACK);
+            SRTInfo_panel.add(SRT_label);
 
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
-            instructorInfo_panel.add(isActive_box);
+            SRTInfo_panel.add(isActive_box);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,12 +332,12 @@ public class Instructors extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Instructor set isActive = " + isActive_int + "WHERE Instructor = N'" + instructor_label.getText() + "'";
-                        PreparedStatement updateInstructor_pst = MineOperations.conn.prepareStatement(update_query);
+                        String update_query = "UPDATE dbo.SafetyNames set isActive = " + isActive_int + "WHERE course = N'" + SRT_label.getText() + "'";
+                        PreparedStatement updateSRTpst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
-                        updateInstructor_pst.executeUpdate();
+                        updateSRTpst.executeUpdate();
 
-                        instructors_tableModel.setValueAt(isActive_box.getSelectedItem(),instructors_table.getSelectedRow(),2);
+                        srt_tableModel.setValueAt(isActive_box.getSelectedItem(), srt_table.getSelectedRow(),2);
 
                         dispose();
 

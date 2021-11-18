@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,7 +54,7 @@ public class HomePage extends JPanel {
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.white);
         buttons_panel.setBounds(30, 120, 500, 500);
-        buttons_panel.setLayout(new GridLayout(6, 1));
+        buttons_panel.setLayout(new GridLayout(6, 1,5,5));
         this.add(buttons_panel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,31 +117,6 @@ public class HomePage extends JPanel {
             }
         });
 
-        /*
-
-        instructorClassification_button = new JButton("<html> <big> У.К. 'Инструктор' </big> <br /> (Управление классификаторами инструкторов) </html>");
-        buttons_panel.add(instructorClassification_button);
-        instructorClassification_button.setHorizontalAlignment(SwingConstants.LEFT);
-        instructorClassification_button.setBackground(Color.WHITE);
-        instructorClassification_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane, "Instructors");
-            }
-        });
-
-        classificationCourse_button = new JButton("<html> <big> У.К. 'Курсы' </big> <br /> (Управление классификаторами курсов) </html>");
-        buttons_panel.add(classificationCourse_button);
-        classificationCourse_button.setHorizontalAlignment(SwingConstants.LEFT);
-        classificationCourse_button.setBackground(Color.WHITE);
-        classificationCourse_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Courses");
-            }
-        });
-
-         */
     }
 
     protected void paintComponent(Graphics g) {
@@ -155,5 +131,7 @@ public class HomePage extends JPanel {
         g.drawImage(logo_image, 0, 0, 150, 100, this);
         g.drawImage(safe_image, 560, 270, 300, 300, this);
     }
-
 }
+
+
+

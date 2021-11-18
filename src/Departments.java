@@ -14,19 +14,20 @@ import java.util.List;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Instructors extends JPanel {
+public class Departments extends JPanel {
 
     private BufferedImage logo_image;
 
-    private JTable instructors_table;
-    private DefaultTableModel instructors_tableModel;
+    private JTable departments_table;
+    private DefaultTableModel departments_tableModel;
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
-    public String instructorSelected;
+    public String departmentSelected;
 
-    public List<String> instructors_list = new ArrayList<>();
+    public List<String> departments_list = new ArrayList<>();
 
-    public Instructors(){
+
+    public Departments(){
 
         try {
             logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
@@ -37,18 +38,20 @@ public class Instructors extends JPanel {
         setLayout(null);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Инструкторы'</big><br /></html>");
+
+        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Отделы'</big><br /></html>");
         titleEng.setBounds(160, 0, 400, 100);
         titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
         titleEng.setForeground(Color.WHITE);
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JTable instructors_panel = new JTable();
-        instructors_panel.setBackground(Color.WHITE);
-        instructors_panel.setBounds(20,120,650,500);
-        instructors_panel.setLayout(new BorderLayout());
-        this.add(instructors_panel);
+
+        JTable departments_panel = new JTable();
+        departments_panel.setBackground(Color.WHITE);
+        departments_panel.setBounds(20,120,650,500);
+        departments_panel.setLayout(new BorderLayout());
+        this.add(departments_panel);
 
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
@@ -70,11 +73,12 @@ public class Instructors extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         buildTable();
-        JScrollPane instructors_scrollPane = new JScrollPane(instructors_table);
+        JScrollPane instructors_scrollPane = new JScrollPane(departments_table);
         instructors_scrollPane.setBackground(Color.WHITE);
-        instructors_panel.add(instructors_scrollPane);
+        departments_panel.add(instructors_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JButton edit_button = new JButton("Изменить");
         edit_button.setForeground(Color.BLACK);
         edit_button.setBackground(Color.WHITE);
@@ -82,9 +86,9 @@ public class Instructors extends JPanel {
         edit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
-                editInstructorFrame.setVisible(true);
-                editInstructorFrame.pack();
+                EditDepartmentFrame editDepartmentFrame= new EditDepartmentFrame();
+                editDepartmentFrame.setVisible(true);
+                editDepartmentFrame.pack();
             }
         });
 
@@ -95,73 +99,71 @@ public class Instructors extends JPanel {
         create_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AddInstructorFrame createInstructorFrame = new AddInstructorFrame();
-                createInstructorFrame.setVisible(true);
-                createInstructorFrame.pack();
+                AddDepartmentFrame addDepartmentFrame = new AddDepartmentFrame();
+                addDepartmentFrame.setVisible(true);
+                addDepartmentFrame.pack();
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
     private void buildTable(){
 
-        instructors_list = databaseQueries.loadInstructors(instructors_list);
+        departments_list = databaseQueries.loadDepartments(departments_list);
 
-        instructors_tableModel = new DefaultTableModel(instructors_list.size(),3){
+        departments_tableModel = new DefaultTableModel(departments_list.size(),3){
             @Override
             public boolean isCellEditable(int row, int column){
                 return false;
             }
         };
-        DefaultTableCellRenderer instructors_cellRenderer = new DefaultTableCellRenderer();
-        instructors_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
+        DefaultTableCellRenderer departments_cellRenderer = new DefaultTableCellRenderer();
+        departments_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        instructors_table = new JTable(instructors_tableModel);
-        instructors_table.setBorder(new LineBorder(Color.BLACK));
-        instructors_table.setBackground(Color.WHITE);
-        instructors_table.setRowHeight(20);
+        departments_table = new JTable(departments_tableModel);
+        departments_table.setBorder(new LineBorder(Color.BLACK));
+        departments_table.setBackground(Color.WHITE);
+        departments_table.setRowHeight(20);
 
-        JTableHeader instructors_header = instructors_table.getTableHeader();
-        instructors_header.setBorder(new LineBorder(Color.BLACK));
-        instructors_header.setBackground(Color.WHITE);
-        instructors_header.setFont(new Font("Helvetica", Font.BOLD,12));
+        JTableHeader departments_header = departments_table.getTableHeader();
+        departments_header.setBorder(new LineBorder(Color.BLACK));
+        departments_header.setBackground(Color.WHITE);
+        departments_header.setFont(new Font("Helvetica", Font.BOLD,12));
 
-        TableColumnModel instructors_columns = instructors_header.getColumnModel();
+        TableColumnModel departments_columns = departments_header.getColumnModel();
 
-        TableColumn tabCol0 = instructors_columns.getColumn(0);
-        tabCol0.setHeaderValue("ID Инструктора");
-        tabCol0.setCellRenderer(instructors_cellRenderer);
+        TableColumn tabCol0 = departments_columns.getColumn(0);
+        tabCol0.setHeaderValue("ID Отдела");
+        tabCol0.setCellRenderer(departments_cellRenderer);
         tabCol0.setPreferredWidth(50);
 
-        TableColumn tabCol1 = instructors_columns.getColumn(1);
-        tabCol1.setHeaderValue("Инструктор");
-        tabCol1.setCellRenderer(instructors_cellRenderer);
+        TableColumn tabCol1 = departments_columns.getColumn(1);
+        tabCol1.setHeaderValue("Отдел");
+        tabCol1.setCellRenderer(departments_cellRenderer);
         tabCol1.setPreferredWidth(50);
 
-        TableColumn tabCol2 = instructors_columns.getColumn(2);
+        TableColumn tabCol2 = departments_columns.getColumn(2);
         tabCol2.setHeaderValue("Статус");
-        tabCol2.setCellRenderer(instructors_cellRenderer);
+        tabCol2.setCellRenderer(departments_cellRenderer);
         tabCol2.setPreferredWidth(50);
 
-        for (int i = 0; i <  instructors_table.getRowCount();i++){
-            instructors_table.setValueAt(databaseQueries.getInstructorID(instructors_list.get(i)),i,0);
-            instructors_table.setValueAt(instructors_list.get(i),i,1);
-            instructors_table.setValueAt(databaseQueries.getInstructorActivity(instructors_list.get(i)),i,2);
+        for (int i = 0; i <  departments_table.getRowCount();i++){
+            departments_table.setValueAt(databaseQueries.getDepartmentID(departments_list.get(i)),i,0);
+            departments_table.setValueAt(departments_list.get(i),i,1);
+            departments_table.setValueAt(databaseQueries.getDepartmentActivity(departments_list.get(i)),i,2);
         }
 
-        instructors_table.addMouseListener(new MouseAdapter() {
+        departments_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
-                    instructorSelected = (String) instructors_table.getValueAt(instructors_table.getSelectedRow(),1);
-                    System.out.println(instructorSelected);
+                    departmentSelected = (String) departments_table.getValueAt(departments_table.getSelectedRow(),1);
+                    System.out.println(departmentSelected);
                 }
             }
         });
     }
-
-
-
 
     protected void paintComponent(Graphics g){
         super.paintComponent(g); // paint children
@@ -175,10 +177,9 @@ public class Instructors extends JPanel {
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
+    private class AddDepartmentFrame extends JFrame{
 
-    private class AddInstructorFrame extends JFrame{
-
-        public AddInstructorFrame(){
+        public AddDepartmentFrame(){
 
             this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
@@ -188,22 +189,21 @@ public class Instructors extends JPanel {
             this.setLocation(200,200);
 
             CreateFrame();
-
         }
 
         private void CreateFrame(){
 
-            JPanel instructorInfo_panel = new JPanel();
-            instructorInfo_panel.setBackground(Color.WHITE);
-            instructorInfo_panel.setLayout(new BorderLayout());
-            this.add(instructorInfo_panel);
+            JPanel departmentsInfo_panel = new JPanel();
+            departmentsInfo_panel.setBackground(Color.WHITE);
+            departmentsInfo_panel.setLayout(new BorderLayout());
+            this.add(departmentsInfo_panel);
 
-            JLabel instructor_label = new JLabel("  Ф.И.О Инструктора:  ");
-            instructor_label.setForeground(Color.BLACK);
-            instructorInfo_panel.add(instructor_label, BorderLayout.WEST);
+            JLabel departments_label = new JLabel("  Название отдела:  ");
+            departments_label.setForeground(Color.BLACK);
+            departmentsInfo_panel.add(departments_label, BorderLayout.WEST);
 
-            JTextField instructor_textField = new JTextField();
-            instructorInfo_panel.add(instructor_textField, BorderLayout.CENTER);
+            JTextField departments_textField = new JTextField();
+            departmentsInfo_panel.add(departments_textField, BorderLayout.CENTER);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,47 +218,46 @@ public class Instructors extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (instructor_textField.getText() == null){
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите имя инструктора");
+                    if (departments_textField.getText() == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название отдела");
                     } else {
-                        int maxIDInstructor = 0;
-                        String checkInstructor_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructor_textField.getText() +"'";
+                        int maxIDDepartment = 0;
+                        String checkDepartment_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departments_textField.getText() +"'";
                         try {
-                            Statement checkInstructor_st = MineOperations.conn.createStatement();
-                            ResultSet instructorExists_rs = checkInstructor_st.executeQuery(checkInstructor_query);
-                            if (!instructorExists_rs.next()){
-                                String maxInstructorId_query = "SELECT max (InstructoId) as InstructoId FROM dbo.Instructor";
+                            Statement checkDepartment_st = MineOperations.conn.createStatement();
+                            ResultSet departmentExists_rs = checkDepartment_st.executeQuery(checkDepartment_query);
+                            if (!departmentExists_rs.next()){
+                                String maxInstructorId_query = "SELECT max (DeptId) as DeptId FROM dbo.Departments";
                                 try{
-                                    Statement maxInstructorId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxInstructorId_rs = maxInstructorId_st.executeQuery(maxInstructorId_query);
-                                    if (maxInstructorId_rs.next()){
-                                        maxIDInstructor = maxInstructorId_rs.getInt(1);
-                                        System.out.println(maxIDInstructor);
+                                    Statement maxDepartmentId_st = MineOperations.conn.createStatement();
+                                    ResultSet maxDepartmentId_rs = maxDepartmentId_st.executeQuery(maxInstructorId_query);
+                                    if (maxDepartmentId_rs.next()){
+                                        maxIDDepartment = maxDepartmentId_rs.getInt(1);
+                                        System.out.println(maxIDDepartment);
                                     }
                                 } catch (SQLException ex){
                                     ex.printStackTrace();
                                 }
 
-                                maxIDInstructor++;
+                                maxIDDepartment++;
 
-                                String insert_query = "INSERT INTO dbo.Instructor " +
-                                        "(InstructoId, InstructorName, Instructor, isActive) " +
-                                        "VALUES (" + maxIDInstructor + ", N'" + instructor_textField.getText() + "', N'" +  instructor_textField.getText() + "', 1)";
+                                String insert_query = "INSERT INTO dbo.Departments " +
+                                        "(DeptId, Departmant, russian, isActive) " +
+                                        "VALUES (" + maxIDDepartment + ", N'" + departments_textField.getText() + "', N'" +  departments_textField.getText() + "', 1)";
                                 System.out.println(insert_query);
 
-                                PreparedStatement insertInstructor = MineOperations.conn.prepareStatement(insert_query);
-                                insertInstructor.executeUpdate();
+                                PreparedStatement insertDepartment = MineOperations.conn.prepareStatement(insert_query);
+                                insertDepartment.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 
-
-                                instructors_tableModel.addRow(new Object[]{maxIDInstructor,instructor_textField.getText(), "Активен" });
-                                instructors_tableModel.fireTableDataChanged();
+                                departments_tableModel.addRow(new Object[]{maxIDDepartment,departments_textField.getText(), "Активен" });
+                                departments_tableModel.fireTableDataChanged();
 
                                 dispose();
 
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор: " +
-                                        instructor_textField.getText() + " уже существует");
+                                        departments_textField.getText() + " уже существует");
                             }
                         } catch (SQLException ex) {
                             ex.printStackTrace();
@@ -277,19 +276,14 @@ public class Instructors extends JPanel {
                 }
             });
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
         }
 
     }
 
-    private class EditInstructorFrame extends JFrame{
+    private class EditDepartmentFrame extends JFrame{
 
-
-
-        public EditInstructorFrame(){
+        public EditDepartmentFrame(){
 
             this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
@@ -304,18 +298,18 @@ public class Instructors extends JPanel {
 
         private void CreateFrame(){
 
-            JPanel instructorInfo_panel = new JPanel();
-            instructorInfo_panel.setBackground(Color.WHITE);
-            instructorInfo_panel.setLayout(new GridLayout(1,2));
-            this.add(instructorInfo_panel);
+            JPanel departmentInfo_panel = new JPanel();
+            departmentInfo_panel.setBackground(Color.WHITE);
+            departmentInfo_panel.setLayout(new GridLayout(1,2));
+            this.add(departmentInfo_panel);
 
-            JLabel instructor_label = new JLabel(instructorSelected, SwingConstants.CENTER);
-            instructor_label.setForeground(Color.BLACK);
-            instructorInfo_panel.add(instructor_label);
+            JLabel department_label = new JLabel(departmentSelected, SwingConstants.CENTER);
+            department_label.setForeground(Color.BLACK);
+            departmentInfo_panel.add(department_label);
 
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
-            instructorInfo_panel.add(isActive_box);
+            departmentInfo_panel.add(isActive_box);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,12 +326,12 @@ public class Instructors extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Instructor set isActive = " + isActive_int + "WHERE Instructor = N'" + instructor_label.getText() + "'";
-                        PreparedStatement updateInstructor_pst = MineOperations.conn.prepareStatement(update_query);
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
-                        updateInstructor_pst.executeUpdate();
+                        String update_query = "UPDATE dbo.Departments set isActive = " + isActive_int + "WHERE russian = N'" + department_label.getText() + "'";
+                        PreparedStatement updateDepartment_pst = MineOperations.conn.prepareStatement(update_query);
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел успешно обнавлен");
+                        updateDepartment_pst.executeUpdate();
 
-                        instructors_tableModel.setValueAt(isActive_box.getSelectedItem(),instructors_table.getSelectedRow(),2);
+                        departments_tableModel.setValueAt(isActive_box.getSelectedItem(),departments_table.getSelectedRow(),2);
 
                         dispose();
 
@@ -357,5 +351,7 @@ public class Instructors extends JPanel {
                 }
             });
         }
+
     }
+
 }

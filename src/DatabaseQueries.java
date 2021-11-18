@@ -1,5 +1,4 @@
 import org.jdatepicker.impl.JDatePickerImpl;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -16,7 +15,6 @@ import java.util.Objects;
 public class DatabaseQueries {
 
     Statement st;
-    Statement courseSearchStatement;
     PreparedStatement updateEmployee;
     PreparedStatement insertEmployee;
 
@@ -466,8 +464,8 @@ public class DatabaseQueries {
                         "VALUES (" +
                         employeeID + ", N'" +
                         fullName + "', N'" +
-                        fullName + "', " +
-                        jobTitle + ", " +
+                        fullName + "', N'" +
+                        jobTitle + "', " +
                         ReportsTo + ", " +
                         crewID + ", " +
                         departmentID + ", " +
@@ -1198,4 +1196,238 @@ public class DatabaseQueries {
 
         return status;
     }
+
+    public List<String> loadDepartments(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String departments_query = "SELECT * FROM dbo.Departments";
+            Statement departments_st = MineOperations.conn.createStatement();
+            ResultSet departments_rs = departments_st.executeQuery(departments_query);
+
+            if (departments_rs.next()){
+                while (departments_rs.next()){
+                    String departmentsTitle = departments_rs.getString("russian");
+                    inputList.add(departmentsTitle);
+                }
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    public int getDepartmentID(String departmentTitle){
+
+        int departmentID = 0;
+
+        try {
+            String departmentID_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            Statement departmentID_statement = MineOperations.conn.createStatement();
+            ResultSet departmentID_results = departmentID_statement.executeQuery(departmentID_query);
+
+            if (departmentID_results.next()){
+                do{
+                    int instructorId= departmentID_results.getInt("DeptId");
+                    departmentID = instructorId;
+                } while (departmentID_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return departmentID;
+    }
+
+    public String getDepartmentActivity(String departmentTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String department_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            Statement department_statement = MineOperations.conn.createStatement();
+            ResultSet department_results = department_statement.executeQuery(department_query);
+
+            if (department_results.next()){
+                do{
+                    int isActiveId= department_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (department_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    public List<String> loadCrews(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String crews_query = "SELECT * FROM dbo.Crews";
+            Statement crews_st = MineOperations.conn.createStatement();
+            ResultSet crews_rs = crews_st.executeQuery(crews_query);
+
+            if (crews_rs.next()){
+                while (crews_rs.next()){
+                    String departmentsTitle = crews_rs.getString("Crew");
+                    inputList.add(departmentsTitle);
+                }
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    public int getCrewID(String crewTitle){
+
+        int crewID = 0;
+
+        try {
+            String crewID_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + crewTitle +"'";
+            Statement crewID_statement = MineOperations.conn.createStatement();
+            ResultSet crewID_results = crewID_statement.executeQuery(crewID_query);
+
+            if (crewID_results.next()){
+                do{
+                    int crewrId= crewID_results.getInt("CrewNo");
+                    crewID = crewrId;
+                } while (crewID_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return crewID;
+    }
+
+    public String getCrewActivity(String departmentTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + departmentTitle +"'";
+            Statement crew_statement = MineOperations.conn.createStatement();
+            ResultSet crew_results = crew_statement.executeQuery(crew_query);
+
+            if (crew_results.next()){
+                do{
+                    int isActiveId= crew_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (crew_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    public List<String> loadSRT(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+            String SRT_query = "SELECT * FROM dbo.SafetyNames";
+            Statement SRT_statement = MineOperations.conn.createStatement();
+            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
+
+            if (SRT_results.next()){
+                do{
+                    String SRTName= SRT_results.getString("course");
+                    inputList.add(SRTName);
+                } while (SRT_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputList;
+    }
+
+    public int getSRTID(String SRTName){
+
+        int SRTID = 0;
+
+        try {
+            String SRT_query = "SELECT * FROM dbo.SafetyNames WHERE course  = N'" + SRTID +"'";
+            Statement SRT_statement = MineOperations.conn.createStatement();
+            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
+
+            if (SRT_results.next()){
+                do{
+                    int SRTId= SRT_results.getInt("InstructoId");
+                    SRTID = SRTId;
+                } while (SRT_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return SRTID;
+    }
+
+    public String getSRTActivity(String instructorName){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + instructorName +"'";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    int isActiveId= instructors_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (instructors_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
 }

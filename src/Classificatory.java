@@ -27,7 +27,7 @@ public class Classificatory extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        title_label = new JLabel("<html><big>Управление классификаторами</big><br />(Курсы, Инструктора, Позиции, SRT)</html>");
+        title_label = new JLabel("<html><big>Управление классификаторами</big><br />(Курсы, Инструктора, Позиции, Отделы, SRT)</html>");
         title_label.setBounds(160, 0, 500, 100);
         title_label.setForeground(Color.WHITE);
         title_label.setFont(new Font("Helvetica", Font.BOLD, 20));
@@ -77,6 +77,38 @@ public class Classificatory extends JPanel {
             }
         });
 
+        JButton departments_button = new JButton("<html> <big> Отделы </big><br />(Просмотреть/Изменить/Данные об Отделах)</html>");
+        buttons_panel.add(departments_button);
+        departments_button.setHorizontalAlignment(SwingConstants.LEFT);
+        departments_button.setBackground(Color.WHITE);
+        departments_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Departments");
+            }
+        });
+
+        JButton crews_button = new JButton("<html> <big> Смены </big><br />(Просмотреть/Изменить/Данные о Сменах)</html>");
+        buttons_panel.add(crews_button);
+        crews_button.setHorizontalAlignment(SwingConstants.LEFT);
+        crews_button.setBackground(Color.WHITE);
+        crews_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Crews");
+            }
+        });
+
+        JButton SRT_button = new JButton("<html> <big> SRT </big><br />(Просмотреть/Изменить/Данные о SRT)</html>");
+        buttons_panel.add(SRT_button);
+        SRT_button.setHorizontalAlignment(SwingConstants.LEFT);
+        SRT_button.setBackground(Color.WHITE);
+        SRT_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"SRT");
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
