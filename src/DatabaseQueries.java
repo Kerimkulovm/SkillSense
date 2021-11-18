@@ -146,9 +146,9 @@ public class DatabaseQueries {
                     }catch (NullPointerException | IOException ex){
                         ex.printStackTrace();
                     }
-
-                    photoLabel = new JLabel(new ImageIcon(imagef));
-
+                    if (imagef != null) {
+                        photoLabel = new JLabel(new ImageIcon(imagef));
+                    }
                 } else {
                     photoLabel = null;
                 }
