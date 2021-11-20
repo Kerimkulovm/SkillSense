@@ -37,6 +37,9 @@ public class MineOperations extends JFrame {
     public static Departments DepartmentsPanel = new Departments();
     public static Crews CrewsPanel = new Crews();
     public static SRTClassifier SRTClassifierPanel = new SRTClassifier();
+    public static Supervisors SupervisorsPanel = new Supervisors();
+    public static SRTHoursEditorial SRTEditorialPanel = new SRTHoursEditorial();
+    public static DailyEditorial DaysEditorialPanel = new DailyEditorial();
 
 
     public static CardLayout card;
@@ -70,6 +73,9 @@ public class MineOperations extends JFrame {
         cardPane.add(DepartmentsPanel, "Departments");
         cardPane.add(CrewsPanel,"Crews");
         cardPane.add(SRTClassifierPanel, "SRT");
+        cardPane.add(SupervisorsPanel,"Supervisors");
+        cardPane.add(SRTEditorialPanel, "SRTEditorial");
+        cardPane.add(DaysEditorialPanel, "DaysEditorial");
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);
