@@ -20,10 +20,11 @@ public class HomePage extends JPanel {
 
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
-    private JButton instructorClassification_button;
+    private JButton editSRT_button;
     private JButton classificationCourse_button;
     private JButton employeeInfo_button;
     private JButton operations_button;
+    private JButton dailyEditorial_button;
 
     public HomePage()
     {
@@ -42,7 +43,7 @@ public class HomePage extends JPanel {
         title_label.setBounds(160, 0, 500, 100);
         title_label.setBackground(Color.WHITE);
         title_label.setForeground(Color.WHITE);
-        title_label.setFont(new Font("Kumtor", Font.BOLD, 40));
+        title_label.setFont(new Font("Helvetica", Font.BOLD, 40));
         this.add(title_label);
 
         gorniy_label = new JLabel("<html>Горный Оператор-<br>Обучение</html>");
@@ -54,7 +55,7 @@ public class HomePage extends JPanel {
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.white);
         buttons_panel.setBounds(30, 120, 500, 500);
-        buttons_panel.setLayout(new GridLayout(6, 1,5,5));
+        buttons_panel.setLayout(new GridLayout(7, 1,5,5));
         this.add(buttons_panel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +68,10 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Employee Info");
+                EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadJobTitlesBox(EmployeeInfo.positionRus_box);
+                EmployeeInfo.supervisor_box = EmployeeInfo.databaseQueries.loadSupervisorBox(EmployeeInfo.supervisor_box);
+                EmployeeInfo.departmentRus_box = EmployeeInfo.databaseQueries.loadDepartmentsBox(EmployeeInfo.departmentRus_box);
+                EmployeeInfo.crewRus_box = EmployeeInfo.databaseQueries.loadCrewBox(EmployeeInfo.crewRus_box);
             }
         });
 
@@ -79,6 +84,8 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane, "Operations Daily");
+                OperationsDaily.CourseName_box = OperationsDaily.databaseQueries.loadCourseNameBox(OperationsDaily.CourseName_box);
+                OperationsDaily.trainer_box = OperationsDaily.databaseQueries.loadTrainerBox(OperationsDaily.trainer_box);
             }
         });
 
@@ -90,11 +97,13 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"View Qualifications");
+                ViewQualifications.coursesList = ViewQualifications.databaseQueries.loadCourses();
+                ViewQualifications.courses_tableModel.fireTableDataChanged();
             }
         });
 
 
-        viewSchedule_button = new JButton("<html> <big> SRT </big> <br /> (Ввод данных по ТБ) </html>");
+        viewSchedule_button = new JButton("<html> <big> Ежегодное Обучение </big> <br /> (Ввод данных по ТБ) </html>");
         buttons_panel.add(viewSchedule_button);
         viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
         viewSchedule_button.setBackground(Color.WHITE);
@@ -102,6 +111,8 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane, "Enter SRT");
+                EnterSRT.CourseName_box = EnterSRT.databaseQueries.loadCourseNameBox(EnterSRT.CourseName_box);
+                EnterSRT.trainer_box = EnterSRT.databaseQueries.loadTrainerBox(EnterSRT.trainer_box);
             }
         });
 
@@ -117,6 +128,27 @@ public class HomePage extends JPanel {
             }
         });
 
+        editSRT_button = new JButton("<html> <big> Часы SRT </big> <br /> (Управление классификаторами курсов, инструкторов) </html>");
+        buttons_panel.add(editSRT_button);
+        editSRT_button.setHorizontalAlignment(SwingConstants.LEFT);
+        editSRT_button.setBackground(Color.WHITE);
+        editSRT_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"SRTEditorial");
+            }
+        });
+
+        dailyEditorial_button = new JButton("<html> <big> Ежедневные Часы </big> <br /> (Управление классификаторами курсов, инструкторов) </html>");
+        buttons_panel.add(dailyEditorial_button);
+        dailyEditorial_button.setHorizontalAlignment(SwingConstants.LEFT);
+        dailyEditorial_button.setBackground(Color.WHITE);
+        dailyEditorial_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"DaysEditorial");
+            }
+        });
     }
 
     protected void paintComponent(Graphics g) {

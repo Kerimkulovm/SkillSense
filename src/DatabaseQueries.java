@@ -178,29 +178,6 @@ public class DatabaseQueries {
         return supervisorID_input;
     }
 
-    /*
-    private int findJobName(int jobTitleID_input){
-
-        String jobTitle_query = "SELECT * FROM dbo.JobTitles WHERE JobTitleId = '" + jobTitleID_input + "'";
-
-        try{
-
-            Statement jobTitle_statement = MineOperations.conn.createStatement();
-            ResultSet jobTitle_result = jobTitle_statement.executeQuery(jobTitle_query);
-
-            while(jobTitle_result.next()){
-                jobName = jobTitle_result.getString("RusTitle");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return jobTitleID_input;
-    }
-
-     */
-
     private int findDepartmentName(int departmentID_input){
 
         String departmentID_query = "SELECT * FROM dbo.Departments WHERE DeptID = " + departmentID_input;
@@ -259,7 +236,6 @@ public class DatabaseQueries {
     public String getSuperVisorName(){
         return Objects.requireNonNullElse(superVisorName, "Нет данных");
     }
-
 
     public String getJobName(){
         return Objects.requireNonNullElse(jobTitle, "Нет данных");
@@ -329,27 +305,6 @@ public class DatabaseQueries {
     public void setFullName(String fullName_input){
         fullName = fullName_input;
     }
-
-    /*
-    public void setJobID(JComboBox inputBox){
-
-        String jobID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + (String) inputBox.getSelectedItem() + "'";
-
-        try {
-
-            Statement jobID_statement = MineOperations.conn.createStatement();
-            ResultSet jobID_result = jobID_statement.executeQuery(jobID_query);
-
-            while (jobID_result.next()){
-                jobTitle = jobID_result.getInt("JobTitleId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-    }
-
-     */
 
     public void setCrewID(JComboBox inputBox){
 
@@ -566,9 +521,11 @@ public class DatabaseQueries {
 
     public JComboBox loadSupervisorBox( JComboBox inputBox) {
 
+        inputBox.removeAllItems();
+
         try{
 
-            String reportsTo_query = "SELECT * FROM dbo.Supervisors";
+            String reportsTo_query = "SELECT * FROM dbo.Supervisors WHERE isActive = 1";
             Statement reportsTo_statement = MineOperations.conn.createStatement();
             ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
 
@@ -587,9 +544,11 @@ public class DatabaseQueries {
 
     public JComboBox loadJobTitlesBox(JComboBox inputBox){
 
+        inputBox.removeAllItems();
+
         try {
 
-            String positionRus_query = "SELECT * FROM dbo.JobTitles";
+            String positionRus_query = "SELECT * FROM dbo.JobTitles WHERE isActive = 1";
             Statement positionRus_statement = MineOperations.conn.createStatement();
             ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
 
@@ -609,8 +568,10 @@ public class DatabaseQueries {
 
     public JComboBox loadDepartmentsBox(JComboBox inputBox){
 
+        inputBox.removeAllItems();
+
         try{
-            String departmentRus_query = "SELECT * FROM dbo.Departments";
+            String departmentRus_query = "SELECT * FROM dbo.Departments WHERE isActive = 1";
             Statement departmentRus_statement = MineOperations.conn.createStatement();
             ResultSet departmentRus_result = departmentRus_statement.executeQuery(departmentRus_query);
 
@@ -633,9 +594,11 @@ public class DatabaseQueries {
 
     public JComboBox loadCrewBox(JComboBox inputBox){
 
+        inputBox.removeAllItems();
+
         try {
 
-            String crews_query = "SELECT * FROM dbo.Crews";
+            String crews_query = "SELECT * FROM dbo.Crews WHERE isActive = 1";
             Statement crews_statement = MineOperations.conn.createStatement();
             ResultSet crews_results = crews_statement.executeQuery(crews_query);
 
@@ -926,6 +889,7 @@ public class DatabaseQueries {
 
         return inputBox;
     }
+
     public String getLastDate(String idUser, int idCourse){
 
         String lastDate_query = " select max(LastDate) as lastDate from SRT where employeeId = '"+idUser+"' and coarse = " + idCourse;
@@ -994,25 +958,6 @@ public class DatabaseQueries {
         return res;
     }
 
-    private int getMaxIDFromTable(String tableName) {
-        int m =0;
-        String MaxId_query = "  select max(RecId) as RecId from dbo." + tableName  ;
-        System.out.println(MaxId_query);
-        try {
-
-            Statement st = MineOperations.conn.createStatement();
-            ResultSet rs = st.executeQuery(MaxId_query);
-
-            while (rs.next()){
-                m = rs.getInt("RecId");
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-        return m;
-    }
-
     public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, int tHours, int fHours, int pHours, int expHours){
         boolean res = false;
         try{
@@ -1039,395 +984,4 @@ public class DatabaseQueries {
 
         return res;
     }
-
-    public List<String> loadInstructors(List<String> inputList){
-
-        inputList.clear();
-
-        try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor";
-            Statement instructors_statement = MineOperations.conn.createStatement();
-            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
-
-            if (instructors_results.next()){
-                do{
-                    String instructorName= instructors_results.getString("Instructor");
-                    inputList.add(instructorName);
-                } while (instructors_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return inputList;
-    }
-
-    public int getInstructorID(String instructorName){
-
-        int instructorID = 0;
-
-        try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
-            Statement instructors_statement = MineOperations.conn.createStatement();
-            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
-
-            if (instructors_results.next()){
-                do{
-                    int instructorId= instructors_results.getInt("InstructoId");
-                    instructorID = instructorId;
-                } while (instructors_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return instructorID;
-    }
-
-    public String getInstructorActivity(String instructorName){
-
-        String status = null;
-        int statusID = 0;
-
-        try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
-            Statement instructors_statement = MineOperations.conn.createStatement();
-            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
-
-            if (instructors_results.next()){
-                do{
-                    int isActiveId= instructors_results.getInt("isActive");
-                    statusID = isActiveId;
-                } while (instructors_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        if (statusID == 0){
-            status = "Неактивен";
-        }  else {
-            status = "Активен";
-        }
-
-        return status;
-    }
-
-    public List<String> loadPositions(List<String> inputList){
-
-        inputList.clear();
-
-        try {
-
-            String positions_query = "SELECT * FROM dbo.JobTitles";
-            Statement positions_st = MineOperations.conn.createStatement();
-            ResultSet positions_rs = positions_st.executeQuery(positions_query);
-
-            if (positions_rs.next()){
-                while (positions_rs.next()){
-                    String positionTitle = positions_rs.getString("RusTitle");
-                    inputList.add(positionTitle);
-                }
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return  inputList;
-    }
-
-
-    public int getPositionID(String positionTitle){
-
-        int positionID = 0;
-
-        try {
-            String positionID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
-            Statement positionID_statement = MineOperations.conn.createStatement();
-            ResultSet positionID_results = positionID_statement.executeQuery(positionID_query);
-
-            if (positionID_results.next()){
-                do{
-                    int instructorId= positionID_results.getInt("JobTitleId");
-                    positionID = instructorId;
-                } while (positionID_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return positionID;
-    }
-
-    public String getPositionActivity(String positionTitle){
-
-        String status = null;
-        int statusID = 0;
-
-        try {
-            String position_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
-            Statement position_statement = MineOperations.conn.createStatement();
-            ResultSet position_results = position_statement.executeQuery(position_query);
-
-            if (position_results.next()){
-                do{
-                    int isActiveId= position_results.getInt("isActive");
-                    statusID = isActiveId;
-                } while (position_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        if (statusID == 0){
-            status = "Неактивен";
-        }  else {
-            status = "Активен";
-        }
-
-        return status;
-    }
-
-    public List<String> loadDepartments(List<String> inputList){
-
-        inputList.clear();
-
-        try {
-
-            String departments_query = "SELECT * FROM dbo.Departments";
-            Statement departments_st = MineOperations.conn.createStatement();
-            ResultSet departments_rs = departments_st.executeQuery(departments_query);
-
-            if (departments_rs.next()){
-                while (departments_rs.next()){
-                    String departmentsTitle = departments_rs.getString("russian");
-                    inputList.add(departmentsTitle);
-                }
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return  inputList;
-    }
-
-    public int getDepartmentID(String departmentTitle){
-
-        int departmentID = 0;
-
-        try {
-            String departmentID_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
-            Statement departmentID_statement = MineOperations.conn.createStatement();
-            ResultSet departmentID_results = departmentID_statement.executeQuery(departmentID_query);
-
-            if (departmentID_results.next()){
-                do{
-                    int instructorId= departmentID_results.getInt("DeptId");
-                    departmentID = instructorId;
-                } while (departmentID_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return departmentID;
-    }
-
-    public String getDepartmentActivity(String departmentTitle){
-
-        String status = null;
-        int statusID = 0;
-
-        try {
-            String department_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
-            Statement department_statement = MineOperations.conn.createStatement();
-            ResultSet department_results = department_statement.executeQuery(department_query);
-
-            if (department_results.next()){
-                do{
-                    int isActiveId= department_results.getInt("isActive");
-                    statusID = isActiveId;
-                } while (department_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        if (statusID == 0){
-            status = "Неактивен";
-        }  else {
-            status = "Активен";
-        }
-
-        return status;
-    }
-
-    public List<String> loadCrews(List<String> inputList){
-
-        inputList.clear();
-
-        try {
-
-            String crews_query = "SELECT * FROM dbo.Crews";
-            Statement crews_st = MineOperations.conn.createStatement();
-            ResultSet crews_rs = crews_st.executeQuery(crews_query);
-
-            if (crews_rs.next()){
-                while (crews_rs.next()){
-                    String departmentsTitle = crews_rs.getString("Crew");
-                    inputList.add(departmentsTitle);
-                }
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return  inputList;
-    }
-
-    public int getCrewID(String crewTitle){
-
-        int crewID = 0;
-
-        try {
-            String crewID_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + crewTitle +"'";
-            Statement crewID_statement = MineOperations.conn.createStatement();
-            ResultSet crewID_results = crewID_statement.executeQuery(crewID_query);
-
-            if (crewID_results.next()){
-                do{
-                    int crewrId= crewID_results.getInt("CrewNo");
-                    crewID = crewrId;
-                } while (crewID_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return crewID;
-    }
-
-    public String getCrewActivity(String departmentTitle){
-
-        String status = null;
-        int statusID = 0;
-
-        try {
-            String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + departmentTitle +"'";
-            Statement crew_statement = MineOperations.conn.createStatement();
-            ResultSet crew_results = crew_statement.executeQuery(crew_query);
-
-            if (crew_results.next()){
-                do{
-                    int isActiveId= crew_results.getInt("isActive");
-                    statusID = isActiveId;
-                } while (crew_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        if (statusID == 0){
-            status = "Неактивен";
-        }  else {
-            status = "Активен";
-        }
-
-        return status;
-    }
-
-    public List<String> loadSRT(List<String> inputList){
-
-        inputList.clear();
-
-        try {
-            String SRT_query = "SELECT * FROM dbo.SafetyNames";
-            Statement SRT_statement = MineOperations.conn.createStatement();
-            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
-
-            if (SRT_results.next()){
-                do{
-                    String SRTName= SRT_results.getString("course");
-                    inputList.add(SRTName);
-                } while (SRT_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return inputList;
-    }
-
-    public int getSRTID(String SRTName){
-
-        int SRTID = 0;
-
-        try {
-            String SRT_query = "SELECT * FROM dbo.SafetyNames WHERE course  = N'" + SRTID +"'";
-            Statement SRT_statement = MineOperations.conn.createStatement();
-            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
-
-            if (SRT_results.next()){
-                do{
-                    int SRTId= SRT_results.getInt("InstructoId");
-                    SRTID = SRTId;
-                } while (SRT_results.next());
-            }
-
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        return SRTID;
-    }
-
-    public String getSRTActivity(String instructorName){
-
-        String status = null;
-        int statusID = 0;
-
-        try {
-            String intsructors_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + instructorName +"'";
-            Statement instructors_statement = MineOperations.conn.createStatement();
-            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
-
-            if (instructors_results.next()){
-                do{
-                    int isActiveId= instructors_results.getInt("isActive");
-                    statusID = isActiveId;
-                } while (instructors_results.next());
-            }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
-        }
-
-        if (statusID == 0){
-            status = "Неактивен";
-        }  else {
-            status = "Активен";
-        }
-
-        return status;
-    }
-
 }

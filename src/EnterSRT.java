@@ -30,7 +30,7 @@ public class EnterSRT extends JPanel {
             save_button,
             cancel_button;
 
-    private JComboBox
+    public static JComboBox
             CourseName_box,
             trainer_box;
 
@@ -43,7 +43,7 @@ public class EnterSRT extends JPanel {
     private Integer instructorId=0;
 
 
-    DatabaseQueries databaseQueries = new DatabaseQueries();
+    static DatabaseQueries databaseQueries = new DatabaseQueries();
 
     public EnterSRT(){
 

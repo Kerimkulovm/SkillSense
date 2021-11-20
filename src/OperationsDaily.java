@@ -31,7 +31,7 @@ public class OperationsDaily extends JPanel {
             save_button,
             cancel_button;
 
-    private JComboBox
+    public static JComboBox
             CourseName_box,
             trainer_box;
 
@@ -44,7 +44,7 @@ public class OperationsDaily extends JPanel {
     private Integer instructorId=0;
 
 
-    DatabaseQueries databaseQueries = new DatabaseQueries();
+    public static DatabaseQueries databaseQueries = new DatabaseQueries();
 
     public OperationsDaily(){
 

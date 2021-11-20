@@ -105,7 +105,7 @@ public class SRTClassifier extends JPanel {
 
     private void buildTable(){
 
-        srt_list = databaseQueries.loadSRT(srt_list);
+        srt_list = loadSRT(srt_list);
 
         srt_tableModel = new DefaultTableModel(srt_list.size(),3){
             @Override
@@ -144,9 +144,9 @@ public class SRTClassifier extends JPanel {
         tabCol2.setPreferredWidth(50);
 
         for (int i = 0; i <  srt_table.getRowCount(); i++){
-            srt_table.setValueAt(databaseQueries.getSRTID(srt_list.get(i)),i,0);
+            srt_table.setValueAt(getSRTID(srt_list.get(i)),i,0);
             srt_table.setValueAt(srt_list.get(i),i,1);
-            srt_table.setValueAt(databaseQueries.getSRTActivity(srt_list.get(i)),i,2);
+            srt_table.setValueAt(getSRTActivity(srt_list.get(i)),i,2);
         }
 
         srt_table.addMouseListener(new MouseAdapter() {
@@ -160,7 +160,91 @@ public class SRTClassifier extends JPanel {
         });
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public List<String> loadSRT(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+            String SRT_query = "SELECT * FROM dbo.SafetyNames";
+            Statement SRT_statement = MineOperations.conn.createStatement();
+            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
+
+            if (SRT_results.next()){
+                do{
+                    String SRTName= SRT_results.getString("course");
+                    inputList.add(SRTName);
+                } while (SRT_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int getSRTID(String SRTName){
+
+        int SRTID = 0;
+
+        try {
+            String SRT_query = "SELECT * FROM dbo.SafetyNames WHERE course  = N'" + SRTName +"'";
+            Statement SRT_statement = MineOperations.conn.createStatement();
+            ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
+
+            if (SRT_results.next()){
+                do{
+                    int SRTId= SRT_results.getInt("ReviewNo");
+                    SRTID = SRTId;
+                } while (SRT_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return SRTID;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getSRTActivity(String SRTName){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + SRTName +"'";
+            Statement SRT_statement = MineOperations.conn.createStatement();
+            ResultSet SRT_results = SRT_statement.executeQuery(intsructors_query);
+
+            if (SRT_results.next()){
+                do{
+                    int isActiveId= SRT_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (SRT_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     protected void paintComponent(Graphics g){

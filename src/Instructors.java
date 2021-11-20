@@ -17,13 +17,9 @@ import java.util.ArrayList;
 public class Instructors extends JPanel {
 
     private BufferedImage logo_image;
-
     private JTable instructors_table;
     private DefaultTableModel instructors_tableModel;
-
-    public DatabaseQueries databaseQueries = new DatabaseQueries();
     public String instructorSelected;
-
     public List<String> instructors_list = new ArrayList<>();
 
     public Instructors(){
@@ -37,6 +33,7 @@ public class Instructors extends JPanel {
         setLayout(null);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Инструкторы'</big><br /></html>");
         titleEng.setBounds(160, 0, 400, 100);
         titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
@@ -75,6 +72,7 @@ public class Instructors extends JPanel {
         instructors_panel.add(instructors_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JButton edit_button = new JButton("Изменить");
         edit_button.setForeground(Color.BLACK);
         edit_button.setBackground(Color.WHITE);
@@ -100,12 +98,13 @@ public class Instructors extends JPanel {
                 createInstructorFrame.pack();
             }
         });
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void buildTable(){
 
-        instructors_list = databaseQueries.loadInstructors(instructors_list);
+        instructors_list = loadInstructors(instructors_list);
 
         instructors_tableModel = new DefaultTableModel(instructors_list.size(),3){
             @Override
@@ -144,9 +143,9 @@ public class Instructors extends JPanel {
         tabCol2.setPreferredWidth(50);
 
         for (int i = 0; i <  instructors_table.getRowCount();i++){
-            instructors_table.setValueAt(databaseQueries.getInstructorID(instructors_list.get(i)),i,0);
+            instructors_table.setValueAt(getInstructorID(instructors_list.get(i)),i,0);
             instructors_table.setValueAt(instructors_list.get(i),i,1);
-            instructors_table.setValueAt(databaseQueries.getInstructorActivity(instructors_list.get(i)),i,2);
+            instructors_table.setValueAt(getInstructorActivity(instructors_list.get(i)),i,2);
         }
 
         instructors_table.addMouseListener(new MouseAdapter() {
@@ -160,7 +159,91 @@ public class Instructors extends JPanel {
         });
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public List<String> loadInstructors(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    String instructorName= instructors_results.getString("Instructor");
+                    inputList.add(instructorName);
+                } while (instructors_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int getInstructorID(String instructorName){
+
+        int instructorID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    int instructorId= instructors_results.getInt("InstructoId");
+                    instructorID = instructorId;
+                } while (instructors_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return instructorID;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getInstructorActivity(String instructorName){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
+            Statement instructors_statement = MineOperations.conn.createStatement();
+            ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
+
+            if (instructors_results.next()){
+                do{
+                    int isActiveId= instructors_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (instructors_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    }
 
 
     protected void paintComponent(Graphics g){
@@ -276,7 +359,6 @@ public class Instructors extends JPanel {
                     dispose();
                 }
             });
-
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

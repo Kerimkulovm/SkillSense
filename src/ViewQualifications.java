@@ -24,12 +24,12 @@ public class ViewQualifications  extends JPanel{
     private JButton cancelButton;
     private JButton  surnameSearch_button;
 
-    public DatabaseQueries databaseQueries = new DatabaseQueries();
+    public static DatabaseQueries databaseQueries = new DatabaseQueries();
 
     private JTextField tableID_text;
     private JTextField nameRus_text;
 
-    private List<String> coursesList = new ArrayList<>();
+    public static List<String> coursesList = new ArrayList<>();
 
     public int numOfCourses;
 
@@ -37,7 +37,7 @@ public class ViewQualifications  extends JPanel{
 
     private BufferedImage logo_image;
 
-    private TrucksTableModel courses_tableModel;
+    public static TrucksTableModel courses_tableModel;
     private JTable courseQualifications_table;
     private JTable practiceHours_table;
 

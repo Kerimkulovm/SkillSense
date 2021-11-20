@@ -111,7 +111,7 @@ public class Positions extends JPanel {
 
     private void buildTable(){
 
-        positions_list = databaseQueries.loadPositions(positions_list);
+        positions_list = loadPositions(positions_list);
 
         positions_tableModel = new DefaultTableModel(positions_list.size(),3){
             @Override
@@ -148,9 +148,9 @@ public class Positions extends JPanel {
         tabCol2.setPreferredWidth(50);
 
         for (int i = 0; i <  positions_table.getRowCount();i++){
-            positions_table.setValueAt(databaseQueries.getPositionID(positions_list.get(i)),i,0);
+            positions_table.setValueAt(getPositionID(positions_list.get(i)),i,0);
             positions_table.setValueAt(positions_list.get(i),i,1);
-            positions_table.setValueAt(databaseQueries.getPositionActivity(positions_list.get(i)),i,2);
+            positions_table.setValueAt(getPositionActivity(positions_list.get(i)),i,2);
         }
 
         positions_table.addMouseListener(new MouseAdapter() {
@@ -163,6 +163,93 @@ public class Positions extends JPanel {
             }
         });
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<String> loadPositions(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String positions_query = "SELECT * FROM dbo.JobTitles";
+            Statement positions_st = MineOperations.conn.createStatement();
+            ResultSet positions_rs = positions_st.executeQuery(positions_query);
+
+            if (positions_rs.next()){
+                do {
+                    String positionTitle = positions_rs.getString("RusTitle");
+                    inputList.add(positionTitle);
+                } while (positions_rs.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int getPositionID(String positionTitle){
+
+        int positionID = 0;
+
+        try {
+            String positionID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
+            Statement positionID_statement = MineOperations.conn.createStatement();
+            ResultSet positionID_results = positionID_statement.executeQuery(positionID_query);
+
+            if (positionID_results.next()){
+                do{
+                    int instructorId= positionID_results.getInt("JobTitleId");
+                    positionID = instructorId;
+                } while (positionID_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return positionID;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getPositionActivity(String positionTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String position_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
+            Statement position_statement = MineOperations.conn.createStatement();
+            ResultSet position_results = position_statement.executeQuery(position_query);
+
+            if (position_results.next()){
+                do{
+                    int isActiveId= position_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (position_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     protected void paintComponent(Graphics g){
         super.paintComponent(g); // paint children

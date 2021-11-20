@@ -39,7 +39,7 @@ public class Classificatory extends JPanel {
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.white);
         buttons_panel.setBounds(30, 120, 500, 500);
-        buttons_panel.setLayout(new GridLayout(6, 1));
+        buttons_panel.setLayout(new GridLayout(7, 1));
         this.add(buttons_panel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +107,17 @@ public class Classificatory extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"SRT");
+            }
+        });
+
+        JButton supervisors_button = new JButton("<html> <big> Руководители </big><br />(Просмотреть/Изменить/Данные о Руководителях)</html>");
+        buttons_panel.add(supervisors_button);
+        supervisors_button.setHorizontalAlignment(SwingConstants.LEFT);
+        supervisors_button.setBackground(Color.WHITE);
+        supervisors_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MineOperations.card.show(MineOperations.cardPane,"Supervisors");
             }
         });
 

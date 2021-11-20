@@ -38,7 +38,7 @@ public class EmployeeInfo extends JPanel {
             select_button,
             upload_button;
 
-    private JComboBox
+    public static JComboBox
             departmentRus_box,
             crewRus_box,
             positionRus_box,
@@ -59,7 +59,9 @@ public class EmployeeInfo extends JPanel {
     private boolean editUser;
     JFileChooser fileChooser;
 
-    DatabaseQueries databaseQueries = new DatabaseQueries();
+    private SearchBySurname searchBySurname;
+
+    public static DatabaseQueries databaseQueries = new DatabaseQueries();
 
     public EmployeeInfo()
     {
@@ -101,7 +103,7 @@ public class EmployeeInfo extends JPanel {
         surnameSearch_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SearchBySurname searchBySurname = new SearchBySurname(tableID_text.getText());
+                searchBySurname = new SearchBySurname(tableID_text.getText());
                 searchBySurname.pack();
                 searchBySurname.setVisible(true);
             }
@@ -614,7 +616,6 @@ public class EmployeeInfo extends JPanel {
                     if (editUser){
 
                         databaseQueries.setFullName(nameRus_text.getText());
-                        //databaseQueries.setJobID(positionRus_box);
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);
@@ -629,7 +630,6 @@ public class EmployeeInfo extends JPanel {
 
                         databaseQueries.setEmployeeID(tableID_text.getText());
                         databaseQueries.setFullName(nameRus_text.getText());
-                        //databaseQueries.setJobID(positionRus_box);
                         databaseQueries.setCrewID(crewRus_box);
                         databaseQueries.setTerminatedID(terminatedStatus_box);
                         databaseQueries.setDepartmentID(departmentRus_box);
@@ -659,11 +659,9 @@ public class EmployeeInfo extends JPanel {
         });
 
         photoPath = new JTextField();
-        //photoPath.setEnabled(false);
         photoPath.setForeground(Color.BLACK);
         photoPath.setDisabledTextColor(Color.BLACK);
         PhotoPathPanel.add(photoPath);
-        //inputPanel.add(photoPath);
 
         select_button = new JButton("Выбрать фото");
         select_button.setForeground(Color.BLACK);
@@ -765,7 +763,7 @@ public class EmployeeInfo extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Home Page");
-
+                searchBySurname.setDefaultCloseOperation(1);
                 clearFields();
             }
         });

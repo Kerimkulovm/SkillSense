@@ -112,7 +112,7 @@ public class Crews extends JPanel {
 
     private void buildTable(){
 
-        crews_list = databaseQueries.loadCrews(crews_list);
+        crews_list = loadCrews(crews_list);
 
         crews_tableModel = new DefaultTableModel(crews_list.size(),3){
             @Override
@@ -151,9 +151,9 @@ public class Crews extends JPanel {
         tabCol2.setPreferredWidth(50);
 
         for (int i = 0; i <  crews_table.getRowCount();i++){
-            crews_table.setValueAt(databaseQueries.getCrewID(crews_list.get(i)),i,0);
+            crews_table.setValueAt(getCrewID(crews_list.get(i)),i,0);
             crews_table.setValueAt(crews_list.get(i),i,1);
-            crews_table.setValueAt(databaseQueries.getCrewActivity(crews_list.get(i)),i,2);
+            crews_table.setValueAt(getCrewActivity(crews_list.get(i)),i,2);
         }
 
         crews_table.addMouseListener(new MouseAdapter() {
@@ -166,6 +166,90 @@ public class Crews extends JPanel {
             }
         });
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<String> loadCrews(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String crews_query = "SELECT * FROM dbo.Crews";
+            Statement crews_st = MineOperations.conn.createStatement();
+            ResultSet crews_rs = crews_st.executeQuery(crews_query);
+
+            if (crews_rs.next()){
+                do {
+                    String departmentsTitle = crews_rs.getString("Crew");
+                    inputList.add(departmentsTitle);
+                } while (crews_rs.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int getCrewID(String crewTitle){
+
+        int crewID = 0;
+
+        try {
+            String crewID_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + crewTitle +"'";
+            Statement crewID_statement = MineOperations.conn.createStatement();
+            ResultSet crewID_results = crewID_statement.executeQuery(crewID_query);
+
+            if (crewID_results.next()){
+                do{
+                    int crewrId= crewID_results.getInt("CrewNo");
+                    crewID = crewrId;
+                } while (crewID_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return crewID;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getCrewActivity(String departmentTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + departmentTitle +"'";
+            Statement crew_statement = MineOperations.conn.createStatement();
+            ResultSet crew_results = crew_statement.executeQuery(crew_query);
+
+            if (crew_results.next()){
+                do{
+                    int isActiveId= crew_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (crew_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected void paintComponent(Graphics g){
         super.paintComponent(g); // paint children

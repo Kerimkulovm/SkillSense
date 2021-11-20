@@ -104,13 +104,13 @@ public class Departments extends JPanel {
                 addDepartmentFrame.pack();
             }
         });
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     }
 
     private void buildTable(){
 
-        departments_list = databaseQueries.loadDepartments(departments_list);
+        departments_list = loadDepartments(departments_list);
 
         departments_tableModel = new DefaultTableModel(departments_list.size(),3){
             @Override
@@ -149,9 +149,9 @@ public class Departments extends JPanel {
         tabCol2.setPreferredWidth(50);
 
         for (int i = 0; i <  departments_table.getRowCount();i++){
-            departments_table.setValueAt(databaseQueries.getDepartmentID(departments_list.get(i)),i,0);
+            departments_table.setValueAt(getDepartmentID(departments_list.get(i)),i,0);
             departments_table.setValueAt(departments_list.get(i),i,1);
-            departments_table.setValueAt(databaseQueries.getDepartmentActivity(departments_list.get(i)),i,2);
+            departments_table.setValueAt(getDepartmentActivity(departments_list.get(i)),i,2);
         }
 
         departments_table.addMouseListener(new MouseAdapter() {
@@ -164,6 +164,95 @@ public class Departments extends JPanel {
             }
         });
     }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<String> loadDepartments(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String departments_query = "SELECT * FROM dbo.Departments";
+            Statement departments_st = MineOperations.conn.createStatement();
+            ResultSet departments_rs = departments_st.executeQuery(departments_query);
+
+            if (departments_rs.next()){
+                do {
+                    String departmentsTitle = departments_rs.getString("russian");
+                    inputList.add(departmentsTitle);
+                } while (departments_rs.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public int getDepartmentID(String departmentTitle){
+
+        int departmentID = 0;
+
+        try {
+            String departmentID_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            Statement departmentID_statement = MineOperations.conn.createStatement();
+            ResultSet departmentID_results = departmentID_statement.executeQuery(departmentID_query);
+
+            if (departmentID_results.next()){
+                do{
+                    int instructorId= departmentID_results.getInt("DeptId");
+                    departmentID = instructorId;
+                } while (departmentID_results.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return departmentID;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getDepartmentActivity(String departmentTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String department_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            Statement department_statement = MineOperations.conn.createStatement();
+            ResultSet department_results = department_statement.executeQuery(department_query);
+
+            if (department_results.next()){
+                do{
+                    int isActiveId= department_results.getInt("isActive");
+                    statusID = isActiveId;
+                } while (department_results.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected void paintComponent(Graphics g){
         super.paintComponent(g); // paint children
