@@ -62,6 +62,7 @@ public class DailyEditorial extends JPanel {
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
@@ -156,8 +157,6 @@ public class DailyEditorial extends JPanel {
         nameRus_text.setDisabledTextColor(Color.BLACK);
         nameRus_panel.add(nameRus_text);
         inputPanel.add(nameRus_text);
-
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
