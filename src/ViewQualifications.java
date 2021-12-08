@@ -3,6 +3,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
@@ -35,7 +36,7 @@ public class ViewQualifications  extends JPanel{
 
     private JLabel tableID_label;
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image, bg_image;
 
     public static TrucksTableModel courses_tableModel;
     private JTable courseQualifications_table;
@@ -48,33 +49,35 @@ public class ViewQualifications  extends JPanel{
     public ViewQualifications(){
 
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
         } catch (IOException ex) {
-
+            ex.printStackTrace();
         }
 
         setLayout(null);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Информация о квалификации сотрудника</big><br /></html>");
-        titleEng.setBounds(160, 0, 400, 100);
-        titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
-        titleEng.setForeground(Color.WHITE);
+        JLabel titleEng = new JLabel("<html><big>Информация о квалификации сотрудника</big><br />Ввод данных о квалификации сотрудников</html>");
+        titleEng.setBounds(160, 0, 500, 100);
+        titleEng.setFont(Font.getFont("Lena"));
+        titleEng.setForeground(Color.BLACK);
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        LineBorder line = new LineBorder(Color.GRAY, 1, true);
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
+        searchEmployee_panel.setBorder(new TitledBorder(line, "Поиск сотрудника"));
         searchEmployee_panel.setBounds(20, 120, 520, 50);
         this.add(searchEmployee_panel);
 
         JPanel tableID_panel = new JPanel();
         tableID_label = new JLabel(" Табельный номер:  ");
         tableID_label.setForeground(Color.RED);
+        tableID_label.setFont(Font.getFont("Lena"));
         tableID_panel.setBackground(Color.WHITE);
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
@@ -82,6 +85,8 @@ public class ViewQualifications  extends JPanel{
         surnameSearch_button = new JButton("Ф.И.О.");
         surnameSearch_button.setForeground(Color.RED);
         surnameSearch_button.setBackground(Color.WHITE);
+        surnameSearch_button.setFont(Font.getFont("Lena"));
+        surnameSearch_button.setBorder(new RoundedBorder(10));
         tableID_panel.add(surnameSearch_button);
         searchEmployee_panel.add(surnameSearch_button);
         surnameSearch_button.addActionListener(new ActionListener() {
@@ -101,6 +106,8 @@ public class ViewQualifications  extends JPanel{
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);
         search_button.setBackground(Color.WHITE);
+        search_button.setBorder(new RoundedBorder(10));
+        search_button.setFont(Font.getFont("Lena"));
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
         search_button.addActionListener(new ActionListener() {
@@ -134,7 +141,7 @@ public class ViewQualifications  extends JPanel{
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Персональная Информация"));
+        employeeInfo_panel.setBorder(new TitledBorder(line, "Персональная Информация"));
         employeeInfo_panel.setBounds(20, 175, 520, 50);
         this.add(employeeInfo_panel);
 
@@ -153,14 +160,14 @@ public class ViewQualifications  extends JPanel{
         photoPanel.setBackground(Color.WHITE);
         photoPanel.setBounds(550, 120, 210, 260);
         photoPanel.setLayout(new BorderLayout());
-        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
+        photoPanel.setBorder(line);
         this.add(photoPanel);
 
         JPanel courseAccessPanel = new JPanel();
         courseAccessPanel.setBackground(Color.WHITE);
         courseAccessPanel.setBounds(20, 235,520,450);
         courseAccessPanel.setLayout(new BorderLayout());
-        courseAccessPanel.setBorder(new LineBorder(Color.orange));
+        courseAccessPanel.setBorder(line);
         this.add(courseAccessPanel);
 
 
@@ -168,32 +175,33 @@ public class ViewQualifications  extends JPanel{
         practiceHoursPanel.setBackground(Color.WHITE);
         practiceHoursPanel.setBounds(550, 390, 300, 200);
         practiceHoursPanel.setLayout(new BorderLayout());
-        practiceHoursPanel.setBorder(new LineBorder(Color.orange));
+        practiceHoursPanel.setBorder(line);
         this.add(practiceHoursPanel);
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setBackground(Color.WHITE);
+        buttonsPanel.setBackground(new Color(0,0,0,0));
         buttonsPanel.setBounds(550,600, 210,80);
-        buttonsPanel.setLayout(new GridLayout(2,1));
-        buttonsPanel.setBorder(new LineBorder(Color.orange));
+        buttonsPanel.setLayout(new GridLayout(2,1, 5, 5));
         this.add(buttonsPanel);
 
         JPanel firstLineButtons = new JPanel();
-        firstLineButtons.setBackground(Color.WHITE);
-        firstLineButtons.setLayout(new GridLayout(1,2));
+        firstLineButtons.setBackground(new Color(0,0,0,0));
+        firstLineButtons.setLayout(new GridLayout(1,2, 5 ,0));
         buttonsPanel.add(firstLineButtons);
 
         JPanel secondLineButtons = new JPanel();
-        secondLineButtons.setBackground(Color.WHITE);
+        secondLineButtons.setBackground(new Color(0,0,0,0));
         secondLineButtons.setLayout(new BorderLayout());
         buttonsPanel.add(secondLineButtons);
 
         editButton = new JButton("Изменить");
         editButton.setForeground(Color.BLUE);
         editButton.setBackground(Color.WHITE);
+        editButton.setBorder(new RoundedBorder(10));
+        editButton.setFont(Font.getFont("Lena"));
         firstLineButtons.add(editButton);
         editButton.setEnabled(false);
         editButton.addActionListener(new ActionListener() {
@@ -206,6 +214,8 @@ public class ViewQualifications  extends JPanel{
         saveButton = new JButton("Сохранить");
         saveButton.setForeground(Color.GREEN);
         saveButton.setBackground(Color.WHITE);
+        saveButton.setBorder(new RoundedBorder(10));
+        saveButton.setFont(Font.getFont("Lena"));
         saveButton.setEnabled(false);
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -220,6 +230,8 @@ public class ViewQualifications  extends JPanel{
         cancelButton = new JButton("Сброс");
         cancelButton.setForeground(Color.RED);
         cancelButton.setBackground(Color.WHITE);
+        cancelButton.setFont(Font.getFont("Lena"));
+        cancelButton.setBorder(new RoundedBorder(10));
         secondLineButtons.add(cancelButton);
         cancelButton.addActionListener(new ActionListener() {
             @Override
@@ -232,6 +244,7 @@ public class ViewQualifications  extends JPanel{
 
         JPanel nameRus_panel = new JPanel();
         JLabel nameRus_label = new JLabel("Имя и Фамилия: ");
+        nameRus_label.setFont(Font.getFont("Lena"));
         nameRus_panel.add(nameRus_label);
         nameRus_panel.setBackground(Color.WHITE);
         nameRus_panel.setForeground(Color.BLACK);
@@ -259,7 +272,7 @@ public class ViewQualifications  extends JPanel{
         JTableHeader practiceHours_header = practiceHours_table.getTableHeader();
         practiceHours_header.setBorder(new LineBorder(Color.BLACK));
         practiceHours_header.setBackground(Color.WHITE);
-        practiceHours_header.setFont(new Font("Helvetica", Font.BOLD,12));
+        practiceHours_header.setFont(Font.getFont("Lena"));
 
         TableColumnModel practiceHours_columns = practiceHours_header.getColumnModel();
 
@@ -298,6 +311,7 @@ public class ViewQualifications  extends JPanel{
         courseQualifications_table = new JTable(courses_tableModel);
         courseQualifications_table.setEnabled(false);
         courseQualifications_table.setRowHeight(20);
+        courseQualifications_table.setFont(Font.getFont("Lena"));
         courseQualifications_table.setBackground(Color.WHITE);
         DefaultTableCellRenderer courseQualification_cellRenderer = new DefaultTableCellRenderer();
         courseQualification_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
@@ -316,7 +330,6 @@ public class ViewQualifications  extends JPanel{
                                     if ((Boolean) courseQualifications_table.getValueAt(courseQualifications_table.getSelectedRow(), i)){
                                         c++;
                                         if (c == 2){
-                                            System.out.println("Two boxes are selected");
                                             for (int j = 1; j < 5; j++){
                                                 courseQualifications_table.setValueAt(false, courseQualifications_table.getSelectedRow(), j);
                                             }
@@ -426,8 +439,10 @@ public class ViewQualifications  extends JPanel{
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        exit_button.setBorder(new RoundedBorder(10));
+        exit_button.setFont(Font.getFont("Lena"));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -483,10 +498,33 @@ public class ViewQualifications  extends JPanel{
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
+    }
+
+    private static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
     }
 
     public class TrucksTableModel extends AbstractTableModel {
@@ -497,10 +535,6 @@ public class ViewQualifications  extends JPanel{
         public TrucksTableModel(){
 
             coursesList = databaseQueries.loadCourses();
-
-            for (String s:coursesList) {
-                System.out.println(s);
-            }
 
             for (int i = 0; i < numOfCourses; i++){
                 data[i][0] = coursesList.get(i);
@@ -567,6 +601,7 @@ public class ViewQualifications  extends JPanel{
             }
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     }
 
     private class SearchBySurname extends JFrame{
@@ -604,7 +639,7 @@ public class ViewQualifications  extends JPanel{
             this.add(pageTitlePanel);
 
             foundEmployees_JLabel = new JLabel("Найденные Сотрудники");
-            foundEmployees_JLabel.setFont(new Font("Helvetica",Font.BOLD, 20));
+            foundEmployees_JLabel.setFont(Font.getFont("Lena"));
             pageTitlePanel.add(foundEmployees_JLabel);
 
             tablePanel = new JPanel();
@@ -687,6 +722,8 @@ public class ViewQualifications  extends JPanel{
                 numOfRows = employeeNames_list.size();
             }
         }
+
+
     }
 
 

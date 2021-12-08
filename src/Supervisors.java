@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 import java.awt.*;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 
 public class Supervisors extends JPanel {
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image, bg_image;
     private JTable supervisors_table;
     private DefaultTableModel supervisors_tableModel;
     public String supervisorsSelected;
@@ -25,7 +26,8 @@ public class Supervisors extends JPanel {
     public Supervisors(){
 
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -35,9 +37,9 @@ public class Supervisors extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Руководители'</big><br /></html>");
-        titleEng.setBounds(160, 0, 400, 100);
-        titleEng.setFont(new Font("Helvetica", Font.BOLD, 20));
-        titleEng.setForeground(Color.WHITE);
+        titleEng.setBounds(160, 0, 600, 100);
+        titleEng.setFont(Font.getFont("Lena"));
+        titleEng.setForeground(Color.BLACK);
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,15 +49,17 @@ public class Supervisors extends JPanel {
         supervisors_panel.setLayout(new BorderLayout());
         this.add(supervisors_panel);
 
-        JPanel buttons_panel = new JPanel(new GridLayout());
+        JPanel buttons_panel = new JPanel(new GridLayout(1,2,5,0));
         buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(20,635,300,30);
         this.add(buttons_panel);
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        exit_button.setFont(Font.getFont("Lena"));
+        exit_button.setBorder(new RoundedBorder(10));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -76,6 +80,8 @@ public class Supervisors extends JPanel {
         JButton edit_button = new JButton("Изменить");
         edit_button.setForeground(Color.BLACK);
         edit_button.setBackground(Color.WHITE);
+        edit_button.setFont(Font.getFont("Lena"));
+        edit_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(edit_button);
         edit_button.addActionListener(new ActionListener() {
             @Override
@@ -89,6 +95,8 @@ public class Supervisors extends JPanel {
         JButton create_button = new JButton("Создать");
         create_button.setBackground(Color.WHITE);
         create_button.setForeground(Color.BLACK);
+        create_button.setFont(Font.getFont("Lena"));
+        create_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(create_button);
         create_button.addActionListener(new ActionListener() {
             @Override
@@ -123,7 +131,7 @@ public class Supervisors extends JPanel {
         JTableHeader supervisors_header = supervisors_table.getTableHeader();
         supervisors_header.setBorder(new LineBorder(Color.BLACK));
         supervisors_header.setBackground(Color.WHITE);
-        supervisors_header.setFont(new Font("Helvetica", Font.BOLD,12));
+        supervisors_header.setFont(Font.getFont("Lena"));
 
         TableColumnModel supervisors_columns = supervisors_header.getColumnModel();
 
@@ -250,9 +258,7 @@ public class Supervisors extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
@@ -435,6 +441,31 @@ public class Supervisors extends JPanel {
                     dispose();
                 }
             });
+        }
+    }
+
+    private static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
     }
 }

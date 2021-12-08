@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 public class Classificatory extends JPanel {
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image, bg_image;
 
     private JLabel title_label;
 
@@ -18,7 +19,8 @@ public class Classificatory extends JPanel {
     public Classificatory(){
 
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
         } catch (IOException ex){
             ex.printStackTrace();
         }
@@ -29,17 +31,16 @@ public class Classificatory extends JPanel {
 
         title_label = new JLabel("<html><big>Управление классификаторами</big><br />(Курсы, Инструктора, Позиции, Отделы, SRT)</html>");
         title_label.setBounds(160, 0, 500, 100);
-        title_label.setForeground(Color.WHITE);
-        title_label.setFont(new Font("Helvetica", Font.BOLD, 20));
+        title_label.setForeground(Color.BLACK);
+        title_label.setFont(Font.getFont("Lena"));
         this.add(title_label);
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         buttons_panel = new JPanel();
-        buttons_panel.setBackground(Color.white);
+        buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(30, 120, 500, 500);
-        buttons_panel.setLayout(new GridLayout(7, 1));
+        buttons_panel.setLayout(new GridLayout(7, 1, 5, 5));
         this.add(buttons_panel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(courses_button);
         courses_button.setHorizontalAlignment(SwingConstants.LEFT);
         courses_button.setBackground(Color.WHITE);
+        courses_button.setBorder(new RoundedBorder(10));
+        courses_button.setFont(Font.getFont("Lena"));
         courses_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -59,6 +62,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(instructors_button);
         instructors_button.setHorizontalAlignment(SwingConstants.LEFT);
         instructors_button.setBackground(Color.WHITE);
+        instructors_button.setFont(Font.getFont("Lena"));
+        instructors_button.setBorder(new RoundedBorder(10));
         instructors_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,6 +75,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(positions_button);
         positions_button.setHorizontalAlignment(SwingConstants.LEFT);
         positions_button.setBackground(Color.WHITE);
+        positions_button.setBorder(new RoundedBorder(10));
+        positions_button.setFont(Font.getFont("Lena"));
         positions_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,6 +88,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(departments_button);
         departments_button.setHorizontalAlignment(SwingConstants.LEFT);
         departments_button.setBackground(Color.WHITE);
+        departments_button.setFont(Font.getFont("Lena"));
+        departments_button.setBorder(new RoundedBorder(10));
         departments_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -92,6 +101,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(crews_button);
         crews_button.setHorizontalAlignment(SwingConstants.LEFT);
         crews_button.setBackground(Color.WHITE);
+        crews_button.setBorder(new RoundedBorder(10));
+        crews_button.setFont(Font.getFont("Lena"));
         crews_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -103,6 +114,7 @@ public class Classificatory extends JPanel {
         buttons_panel.add(SRT_button);
         SRT_button.setHorizontalAlignment(SwingConstants.LEFT);
         SRT_button.setBackground(Color.WHITE);
+        SRT_button.setFont(Font.getFont("Lena"));
         SRT_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,6 +126,8 @@ public class Classificatory extends JPanel {
         buttons_panel.add(supervisors_button);
         supervisors_button.setHorizontalAlignment(SwingConstants.LEFT);
         supervisors_button.setBackground(Color.WHITE);
+        supervisors_button.setFont(Font.getFont("Lena"));
+        supervisors_button.setBorder(new RoundedBorder(10));
         supervisors_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -125,8 +139,10 @@ public class Classificatory extends JPanel {
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        exit_button.setBorder(new RoundedBorder(10));
+        exit_button.setFont(Font.getFont("Lena"));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -142,9 +158,32 @@ public class Classificatory extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
+    }
+
+    private static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
     }
 }
