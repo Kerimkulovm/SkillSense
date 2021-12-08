@@ -21,25 +21,21 @@ public class MineOperations extends JFrame {
     public static final int FRAME_HEIGHT = 750;
 
     public static HomePage homePagePanel = new HomePage();
-    public static EmployeeInfo employeeInfoPanel;
 
-    static {
-        employeeInfoPanel = new EmployeeInfo();
-    }
-
-    public static OperationsDaily operationsDailyPanel = new OperationsDaily();
-    public static EnterSRT enterSRTPanel = new EnterSRT();
-    public static ViewQualifications viewQualificationsPanel = new ViewQualifications();
-    public static Courses CoursesPanel = new Courses();
-    public static Instructors InstructorsPanel = new Instructors();
-    public static Classificatory ClassificatoryPanel = new Classificatory();
-    public static Positions PositionsPanel = new Positions();
-    public static Departments DepartmentsPanel = new Departments();
-    public static Crews CrewsPanel = new Crews();
-    public static SRTClassifier SRTClassifierPanel = new SRTClassifier();
-    public static Supervisors SupervisorsPanel = new Supervisors();
-    public static SRTHoursEditorial SRTEditorialPanel = new SRTHoursEditorial();
-    public static DailyEditorial DaysEditorialPanel = new DailyEditorial();
+    private static final EmployeeInfo employeeInfoPanel = new EmployeeInfo();
+    private static final OperationsDaily operationsDailyPanel = new OperationsDaily();
+    private static final EnterSRT enterSRTPanel = new EnterSRT();
+    private static final ViewQualifications viewQualificationsPanel = new ViewQualifications();
+    private static final Courses coursesPanel = new Courses();
+    private static final Instructors instructorsPanel = new Instructors();
+    private static final Classificatory classificatoryPanel = new Classificatory();
+    private static final Positions positionsPanel = new Positions();
+    private static final Departments departmentsPanel = new Departments();
+    private static final Crews crewsPanel = new Crews();
+    private static final SRTClassifier SRTClassifierPanel = new SRTClassifier();
+    private static final Supervisors supervisorsPanel = new Supervisors();
+    private static final SRTHoursEditorial SRTEditorialPanel = new SRTHoursEditorial();
+    private static final DailyEditorial daysEditorialPanel = new DailyEditorial();
 
 
     public static CardLayout card;
@@ -66,20 +62,21 @@ public class MineOperations extends JFrame {
         cardPane.add(operationsDailyPanel, "Operations Daily");
         cardPane.add(enterSRTPanel,"Enter SRT");
         cardPane.add(viewQualificationsPanel,"View Qualifications");
-        cardPane.add(ClassificatoryPanel,"Classificatory");
-        cardPane.add(CoursesPanel, "Courses");
-        cardPane.add(InstructorsPanel,"Instructors");
-        cardPane.add(PositionsPanel, "Positions");
-        cardPane.add(DepartmentsPanel, "Departments");
-        cardPane.add(CrewsPanel,"Crews");
+        cardPane.add(classificatoryPanel,"Classificatory");
+        cardPane.add(coursesPanel, "Courses");
+        cardPane.add(instructorsPanel,"Instructors");
+        cardPane.add(positionsPanel, "Positions");
+        cardPane.add(departmentsPanel, "Departments");
+        cardPane.add(crewsPanel,"Crews");
         cardPane.add(SRTClassifierPanel, "SRT");
-        cardPane.add(SupervisorsPanel,"Supervisors");
+        cardPane.add(supervisorsPanel,"Supervisors");
         cardPane.add(SRTEditorialPanel, "SRTEditorial");
-        cardPane.add(DaysEditorialPanel, "DaysEditorial");
+        cardPane.add(daysEditorialPanel, "DaysEditorial");
 
         application_frame.add(cardPane);
         application_frame.setVisible(true);
     }
+
     private static void connectToDatabase() throws ClassNotFoundException, SQLException {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
     }

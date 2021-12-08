@@ -3,6 +3,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
@@ -37,8 +38,8 @@ public class OperationsDaily extends JPanel {
 
     JDatePickerImpl Date_dtp = null;
 
-    private BufferedImage logo_image;
-    private JPanel photoPanel;
+    private BufferedImage logo_image, bg_image;
+    private JPanel photoPanel; 
 
     private Integer courseId=0;
     private Integer instructorId=0;
@@ -49,7 +50,8 @@ public class OperationsDaily extends JPanel {
     public OperationsDaily(){
 
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
         } catch (IOException ignored) {
 
         }
@@ -57,19 +59,20 @@ public class OperationsDaily extends JPanel {
         setLayout(null);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Ввод ежедневной информации</big></html>");
+        JLabel titleEng = new JLabel("<html><big>Ввод ежедневной информации</big><br />Ввод данных по ТБ</html>");
         titleEng.setBounds(160, 0, 500, 100);
-        titleEng.setBackground(Color.WHITE);
-        titleEng.setForeground(Color.WHITE);
-        titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
+        titleEng.setForeground(Color.BLACK);
+        titleEng.setFont(Font.getFont("Lena"));
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");
-        exit_button.setBounds(730, 60, 150, 30);
+        exit_button.setBounds(720, 60, 150, 30);
         exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
+        exit_button.setFont(Font.getFont("Lena"));
+        exit_button.setBorder(new RoundedBorder(10));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -79,10 +82,11 @@ public class OperationsDaily extends JPanel {
         });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        LineBorder line = new LineBorder(Color.GRAY, 1, true);
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
+        searchEmployee_panel.setBorder(new TitledBorder(line, "Поиск сотрудника"));
         searchEmployee_panel.setBounds(20, 120, 500, 50);
         this.add(searchEmployee_panel);
 
@@ -90,12 +94,15 @@ public class OperationsDaily extends JPanel {
         tableID_label = new JLabel(" Табельный номер:  ");
         tableID_label.setForeground(Color.RED);
         tableID_panel.setBackground(Color.WHITE);
+        tableID_label.setFont(Font.getFont("Lena"));
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
 
         surnameSearch_button = new JButton("Ф.И.О.");
         surnameSearch_button.setForeground(Color.RED);
         surnameSearch_button.setBackground(Color.WHITE);
+        surnameSearch_button.setBorder(new RoundedBorder(10));
+        surnameSearch_button.setFont(Font.getFont("Lena"));
         tableID_panel.add(surnameSearch_button);
         searchEmployee_panel.add(surnameSearch_button);
         surnameSearch_button.addActionListener(new ActionListener() {
@@ -115,6 +122,8 @@ public class OperationsDaily extends JPanel {
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);
         search_button.setBackground(Color.WHITE);
+        search_button.setBorder(new RoundedBorder(10));
+        search_button.setFont(Font.getFont("Lena"));
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
         search_button.addActionListener(new ActionListener() {
@@ -153,7 +162,7 @@ public class OperationsDaily extends JPanel {
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Информация по курсам"));
+        employeeInfo_panel.setBorder(new TitledBorder(line, "Информация по курсам"));
         employeeInfo_panel.setBounds(20, 175, 500, 250);
         this.add(employeeInfo_panel);
 
@@ -172,13 +181,14 @@ public class OperationsDaily extends JPanel {
         photoPanel.setBackground(Color.WHITE);
         photoPanel.setBounds(530, 120, 210, 230);
         photoPanel.setLayout(new BorderLayout());
-        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
+        photoPanel.setBorder(line);
         this.add(photoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel nameRus_panel = new JPanel();
         JLabel nameRus_label = new JLabel("Имя и Фамилия: ");
+        nameRus_label.setFont(Font.getFont("Lena"));
         nameRus_panel.add(nameRus_label);
         nameRus_panel.setBackground(Color.WHITE);
         nameRus_panel.setForeground(Color.BLACK);
@@ -193,16 +203,17 @@ public class OperationsDaily extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel CourseName_panel = new JPanel();
-        JLabel CourseName_label = new JLabel("Курс: ");
-        CourseName_panel.add(CourseName_label);
-        CourseName_panel.setBackground(Color.WHITE);
-        infoLabels.add(CourseName_panel);
+        JPanel courseName_panel = new JPanel();
+        JLabel courseName_label = new JLabel("Курс: ");
+        courseName_label.setFont(Font.getFont("Lena"));
+        courseName_panel.add(courseName_label);
+        courseName_panel.setBackground(Color.WHITE);
+        infoLabels.add(courseName_panel);
 
         CourseName_box = new JComboBox();
         CourseName_box.setBackground(Color.WHITE);
         CourseName_box = databaseQueries.loadCourseNameBox(CourseName_box);
-        CourseName_panel.add(CourseName_box);
+        courseName_panel.add(CourseName_box);
         inputPanel.add(CourseName_box);
         CourseName_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
@@ -216,6 +227,7 @@ public class OperationsDaily extends JPanel {
 
         JPanel trainer_panel = new JPanel();
         JLabel trainer_label = new JLabel("Инструктор: ");
+        trainer_label.setFont(Font.getFont("Lena"));
         trainer_panel.add(trainer_label);
         trainer_panel.setBackground(Color.WHITE);
         infoLabels.add(trainer_panel);
@@ -238,8 +250,9 @@ public class OperationsDaily extends JPanel {
 
 
         JPanel Date_panel = new JPanel();
-        JLabel Date_label = new JLabel("Дата: ");
-        Date_panel.add(Date_label);
+        JLabel date_label = new JLabel("Дата: ");
+        date_label.setFont(Font.getFont("Lena"));
+        Date_panel.add(date_label);
         Date_panel.setBackground(Color.WHITE);
         infoLabels.add(Date_panel);
 
@@ -253,10 +266,12 @@ public class OperationsDaily extends JPanel {
         Date_dtp = new JDatePickerImpl(datePanel, new DateLabelFormatter());
         Date_panel.add(Date_dtp);
         inputPanel.add(Date_dtp);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel theoryHours_panel = new JPanel();
         JLabel theoryHours_label = new JLabel("Теория: ");
+        theoryHours_label.setFont(Font.getFont("Lena"));
         theoryHours_panel.add(theoryHours_label);
         theoryHours_panel.setBackground(Color.WHITE);
         infoLabels.add(theoryHours_panel);
@@ -273,6 +288,7 @@ public class OperationsDaily extends JPanel {
 
         JPanel fieldHours_panel = new JPanel();
         JLabel fieldHours_label = new JLabel("Работа с тренером: ");
+        fieldHours_label.setFont(Font.getFont("Lena"));
         fieldHours_panel.add(fieldHours_label);
         fieldHours_panel.setBackground(Color.WHITE);
         infoLabels.add(fieldHours_panel);
@@ -288,6 +304,7 @@ public class OperationsDaily extends JPanel {
 
         JPanel practHours_panel = new JPanel();
         JLabel practHours_label = new JLabel("Практ. часы: ");
+        practHours_label.setFont(Font.getFont("Lena"));
         practHours_panel.add(practHours_label);
         practHours_panel.setBackground(Color.WHITE);
         infoLabels.add(practHours_panel);
@@ -303,6 +320,7 @@ public class OperationsDaily extends JPanel {
 
         JPanel expHours_panel = new JPanel();
         JLabel expHours_label = new JLabel("Опыт. часы: ");
+        expHours_label.setFont(Font.getFont("Lena"));
         expHours_panel.add(expHours_label);
         expHours_panel.setBackground(Color.WHITE);
         infoLabels.add(expHours_panel);
@@ -314,22 +332,19 @@ public class OperationsDaily extends JPanel {
         expHours_panel.add(expHours_text);
         inputPanel.add(expHours_text);
 
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Панель Управления
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 450, 500, 30);
-        buttons_panel.setLayout(new GridLayout(1, 2));
-        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        buttons_panel.setBounds(20, 430, 500, 30);
+        buttons_panel.setLayout(new GridLayout(1, 2,5,0));
         this.add(buttons_panel);
-
-
 
         save_button = new JButton("Сохранить");
         save_button.setBackground(Color.WHITE);
         save_button.setForeground(Color.BLACK);
-        save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        save_button.setBorder(new RoundedBorder(10));
+        save_button.setFont(Font.getFont("Lena"));
         buttons_panel.add(save_button);
         save_button.addActionListener(new ActionListener() {
             @Override
@@ -364,9 +379,10 @@ public class OperationsDaily extends JPanel {
         });
 
         cancel_button = new JButton("Сброс");
-        cancel_button.setBackground(Color.RED);
-        cancel_button.setForeground(Color.WHITE);
-        cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        cancel_button.setBackground(Color.WHITE);
+        cancel_button.setForeground(Color.RED);
+        cancel_button.setBorder(new RoundedBorder(10));
+        cancel_button.setFont(Font.getFont("Lena"));
         buttons_panel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
@@ -386,9 +402,7 @@ public class OperationsDaily extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
@@ -544,5 +558,33 @@ public class OperationsDaily extends JPanel {
                 System.out.println(numOfRows);
             }
         }
+
+
     }
+
+    private static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
+    }
+
 }

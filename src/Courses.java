@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class Courses extends JPanel {
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image, bg_image;
     private JTextField newCourse_text = null;
     private JTextField hiddenCourseId_text = new JTextField();
     private JTextField hiddenCourseName_text = new JTextField();
@@ -46,9 +47,10 @@ public class Courses extends JPanel {
     public Courses()
     {
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
         } catch (IOException ex) {
-
+            ex.printStackTrace();
         }
 
         setLayout(null);
@@ -57,15 +59,17 @@ public class Courses extends JPanel {
         JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Курсы'</big></html>");
         titleEng.setBounds(160, 0, 600, 100);
         titleEng.setBackground(Color.WHITE);
-        titleEng.setForeground(Color.WHITE);
-        titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
+        titleEng.setForeground(Color.BLACK);
+        titleEng.setFont(Font.getFont("Lena"));
         this.add(titleEng);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        exit_button.setFont(Font.getFont("Lena"));
+        exit_button.setBorder(new RoundedBorder(10));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -88,13 +92,14 @@ public class Courses extends JPanel {
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(20, 635, 300, 30);
-        buttons_panel.setLayout(new GridLayout(1, 5));
+        buttons_panel.setLayout(new GridLayout(1, 5,5,0));
         this.add(buttons_panel);
 
         edit_button = new JButton("Изменить");
         edit_button.setBackground(Color.WHITE);
         edit_button.setForeground(Color.BLACK);
-        edit_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        edit_button.setFont(Font.getFont("Lena"));
+        edit_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(edit_button);
         edit_button.addActionListener(new ActionListener() {
             @Override
@@ -108,7 +113,8 @@ public class Courses extends JPanel {
         add_button = new JButton("Создать");
         add_button.setBackground(Color.WHITE);
         add_button.setForeground(Color.BLACK);
-        add_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        add_button.setFont(Font.getFont("Lena"));
+        add_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(add_button);
         add_button.addActionListener(new ActionListener() {
             @Override
@@ -176,7 +182,7 @@ public class Courses extends JPanel {
         JTableHeader listHeader= listOfCourses_table.getTableHeader();
         listHeader.setBorder(new LineBorder(Color.BLACK));
         listHeader.setBackground(Color.WHITE);
-        listHeader.setFont(new Font("Helvetica", Font.BOLD,12));
+        listHeader.setFont(Font.getFont("Lena"));
 
         TableColumnModel listOfCourses_columns = listHeader.getColumnModel();
 
@@ -229,9 +235,7 @@ public class Courses extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
@@ -429,6 +433,31 @@ public class Courses extends JPanel {
         }
 
 
+    }
+
+    private static class RoundedBorder implements Border {
+
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
     }
 
 }

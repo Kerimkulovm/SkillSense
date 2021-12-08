@@ -3,6 +3,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
@@ -36,7 +37,8 @@ public class EnterSRT extends JPanel {
 
     JDatePickerImpl LastDate_dtp = null;
 
-    private BufferedImage logo_image;
+    private BufferedImage logo_image, bg_image;
+
     private JPanel photoPanel;
 
     private Integer courseId=0;
@@ -48,27 +50,31 @@ public class EnterSRT extends JPanel {
     public EnterSRT(){
 
         try {
-            logo_image = ImageIO.read(new File("textures/logo/kumtor_logo.jpg"));
-        } catch (IOException ignored) {
-
+            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
+            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         setLayout(null);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Ежегодное обучение</big></html>");
+        JLabel titleEng = new JLabel("<html><big>Ежегодное обучение</big><br />Ежегодное обучение персонала</html>");
         titleEng.setBounds(160, 0, 500, 100);
         titleEng.setBackground(Color.WHITE);
-        titleEng.setForeground(Color.WHITE);
-        titleEng.setFont(new Font("Kumtor", Font.BOLD, 20));
+        titleEng.setForeground(Color.BLACK);
+        titleEng.setFont(Font.getFont("Lena"));
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");
-        exit_button.setBounds(730, 60, 150, 30);
+        exit_button.setBounds(720, 60, 150, 30);
         exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
+        exit_button.setFont(Font.getFont("Lena"));
+        exit_button.setBorder(new RoundedBorder(10));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
@@ -78,16 +84,18 @@ public class EnterSRT extends JPanel {
         });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        LineBorder line = new LineBorder(Color.GRAY, 1, true);
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
         searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Поиск сотрудника"));
+        searchEmployee_panel.setBorder(new TitledBorder(line, "Поиск сотрудника"));
         searchEmployee_panel.setBounds(20, 120, 500, 50);
         this.add(searchEmployee_panel);
 
         JPanel tableID_panel = new JPanel();
         tableID_label = new JLabel(" Табельный номер:  ");
         tableID_label.setForeground(Color.RED);
+        tableID_label.setFont(Font.getFont("Lena"));
         tableID_panel.setBackground(Color.WHITE);
         tableID_panel.add(tableID_label);
         searchEmployee_panel.add(tableID_label);
@@ -95,6 +103,8 @@ public class EnterSRT extends JPanel {
         surnameSearch_button = new JButton("Ф.И.О.");
         surnameSearch_button.setForeground(Color.RED);
         surnameSearch_button.setBackground(Color.WHITE);
+        surnameSearch_button.setFont(Font.getFont("Lena"));
+        surnameSearch_button.setBorder(new RoundedBorder(10));
         tableID_panel.add(surnameSearch_button);
         searchEmployee_panel.add(surnameSearch_button);
         surnameSearch_button.addActionListener(new ActionListener() {
@@ -114,6 +124,8 @@ public class EnterSRT extends JPanel {
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);
         search_button.setBackground(Color.WHITE);
+        search_button.setFont(Font.getFont("Lena"));
+        search_button.setBorder(new RoundedBorder(10));
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
         search_button.addActionListener(new ActionListener() {
@@ -129,7 +141,6 @@ public class EnterSRT extends JPanel {
                     enableComboText(CourseName_box).setSelectedItem(databaseQueries.getJobName());
 
 
-
                     if (databaseQueries.getPhotoLabel() != null){
                         photoPanel.removeAll();
                         photoPanel.add(databaseQueries.getPhotoLabel());
@@ -140,8 +151,6 @@ public class EnterSRT extends JPanel {
                         revalidate();
                         repaint();
                     }
-
-                    //LastDate_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
                     setVisible(true);
                 }
             }
@@ -152,7 +161,7 @@ public class EnterSRT extends JPanel {
         JPanel employeeInfo_panel = new JPanel();
         employeeInfo_panel.setBackground(Color.white);
         employeeInfo_panel.setLayout(new BoxLayout(employeeInfo_panel, BoxLayout.X_AXIS));
-        employeeInfo_panel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Информация по курсам"));
+        employeeInfo_panel.setBorder(new TitledBorder(line, "Информация по курсам"));
         employeeInfo_panel.setBounds(20, 175, 500, 210);
         this.add(employeeInfo_panel);
 
@@ -171,13 +180,14 @@ public class EnterSRT extends JPanel {
         photoPanel.setBackground(Color.WHITE);
         photoPanel.setBounds(530, 120, 210, 230);
         photoPanel.setLayout(new BorderLayout());
-        photoPanel.setBorder(new TitledBorder(new LineBorder(Color.orange), "Фото"));
+        photoPanel.setBorder(new LineBorder(Color.BLACK));
         this.add(photoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel nameRus_panel = new JPanel();
         JLabel nameRus_label = new JLabel("Имя и Фамилия: ");
+        nameRus_label.setFont(Font.getFont("Lena"));
         nameRus_panel.add(nameRus_label);
         nameRus_panel.setBackground(Color.WHITE);
         nameRus_panel.setForeground(Color.BLACK);
@@ -193,8 +203,9 @@ public class EnterSRT extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel CourseName_panel = new JPanel();
-        JLabel CourseName_label = new JLabel("Курс: ");
-        CourseName_panel.add(CourseName_label);
+        JLabel courseName_label = new JLabel("Курс: ");
+        courseName_label.setFont(Font.getFont("Lena"));
+        CourseName_panel.add(courseName_label);
         CourseName_panel.setBackground(Color.WHITE);
         infoLabels.add(CourseName_panel);
 
@@ -221,6 +232,7 @@ public class EnterSRT extends JPanel {
 
         JPanel trainer_panel = new JPanel();
         JLabel trainer_label = new JLabel("Инструктор: ");
+        trainer_label.setFont(Font.getFont("Lena"));
         trainer_panel.add(trainer_label);
         trainer_panel.setBackground(Color.WHITE);
         infoLabels.add(trainer_panel);
@@ -243,6 +255,7 @@ public class EnterSRT extends JPanel {
 
         JPanel theoryHours_panel = new JPanel();
         JLabel theoryHours_label = new JLabel("Теория: ");
+        theoryHours_label.setFont(Font.getFont("Lena"));
         theoryHours_panel.add(theoryHours_label);
         theoryHours_panel.setBackground(Color.WHITE);
         infoLabels.add(theoryHours_panel);
@@ -254,13 +267,12 @@ public class EnterSRT extends JPanel {
         theoryHours_text.setText("0");
         theoryHours_panel.add(theoryHours_text);
         inputPanel.add(theoryHours_text);
-        
-
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel fieldHours_panel = new JPanel();
         JLabel fieldHours_label = new JLabel("Работа с тренером: ");
+        fieldHours_label.setFont(Font.getFont("Lena"));
         fieldHours_panel.add(fieldHours_label);
         fieldHours_panel.setBackground(Color.WHITE);
         infoLabels.add(fieldHours_panel);
@@ -276,6 +288,7 @@ public class EnterSRT extends JPanel {
 
         JPanel mark_panel = new JPanel();
         JLabel mark_label = new JLabel("Оценка: ");
+        mark_label.setFont(Font.getFont("Lena"));
         mark_panel.add(mark_label);
         mark_panel.setBackground(Color.WHITE);
         infoLabels.add(mark_panel);
@@ -291,6 +304,7 @@ public class EnterSRT extends JPanel {
 
         JPanel lastDate_panel = new JPanel();
         JLabel lastOr_label = new JLabel("Посл дата: ");
+        lastOr_label.setFont(Font.getFont("Lena"));
         lastDate_panel.add(lastOr_label);
         lastDate_panel.setBackground(Color.WHITE);
         infoLabels.add(lastDate_panel);
@@ -306,22 +320,19 @@ public class EnterSRT extends JPanel {
         lastDate_panel.add(LastDate_dtp);
         inputPanel.add(LastDate_dtp);
 
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //Панель Управления
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 400, 500, 30);
-        buttons_panel.setLayout(new GridLayout(1, 2));
-        buttons_panel.setBorder(new TitledBorder(new LineBorder(Color.orange)));
+        buttons_panel.setBounds(20, 390, 500, 30);
+        buttons_panel.setLayout(new GridLayout(1, 2,5,0));
         this.add(buttons_panel);
-
-
 
         save_button = new JButton("Сохранить");
         save_button.setBackground(Color.WHITE);
         save_button.setForeground(Color.BLACK);
-        save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        save_button.setFont(Font.getFont("Lena"));
+        save_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(save_button);
         save_button.addActionListener(new ActionListener() {
             @Override
@@ -353,9 +364,10 @@ public class EnterSRT extends JPanel {
         });
 
         cancel_button = new JButton("Сброс");
-        cancel_button.setBackground(Color.RED);
-        cancel_button.setForeground(Color.WHITE);
-        cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
+        cancel_button.setBackground(Color.WHITE);
+        cancel_button.setForeground(Color.RED);
+        cancel_button.setFont(Font.getFont("Lena"));
+        cancel_button.setBorder(new RoundedBorder(10));
         buttons_panel.add(cancel_button);
         cancel_button.addActionListener(new ActionListener() {
             @Override
@@ -375,9 +387,7 @@ public class EnterSRT extends JPanel {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 900, 750);
 
-        g.setColor(Color.ORANGE);
-        g.fillRect(0, 0, 900, 100);
-
+        g.drawImage(bg_image,0,0,this);
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
@@ -411,7 +421,30 @@ public class EnterSRT extends JPanel {
         repaint();
     }
 
+    private static class RoundedBorder implements Border {
 
+        private int radius;
+
+
+        RoundedBorder(int radius) {
+            this.radius = radius;
+        }
+
+
+        public Insets getBorderInsets(Component c) {
+            return new Insets(this.radius+1, this.radius+1, this.radius+2, this.radius);
+        }
+
+
+        public boolean isBorderOpaque() {
+            return true;
+        }
+
+
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            g.drawRoundRect(x, y, width-1, height-1, radius, radius);
+        }
+    }
 
     private class SearchBySurname extends JFrame{
 
