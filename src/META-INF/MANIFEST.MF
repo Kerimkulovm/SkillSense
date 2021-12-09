@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: MineOperations
-Class-Path: mssql-jdbc-9.4.0.jre8.jar mssql-jdbc-9.4.0.jre8.jar jdatepic
- ker-1.3.4.jar
+Class-Path: jdatepicker-1.3.4.jar mssql-jdbc-9.4.0.jre8.jar mssql-jdbc-9
+ .4.0.jre8.jar
 

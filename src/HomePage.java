@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class HomePage extends JPanel {
 
@@ -30,8 +31,8 @@ public class HomePage extends JPanel {
         setLayout(null);
 
         try {
-            logo_image = ImageIO.read(new File("resources/logo/logo1.1.png"));
-            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
+            logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/logo1.1.png")));
+            bg_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/bg.jpg")));
         } catch (IOException ex) {
             ex.printStackTrace();
         }

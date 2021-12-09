@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Positions extends JPanel {
 
@@ -34,8 +35,8 @@ public class Positions extends JPanel {
     public Positions(){
 
         try {
-            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
-            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
+            logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/Logo2.png")));
+            bg_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/bg.jpg")));
         } catch (IOException ex) {
             ex.printStackTrace();
         }

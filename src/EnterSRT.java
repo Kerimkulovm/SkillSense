@@ -50,8 +50,8 @@ public class EnterSRT extends JPanel {
     public EnterSRT(){
 
         try {
-            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
-            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
+            logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/Logo2.png")));
+            bg_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/bg.jpg")));
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class DailyEditorial extends JPanel {
 
@@ -44,8 +45,8 @@ public class DailyEditorial extends JPanel {
     public DailyEditorial(){
 
         try {
-            logo_image = ImageIO.read(new File("resources/logo/Logo2.png"));
-            bg_image = ImageIO.read(new File("resources/logo/bg.jpg"));
+            logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/Logo2.png")));
+            bg_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/bg.jpg")));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -269,8 +270,10 @@ public class DailyEditorial extends JPanel {
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
-        exit_button.setBackground(Color.RED);
-        exit_button.setForeground(Color.WHITE);
+        exit_button.setBackground(Color.WHITE);
+        exit_button.setForeground(Color.RED);
+        exit_button.setBorder(new RoundedBorder(10));
+        exit_button.setFont(Font.getFont("Lena"));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
             @Override
