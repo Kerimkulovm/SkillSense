@@ -338,10 +338,10 @@ public class Crews extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.Crews " +
                                         "(CrewNo, Crew, isActive) " +
-                                        "VALUES (" + maxIDCrew + ", N'" +  crew_textField.getText() + "', 1)";
-                                System.out.println(insert_query);
+                                        "VALUES (" + maxIDCrew + ", ? , 1)";
 
                                 PreparedStatement insertCrew = MineOperations.conn.prepareStatement(insert_query);
+                                insertCrew.setString(1, crew_textField.getText());
                                 insertCrew.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Смена успешно добавлена");
 

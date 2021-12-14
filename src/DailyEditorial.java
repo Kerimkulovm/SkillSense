@@ -291,9 +291,9 @@ public class DailyEditorial extends JPanel {
 
         dailyHours_list.clear();
 
-        String hours_query = "select td.date, td.EmployeeId, cc.Course, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.Instructor from MineOperationsTestDb.dbo.TrainingData td\n" +
-                "\tleft join MineOperationsTestDb.dbo.Courses cc on td.Coarse = cc.CoarseNo \n" +
-                "\tleft join MineOperationsTestDb.dbo.Instructor ii on td.instructor = ii.InstructoId \n" +
+        String hours_query = "select td.date, td.EmployeeId, cc.Course, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.Instructor from dbo.TrainingData td\n" +
+                "\tleft join dbo.Courses cc on td.Coarse = cc.CoarseNo \n" +
+                "\tleft join dbo.Instructor ii on td.instructor = ii.InstructoId \n" +
                 "\twhere td.EmployeeID = '+ " + tableID_text.getText() + "'\n" +
                 "\torder by date desc";
 

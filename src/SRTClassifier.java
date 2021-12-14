@@ -334,10 +334,11 @@ public class SRTClassifier extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.SafetyNames " +
                                         "(ReviewNo, ReviewName, course, isActive) " +
-                                        "VALUES (" + maxIDSRT + ", N'" + SRT_textField.getText() + "', N'" +  SRT_textField.getText() + "', 1)";
-                                System.out.println(insert_query);
+                                        "VALUES (" + maxIDSRT + ", ?, ? , 1)";
 
                                 PreparedStatement insertSRTr = MineOperations.conn.prepareStatement(insert_query);
+                                insertSRTr.setString(1, SRT_textField.getText());
+                                insertSRTr.setString(2, SRT_textField.getText());
                                 insertSRTr.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 

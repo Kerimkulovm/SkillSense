@@ -338,10 +338,11 @@ public class Departments extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.Departments " +
                                         "(DeptId, Departmant, russian, isActive) " +
-                                        "VALUES (" + maxIDDepartment + ", N'" + departments_textField.getText() + "', N'" +  departments_textField.getText() + "', 1)";
-                                System.out.println(insert_query);
+                                        "VALUES (" + maxIDDepartment + ", ? , ? , 1)";
 
                                 PreparedStatement insertDepartment = MineOperations.conn.prepareStatement(insert_query);
+                                insertDepartment.setString(1, departments_textField.getText());
+                                insertDepartment.setString(2, departments_textField.getText());
                                 insertDepartment.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 

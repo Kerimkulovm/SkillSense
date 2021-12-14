@@ -313,13 +313,13 @@ public class Courses extends JPanel {
                                     maxCourse++;
                                     String insert_query = "INSERT INTO dbo.Courses " +
                                             "(coarseNo, Course  , isActive ) " +
-                                            "VALUES (" + maxCourse +  ",N'" +
-                                            newCourse_text.getText() + "', 1)";
+                                            "VALUES (" + maxCourse +  ", ? , 1)";
 
                                     System.out.println(insert_query);
                                     PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
+                                    insertCourse.setString(1,newCourse_text.getText());
+                                    insertCourse.execute();
                                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно добавлен");
-                                    insertCourse.executeUpdate();
 
                                     listOfCourses_model.addRow(new Object[]{maxCourse, newCourse_text.getText(),"Да"});
                                     listOfCourses_model.fireTableDataChanged();

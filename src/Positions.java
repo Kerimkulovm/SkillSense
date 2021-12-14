@@ -336,11 +336,12 @@ public class Positions extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.JobTitles " +
                                         "(JobTitleId, Title, RusTitle, isActive) " +
-                                        "VALUES (" + maxIDPosition + ", N'" + position_textField.getText() + "', N'" + position_textField.getText()+ "', 1)";
-
+                                        "VALUES (" + maxIDPosition + ", ? , ? , 1)";
 
 
                                 PreparedStatement insertPosition = MineOperations.conn.prepareStatement(insert_query);
+                                insertPosition.setString(1,position_textField.getText());
+                                insertPosition.setString(2,position_textField.getText());
                                 insertPosition.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Должность успешно добавлена");
 

@@ -331,10 +331,11 @@ public class Supervisors extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.Supervisors " +
                                         "(SupervisorId, Supervisor, Russian, isActive) " +
-                                        "VALUES (" + maxIDSupervisor + ", N'" + supervisor_textField.getText() + "', N'" +  supervisor_textField.getText() + "', 1)";
-                                System.out.println(insert_query);
+                                        "VALUES (" + maxIDSupervisor + ", ? , ? , 1)";
 
                                 PreparedStatement insertSupervisor = MineOperations.conn.prepareStatement(insert_query);
+                                insertSupervisor.setString(1,supervisor_textField.getText());
+                                insertSupervisor.setString(2,supervisor_textField.getText());
                                 insertSupervisor.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Руководитель успешно добавлен");
 

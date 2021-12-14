@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class DatabaseQueries {
 
-    Statement st;
+    PreparedStatement st;
     PreparedStatement updateEmployee;
     PreparedStatement insertEmployee;
 
@@ -72,11 +72,11 @@ public class DatabaseQueries {
     public void queryEmployeeData(String EmployeeID) {
 
         employeeID = EmployeeID;
-
+        String id_query = "SELECT * FROM dbo.Employees WHERE EmployeeID =?";
         try {
-            st = MineOperations.conn.createStatement();
-            String id_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + employeeID;
-            ResultSet employeeSearch_resultSet = st.executeQuery(id_query);
+            st = MineOperations.conn.prepareStatement(id_query);
+            st.setString(1,employeeID);
+            ResultSet employeeSearch_resultSet = st.executeQuery();
 
             if (!employeeSearch_resultSet.next()){
                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Сотрудник не найден!");

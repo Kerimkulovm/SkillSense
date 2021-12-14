@@ -333,10 +333,11 @@ public class Instructors extends JPanel {
 
                                 String insert_query = "INSERT INTO dbo.Instructor " +
                                         "(InstructoId, InstructorName, Instructor, isActive) " +
-                                        "VALUES (" + maxIDInstructor + ", N'" + instructor_textField.getText() + "', N'" +  instructor_textField.getText() + "', 1)";
-                                System.out.println(insert_query);
+                                        "VALUES (" + maxIDInstructor + ", ? , ? , 1)";
 
                                 PreparedStatement insertInstructor = MineOperations.conn.prepareStatement(insert_query);
+                                insertInstructor.setString(1,instructor_textField.getText());
+                                insertInstructor.setString(2,instructor_textField.getText());
                                 insertInstructor.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 

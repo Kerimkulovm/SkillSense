@@ -5,7 +5,7 @@ import java.sql.*;
 public class MineOperations extends JFrame {
 
     //Connecting to Database
-    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDb; username=MineTraining;password=qazwsx";
+    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTrainingDb; username=MineTraining;password=qazwsx";
     public static Connection conn;
     static {
         try {
