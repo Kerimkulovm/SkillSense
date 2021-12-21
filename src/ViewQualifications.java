@@ -158,7 +158,7 @@ public class ViewQualifications  extends JPanel{
 
         photoPanel = new JPanel();
         photoPanel.setBackground(Color.WHITE);
-        photoPanel.setBounds(550, 120, 210, 260);
+        photoPanel.setBounds(550, 150, 210, 230);
         photoPanel.setLayout(new BorderLayout());
         photoPanel.setBorder(line);
         this.add(photoPanel);
@@ -609,7 +609,7 @@ public class ViewQualifications  extends JPanel{
         private JTable listOfEmployees_table;
 
         private List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
+        private List<String> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 

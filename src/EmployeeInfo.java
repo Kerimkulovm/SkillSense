@@ -60,7 +60,6 @@ public class EmployeeInfo extends JPanel {
     JFileChooser fileChooser;
 
     private SearchBySurname searchBySurname;
-
     public static DatabaseQueries databaseQueries = new DatabaseQueries();
 
     public EmployeeInfo()
@@ -635,7 +634,7 @@ public class EmployeeInfo extends JPanel {
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
-
+                        databaseQueries.setJobTitle(positionRus_box);
                         databaseQueries.updateEmployee();
 
                     } else {
@@ -649,7 +648,7 @@ public class EmployeeInfo extends JPanel {
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
-
+                        databaseQueries.setJobTitle(positionRus_box);
                         databaseQueries.createEmployee();
                     }
 
@@ -696,7 +695,6 @@ public class EmployeeInfo extends JPanel {
                     if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".png")
                             || extension.equalsIgnoreCase(".bmp") || extension.equalsIgnoreCase(".tif")
                             || extension.equalsIgnoreCase(".gif")) {
-                        System.out.println("Zawel");
                         System.out.println(fileChooser.getSelectedFile().getPath());
                         photoPath.setText(fileChooser.getSelectedFile().getPath());
                     } else {
@@ -740,7 +738,7 @@ public class EmployeeInfo extends JPanel {
                         }
 
                         String updateQuery =
-                                "UPDATE dbo.Employees SET Photo = ? WHERE EmployeeID = " + tableID_text.getText();
+                                "UPDATE dbo.Employees SET Photo = ? WHERE EmployeeID = '" + tableID_text.getText() +"'";
 
                         try{
                             PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
@@ -816,7 +814,7 @@ public class EmployeeInfo extends JPanel {
         return inputCombobox;
     }
 
-    private void clearFields(){
+    public void clearFields(){
 
         search_button.setEnabled(true);
         add_button.setEnabled(true);
@@ -929,7 +927,7 @@ public class EmployeeInfo extends JPanel {
         private JTable listOfEmployees_table;
 
         private List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
+        private List<String> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 

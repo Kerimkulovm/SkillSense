@@ -294,7 +294,7 @@ public class DailyEditorial extends JPanel {
         String hours_query = "select td.date, td.EmployeeId, cc.Course, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.Instructor from dbo.TrainingData td\n" +
                 "\tleft join dbo.Courses cc on td.Coarse = cc.CoarseNo \n" +
                 "\tleft join dbo.Instructor ii on td.instructor = ii.InstructoId \n" +
-                "\twhere td.EmployeeID = '+ " + tableID_text.getText() + "'\n" +
+                "\twhere td.EmployeeID = '" + tableID_text.getText() + "'\n" +
                 "\torder by date desc";
 
         try {
@@ -305,7 +305,7 @@ public class DailyEditorial extends JPanel {
                 do{
 
                     Date date = hours_rs.getDate("date");
-                    int EmployeeId = hours_rs.getInt("EmployeeId");
+                    String EmployeeId = hours_rs.getString("EmployeeId");
                     String course = hours_rs.getString("Course");
                     int tHours = hours_rs.getInt("Thours");
                     int pHours = hours_rs.getInt("Phours");
@@ -369,8 +369,8 @@ public class DailyEditorial extends JPanel {
 
         private JTable listOfEmployees_table;
 
-        private java.util.List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
+        private List<String> employeeNames_list = new ArrayList<>();
+        private List<String> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 

@@ -67,7 +67,7 @@ public class DatabaseQueries {
 
     List<String> employeeNames_list = new ArrayList<>();
     List<String> courses_list = new ArrayList<>();
-    List<Integer> employeeID_list = new ArrayList<>();
+    List<String> employeeID_list = new ArrayList<>();
 
     public void queryEmployeeData(String EmployeeID) {
 
@@ -142,13 +142,18 @@ public class DatabaseQueries {
                     }
 
                     BufferedImage imagef = null;
+
                     try{
                         imagef = ImageIO.read(is);
                     }catch (NullPointerException | IOException ex){
+                        photoLabel = null;
                         ex.printStackTrace();
                     }
+
                     if (imagef != null) {
-                        photoLabel = new JLabel(new ImageIcon(imagef));
+                        Image dimg = imagef.getScaledInstance(210,230, Image.SCALE_SMOOTH);
+                        ImageIcon imageIcon = new ImageIcon(dimg);
+                        photoLabel = new JLabel(imageIcon);
                     }
                 } else {
                     photoLabel = null;
@@ -290,7 +295,7 @@ public class DatabaseQueries {
                         "gos_C1E = " + checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
                         "gos_DE = " + checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
                         "gos_D1E = " + checkTablesContent(drivingLicence_table.getValueAt(12,1)) + " " +
-                        "WHERE EmployeeID = " + employeeID;
+                        "WHERE EmployeeID = '" + employeeID+"'";
 
         System.out.println(updateQuery);
 
@@ -340,6 +345,10 @@ public class DatabaseQueries {
         } catch (SQLException ex){
             ex.printStackTrace();
         }
+    }
+
+    public void setJobTitle(JComboBox inputBox){
+        jobTitle = inputBox.getSelectedItem().toString();
     }
 
     public void setReportsTo(JComboBox inputBox){
@@ -396,20 +405,24 @@ public class DatabaseQueries {
 
         if (objectInput == null){
             return null;
+        }  else if  (Objects.equals(objectInput.toString(), "")){
+            return null;
         } else {
             returnString = "'" + objectInput.toString() + "'";
+            System.out.println(returnString);
             return returnString;
         }
     }
 
     public void createEmployee(){
 
-        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + employeeID;
+        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = ?";
 
         try {
 
-            Statement checkEmployee_st = MineOperations.conn.createStatement();
-            ResultSet employeeExist_result = checkEmployee_st.executeQuery(checkEmployee_query);
+            PreparedStatement checkEmployee_st = MineOperations.conn.prepareStatement(checkEmployee_query);
+            checkEmployee_st.setString(1,employeeID);
+            ResultSet employeeExist_result = checkEmployee_st.executeQuery();
 
             if (!employeeExist_result.next()){
                 String insertQuery = "INSERT INTO dbo.Employees " +
@@ -417,8 +430,8 @@ public class DatabaseQueries {
                         "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
                         "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E, Transfered," +
                         "Driverschk, LightTtruck, MineResc, CraneTr) " +
-                        "VALUES (" +
-                        employeeID + ", N'" +
+                        "VALUES ('" +
+                        employeeID + "', N'" +
                         fullName + "', N'" +
                         fullName + "', N'" +
                         jobTitle + "', " +
@@ -465,6 +478,7 @@ public class DatabaseQueries {
         }
     }
 
+
     public void findBySurname(String surname_input){
 
         try{
@@ -482,7 +496,7 @@ public class DatabaseQueries {
                     String LastName = rs.getString("LastName");
                     employeeNames_list.add(LastName);
 
-                    int employeeID = rs.getInt("EmployeeID");
+                    String employeeID = rs.getString("EmployeeID");
                     employeeID_list.add(employeeID);
 
                 }while (rs.next());
@@ -496,14 +510,14 @@ public class DatabaseQueries {
         return employeeNames_list;
     }
 
-    public List<Integer> getListOfID(){
+    public List<String> getListOfID(){
         return employeeID_list;
     }
 
     public boolean ifUserExists( String userID){
 
         boolean isExists = false;
-        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = " + userID;
+        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = '" + userID + "'";
 
         try {
             Statement st = MineOperations.conn.createStatement();
@@ -652,7 +666,7 @@ public class DatabaseQueries {
         }
 
             try {
-                String acceptedQialifications_query = "select * from Qualified where EmployeeID = " + employeeID;
+                String acceptedQialifications_query = "select * from Qualified where EmployeeID = '" + employeeID +"'";
                 Statement acceptedSearchStatement = MineOperations.conn.createStatement();
                 ResultSet acceptedQResult = acceptedSearchStatement.executeQuery(acceptedQialifications_query);
 
@@ -725,7 +739,7 @@ public class DatabaseQueries {
     public JTable saveAcceptedQualifications(JTable inputTable){
 
         try{
-            String deleteQuery = "DELETE FROM Qualified WHERE EmployeeID= " + employeeID +"  and Equipment in (select distinct CoarseNo from Courses where isActive = 1)";
+            String deleteQuery = "DELETE FROM Qualified WHERE EmployeeID= '" + employeeID +"'  and Equipment in (select distinct CoarseNo from Courses where isActive = 1)";
             PreparedStatement deleteQualifications_st = MineOperations.conn.prepareStatement(deleteQuery);
             deleteQualifications_st.executeUpdate();
 
@@ -737,8 +751,8 @@ public class DatabaseQueries {
                       String insertQuery = "INSERT INTO dbo.Qualified " +
                               "(RecID, Equipment, EmployeeID, Date, Experienced, Qualified, Approved, Training) " +
                                       "VALUES (" + 0 + ", " +
-                                      convertQualificationName((String) inputTable.getValueAt(i,0)) + ", " +
-                                      employeeID + ", " +
+                                      convertQualificationName((String) inputTable.getValueAt(i,0)) + ", '" +
+                                      employeeID + "', " +
                                       checkTablesContent(inputTable.getValueAt(i,5)) + ", " +
                                       convertQualifiedBoolean((Boolean)inputTable.getValueAt(i,1)) + ", " +
                                       convertQualifiedBoolean((Boolean)inputTable.getValueAt(i, 2)) + ", " +
@@ -944,7 +958,7 @@ public class DatabaseQueries {
             PreparedStatement insertQStatement;
             String insertQuery = "INSERT INTO dbo.SRT " +
                     "( EmployeeID, LastDate, ScheduledDate, coarse, payslip, FieldHours, Thours, Instructor, Mark) " +
-                    "VALUES ( " + empId + ", '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
+                    "VALUES ( '" + empId + "', '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
                     CourseId + ", 0,  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
 
             System.out.println(insertQuery);
@@ -971,7 +985,7 @@ public class DatabaseQueries {
             PreparedStatement insertQStatement;
             String insertQuery = "INSERT INTO dbo.TrainingData " +
                         "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
-                    "VALUES ( " + empId + ", '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
+                    "VALUES ( '" + empId + "', '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
                      CourseId + ", " + instructorId + ")";
 
             System.out.println(insertQuery);

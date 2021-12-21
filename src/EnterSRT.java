@@ -451,7 +451,7 @@ public class EnterSRT extends JPanel {
         private JTable listOfEmployees_table;
 
         private List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
+        private List<String> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 

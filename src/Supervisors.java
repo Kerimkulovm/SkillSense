@@ -374,8 +374,6 @@ public class Supervisors extends JPanel {
 
     private class EditSupervisorFrame extends JFrame{
 
-
-
         public EditSupervisorFrame(){
 
             this.setPreferredSize(new Dimension(400,120));
