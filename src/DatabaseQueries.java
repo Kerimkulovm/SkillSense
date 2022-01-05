@@ -880,6 +880,31 @@ public class DatabaseQueries {
         return inputBox;
     }
 
+    public JComboBox loadSRTNameBox(JComboBox inputBox){
+
+        try {
+
+            String positionRus_query = " select 0 CoarseNo, N'Нет данных' Equipment, N'Нет данных' Course, 1 isActive\n" +
+                    " union all \n" +
+                    " SELECT * FROM dbo.SafetyNames where isactive = 1";
+            Statement positionRus_statement = MineOperations.conn.createStatement();
+            ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
+
+            while(positionRus_result.next())
+            {
+                String addCourseNameItem = positionRus_result.getString("Course");
+                Integer addCourseId = positionRus_result.getInt("CoarseNo");
+                if (addCourseNameItem != null){
+                    inputBox.addItem(new Item(addCourseId, addCourseNameItem));
+                } else continue;
+            }
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return inputBox;
+    }
+
     public JComboBox loadTrainerBox( JComboBox inputBox) {
 
         try{

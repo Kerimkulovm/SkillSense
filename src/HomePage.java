@@ -106,7 +106,7 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane, "Enter SRT");
-                EnterSRT.CourseName_box = EnterSRT.databaseQueries.loadCourseNameBox(EnterSRT.CourseName_box);
+                EnterSRT.SRTName_box = EnterSRT.databaseQueries.loadSRTNameBox(EnterSRT.SRTName_box);
                 EnterSRT.trainer_box = EnterSRT.databaseQueries.loadTrainerBox(EnterSRT.trainer_box);
             }
         });
