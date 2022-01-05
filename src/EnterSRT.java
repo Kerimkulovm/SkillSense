@@ -32,7 +32,7 @@ public class EnterSRT extends JPanel {
             cancel_button;
 
     public static JComboBox
-            CourseName_box,
+            SRTName_box,
             trainer_box;
 
     JDatePickerImpl LastDate_dtp = null;
@@ -138,7 +138,7 @@ public class EnterSRT extends JPanel {
                     databaseQueries.queryEmployeeData(tableID_text.getText());
                     nameRus_text.setText(databaseQueries.getEmployeeName());
                     enableComboText(trainer_box).setSelectedItem((databaseQueries.getSuperVisorName()));
-                    enableComboText(CourseName_box).setSelectedItem(databaseQueries.getJobName());
+                    enableComboText(SRTName_box).setSelectedItem(databaseQueries.getJobName());
 
 
                     if (databaseQueries.getPhotoLabel() != null){
@@ -202,19 +202,22 @@ public class EnterSRT extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel CourseName_panel = new JPanel();
+        JPanel SRTName_panel = new JPanel();
         JLabel courseName_label = new JLabel("Курс: ");
         courseName_label.setFont(Font.getFont("Lena"));
-        CourseName_panel.add(courseName_label);
-        CourseName_panel.setBackground(Color.WHITE);
-        infoLabels.add(CourseName_panel);
+        SRTName_panel.add(courseName_label);
+        SRTName_panel.setBackground(Color.WHITE);
+        infoLabels.add(SRTName_panel);
 
-        CourseName_box = new JComboBox();
-        CourseName_box.setBackground(Color.WHITE);
-        CourseName_box = databaseQueries.loadCourseNameBox(CourseName_box);
-        CourseName_panel.add(CourseName_box);
-        inputPanel.add(CourseName_box);
-        CourseName_box.addActionListener (new ActionListener () {
+        SRTName_box = new JComboBox();
+        SRTName_box.setBackground(Color.WHITE);
+        SRTName_box = databaseQueries.loadSRTNameBox(SRTName_box);
+
+
+
+        SRTName_panel.add(SRTName_box);
+        inputPanel.add(SRTName_box);
+        SRTName_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
                 LastDate_dtp.getJFormattedTextField().setText("");
                 JComboBox c = (JComboBox) e.getSource();
