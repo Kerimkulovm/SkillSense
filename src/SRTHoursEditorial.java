@@ -290,9 +290,9 @@ public class SRTHoursEditorial extends JPanel {
 
         acceptedHours_list.clear();
 
-        String hours_query = "select s.lastdate as date, s.EmployeeId, cc.Course, s.RecID, s.Thours,  s.Phours, Fieldhours as fHours,  ii.Instructor from MineOperationsTestDb.dbo.SRT s\n" +
-                "\tleft join MineOperationsTestDb.dbo.SafetyNames cc on s.Coarse = cc.ReviewNo \n" +
-                "\tleft join MineOperationsTestDb.dbo.Instructor ii on s.instructor = ii.InstructoId \n" +
+        String hours_query = "select s.lastdate as date, s.EmployeeId, cc.Course, s.RecID, s.Thours,  s.Phours, Fieldhours as fHours,  ii.Instructor from dbo.SRT s\n" +
+                "\tleft join SafetyNames cc on s.Coarse = cc.ReviewNo \n" +
+                "\tleft join Instructor ii on s.instructor = ii.InstructoId \n" +
                 "\twhere s.EmployeeID = '"+ tableID_text.getText() +"'\n" +
                 "\torder by  s.lastdate  desc";
 
