@@ -346,6 +346,10 @@ public class Instructors extends JPanel {
 
                                 dispose();
 
+                                updateComboboxes();
+
+
+
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор: " +
                                         instructor_textField.getText() + " уже существует");
@@ -429,6 +433,7 @@ public class Instructors extends JPanel {
                         instructors_tableModel.setValueAt(isActive_box.getSelectedItem(),instructors_table.getSelectedRow(),2);
 
                         dispose();
+                        updateComboboxes();
 
                     } catch (SQLException ex){
                         ex.printStackTrace();
@@ -472,4 +477,14 @@ public class Instructors extends JPanel {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
     }
+
+
+    private void updateComboboxes() {
+        EnterSRT.trainer_box.removeAllItems();
+        EnterSRT.trainer_box = EnterSRT.databaseQueries.loadTrainerBox(EnterSRT.trainer_box);
+        OperationsDaily.trainer_box.removeAllItems();
+        OperationsDaily.trainer_box = OperationsDaily.databaseQueries.loadTrainerBox(OperationsDaily.trainer_box);
+
+    }
+
 }

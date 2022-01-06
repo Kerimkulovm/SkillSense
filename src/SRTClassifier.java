@@ -346,6 +346,7 @@ public class SRTClassifier extends JPanel {
                                 srt_tableModel.fireTableDataChanged();
 
                                 dispose();
+                                updateComboboxes();
 
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"SRT: " +
@@ -425,12 +426,14 @@ public class SRTClassifier extends JPanel {
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
                         String update_query = "UPDATE dbo.SafetyNames set isActive = " + isActive_int + "WHERE course = N'" + SRT_label.getText() + "'";
                         PreparedStatement updateSRTpst = MineOperations.conn.prepareStatement(update_query);
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обнавлен");
                         updateSRTpst.executeUpdate();
 
                         srt_tableModel.setValueAt(isActive_box.getSelectedItem(), srt_table.getSelectedRow(),2);
 
                         dispose();
+
+                        updateComboboxes();
 
                     } catch (SQLException ex){
                         ex.printStackTrace();
@@ -474,4 +477,10 @@ public class SRTClassifier extends JPanel {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
     }
+
+    private void updateComboboxes() {
+        EnterSRT.SRTName_box.removeAllItems();
+        EnterSRT.SRTName_box = EnterSRT.databaseQueries.loadSRTNameBox(EnterSRT.SRTName_box);
+    }
+
 }

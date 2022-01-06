@@ -349,7 +349,7 @@ public class Departments extends JPanel {
                                 departments_tableModel.fireTableDataChanged();
 
                                 dispose();
-
+                                updateComboboxes();
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор: " +
                                         departments_textField.getText() + " уже существует");
@@ -429,7 +429,7 @@ public class Departments extends JPanel {
                         departments_tableModel.setValueAt(isActive_box.getSelectedItem(),departments_table.getSelectedRow(),2);
 
                         dispose();
-
+                        updateComboboxes();
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
@@ -473,5 +473,8 @@ public class Departments extends JPanel {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
     }
-
+    private void updateComboboxes() {
+        EmployeeInfo.departmentRus_box.removeAllItems();
+        EmployeeInfo.departmentRus_box = EmployeeInfo.databaseQueries.loadDepartmentsBox(EmployeeInfo.departmentRus_box);
+    }
 }

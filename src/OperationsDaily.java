@@ -217,10 +217,12 @@ public class OperationsDaily extends JPanel {
         inputPanel.add(CourseName_box);
         CourseName_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
-                Date_dtp.getJFormattedTextField().setText("");
-                JComboBox c = (JComboBox) e.getSource();
-                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
-                courseId = item.getId();
+                if (CourseName_box.getItemCount()>0) {
+                    Date_dtp.getJFormattedTextField().setText("");
+                    JComboBox c = (JComboBox) e.getSource();
+                    DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                    courseId = item.getId();
+                }
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,10 +241,12 @@ public class OperationsDaily extends JPanel {
         inputPanel.add(trainer_box);
         trainer_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
-                JComboBox c = (JComboBox) e.getSource();
-                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
-                System.out.println(item.getId() + " : " + item.getDescription());
-                instructorId = item.getId();
+                if (trainer_box.getItemCount()>0) {
+                    JComboBox c = (JComboBox) e.getSource();
+                    DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                    System.out.println(item.getId() + " : " + item.getDescription());
+                    instructorId = item.getId();
+                }
             }
         });
 
