@@ -370,7 +370,7 @@ public class SRTHoursEditorial extends JPanel {
         private JTable listOfEmployees_table;
 
         private java.util.List<String> employeeNames_list = new ArrayList<>();
-        private List<Integer> employeeID_list = new ArrayList<>();
+        private List<String> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 
