@@ -219,16 +219,18 @@ public class EnterSRT extends JPanel {
         inputPanel.add(SRTName_box);
         SRTName_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
-                LastDate_dtp.getJFormattedTextField().setText("");
-                JComboBox c = (JComboBox) e.getSource();
-                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
-                System.out.println(item.getId() + " : " + item.getDescription());
-                String lastDate = databaseQueries.getLastDate(tableID_text.getText(), item.getId());
-                System.out.println(lastDate);
-                if ( lastDate != null && !lastDate.equals("")){
-                    LastDate_dtp.getJFormattedTextField().setText(lastDate.substring(0,10));
+                if (SRTName_box.getItemCount()>0) {
+                    LastDate_dtp.getJFormattedTextField().setText("");
+                    JComboBox c = (JComboBox) e.getSource();
+                    DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                    System.out.println(item.getId() + " : " + item.getDescription());
+                    String lastDate = databaseQueries.getLastDate(tableID_text.getText(), item.getId());
+                    System.out.println(lastDate);
+                    if (lastDate != null && !lastDate.equals("")) {
+                        LastDate_dtp.getJFormattedTextField().setText(lastDate.substring(0, 10));
+                    }
+                    courseId = item.getId();
                 }
-                courseId = item.getId();
             }
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,10 +249,12 @@ public class EnterSRT extends JPanel {
         inputPanel.add(trainer_box);
         trainer_box.addActionListener (new ActionListener () {
             public void actionPerformed(ActionEvent e) {
-                JComboBox c = (JComboBox) e.getSource();
-                DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
-                System.out.println(item.getId() + " : " + item.getDescription());
-                instructorId = item.getId();
+                if (trainer_box.getItemCount()>0) {
+                    JComboBox c = (JComboBox) e.getSource();
+                    DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
+                    System.out.println(item.getId() + " : " + item.getDescription());
+                    instructorId = item.getId();
+                }
             }
         });
 

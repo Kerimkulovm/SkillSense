@@ -349,7 +349,7 @@ public class Positions extends JPanel {
                                 positions_tableModel.fireTableDataChanged();
 
                                 dispose();
-
+                                updateComboboxes();
 
                             }
                         } catch (SQLException ex){
@@ -423,6 +423,7 @@ public class Positions extends JPanel {
                         positions_tableModel.setValueAt(isActive_box.getSelectedItem(),positions_table.getSelectedRow(),2);
 
                         dispose();
+                        updateComboboxes();
 
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -466,5 +467,10 @@ public class Positions extends JPanel {
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
+    }
+
+    private void updateComboboxes() {
+        EmployeeInfo.positionRus_box.removeAllItems();
+        EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadJobTitlesBox(EmployeeInfo.positionRus_box);
     }
 }

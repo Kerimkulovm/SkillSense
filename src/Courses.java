@@ -324,7 +324,7 @@ public class Courses extends JPanel {
                                     listOfCourses_model.addRow(new Object[]{maxCourse, newCourse_text.getText(),"Да"});
                                     listOfCourses_model.fireTableDataChanged();
                                     dispose();
-
+                                    updateComboboxes();
                                 } else {
                                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
                                                 newCourse_text.getText() + " уже существует");
@@ -411,6 +411,7 @@ public class Courses extends JPanel {
                             listOfCourses_model.setValueAt(isActive_box.getSelectedItem(),listOfCourses_table.getSelectedRow(),2);
 
                             dispose();
+                            updateComboboxes();
 
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -459,6 +460,11 @@ public class Courses extends JPanel {
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
+    }
+
+    private void updateComboboxes() {
+        OperationsDaily.CourseName_box.removeAllItems();
+        OperationsDaily.CourseName_box = OperationsDaily.databaseQueries.loadCourseNameBox(OperationsDaily.CourseName_box);
     }
 
 }

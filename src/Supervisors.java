@@ -343,7 +343,7 @@ public class Supervisors extends JPanel {
                                 supervisors_tableModel.fireTableDataChanged();
 
                                 dispose();
-
+                                updateComboboxes();
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Руководитель: " +
                                         supervisor_textField.getText() + " уже существует");
@@ -425,7 +425,7 @@ public class Supervisors extends JPanel {
                         supervisors_tableModel.setValueAt(isActive_box.getSelectedItem(), supervisors_table.getSelectedRow(),2);
                         supervisors_tableModel.fireTableDataChanged();
                         dispose();
-
+                        updateComboboxes();
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
@@ -467,5 +467,9 @@ public class Supervisors extends JPanel {
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
+    }
+    private void updateComboboxes() {
+        EmployeeInfo.supervisor_box.removeAllItems();
+        EmployeeInfo.supervisor_box = EmployeeInfo.databaseQueries.loadSupervisorBox(EmployeeInfo.supervisor_box);
     }
 }

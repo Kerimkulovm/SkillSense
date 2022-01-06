@@ -350,7 +350,7 @@ public class Crews extends JPanel {
                                 crews_tableModel.fireTableDataChanged();
 
                                 dispose();
-
+                                updateComboboxes();
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Смена: " +
                                         crew_textField.getText() + " уже существует");
@@ -433,6 +433,7 @@ public class Crews extends JPanel {
                         crews_tableModel.setValueAt(isActive_box.getSelectedItem(),crews_table.getSelectedRow(),2);
 
                         dispose();
+                        updateComboboxes();
 
                     } catch (SQLException ex){
                         ex.printStackTrace();
@@ -475,5 +476,9 @@ public class Crews extends JPanel {
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
+    }
+    private void updateComboboxes() {
+        EmployeeInfo.crewRus_box.removeAllItems();
+        EmployeeInfo.crewRus_box = EmployeeInfo.databaseQueries.loadCrewBox(EmployeeInfo.crewRus_box);
     }
 }
