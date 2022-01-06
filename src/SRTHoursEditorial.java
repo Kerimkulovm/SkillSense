@@ -304,7 +304,7 @@ public class SRTHoursEditorial extends JPanel {
                 do{
 
                     Date date = hours_rs.getDate("date");
-                    String EmployeeId = hours_rs.getString("EmployeeId");
+                    int EmployeeId = hours_rs.getInt("EmployeeId");
                     String course = hours_rs.getString("Course");
                     int tHours = hours_rs.getInt("Thours");
                     int pHours = hours_rs.getInt("Phours");
@@ -370,7 +370,7 @@ public class SRTHoursEditorial extends JPanel {
         private JTable listOfEmployees_table;
 
         private java.util.List<String> employeeNames_list = new ArrayList<>();
-        private List<String> employeeID_list = new ArrayList<>();
+        private List<Integer> employeeID_list = new ArrayList<>();
 
         private JPanel pageTitlePanel, tablePanel, backgroundPanel;
 
