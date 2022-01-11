@@ -998,7 +998,7 @@ public class DatabaseQueries {
         return res;
     }
 
-    public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, int tHours, int fHours, int pHours, int expHours){
+    public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, float tHours, float fHours, float pHours, float expHours){
         boolean res = false;
         try{
             System.out.println(tHours);

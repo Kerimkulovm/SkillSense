@@ -203,7 +203,7 @@ public class DailyEditorial extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        dailyHours_tableModel = new DefaultTableModel(numOfAcceptedHours, 8){
+        dailyHours_tableModel = new DefaultTableModel(numOfAcceptedHours, 9){
             @Override
             public boolean isCellEditable(int row, int column) {return false;}
         };
@@ -248,19 +248,24 @@ public class DailyEditorial extends JPanel {
         tabCol4.setPreferredWidth(20);
 
         TableColumn tabCol5 = acceptedHours_columns.getColumn(5);
-        tabCol5.setHeaderValue("С инструктором");
+        tabCol5.setHeaderValue("ExpHours");
         tabCol5.setCellRenderer(acceptedHours_cellRenderer);
         tabCol5.setPreferredWidth(20);
 
         TableColumn tabCol6 = acceptedHours_columns.getColumn(6);
-        tabCol6.setHeaderValue("Инструктор");
+        tabCol6.setHeaderValue("С инструктором");
         tabCol6.setCellRenderer(acceptedHours_cellRenderer);
-        tabCol6.setPreferredWidth(60);
+        tabCol6.setPreferredWidth(20);
 
         TableColumn tabCol7 = acceptedHours_columns.getColumn(7);
-        tabCol7.setHeaderValue("ID");
+        tabCol7.setHeaderValue("Инструктор");
         tabCol7.setCellRenderer(acceptedHours_cellRenderer);
-        tabCol7.setPreferredWidth(10);
+        tabCol7.setPreferredWidth(60);
+
+        TableColumn tabCol8 = acceptedHours_columns.getColumn(8);
+        tabCol8.setHeaderValue("ID");
+        tabCol8.setCellRenderer(acceptedHours_cellRenderer);
+        tabCol8.setPreferredWidth(10);
 
         JScrollPane instructors_scrollPane = new JScrollPane(dailyHours_table);
         instructors_scrollPane.setBackground(Color.WHITE);
@@ -307,13 +312,14 @@ public class DailyEditorial extends JPanel {
                     Date date = hours_rs.getDate("date");
                     String EmployeeId = hours_rs.getString("EmployeeId");
                     String course = hours_rs.getString("Course");
-                    int tHours = hours_rs.getInt("Thours");
-                    int pHours = hours_rs.getInt("Phours");
-                    int fHours = hours_rs.getInt("fHours");
+                    float tHours = hours_rs.getFloat("Thours");
+                    float pHours = hours_rs.getFloat("Phours");
+                    float expHours = hours_rs.getFloat("ExpHours");
+                    float fHours = hours_rs.getFloat("fHours");
                     String instructor = hours_rs.getString("Instructor");
                     int recId = hours_rs.getInt("RecID");
 
-                    dailyHours_list.add(new Object[]{date,EmployeeId, course, tHours, pHours, fHours,instructor,recId});
+                    dailyHours_list.add(new Object[]{date,EmployeeId, course, tHours, pHours, expHours,fHours,instructor,recId});
 
                 }while (hours_rs.next());
 

@@ -137,9 +137,12 @@ public class EnterSRT extends JPanel {
 
                     databaseQueries.queryEmployeeData(tableID_text.getText());
                     nameRus_text.setText(databaseQueries.getEmployeeName());
-                    enableComboText(trainer_box).setSelectedItem((databaseQueries.getSuperVisorName()));
-                    enableComboText(SRTName_box).setSelectedItem(databaseQueries.getJobName());
 
+                    enableComboText(trainer_box);
+                    trainer_box.setEnabled(true);
+
+                    enableComboText(SRTName_box);
+                    SRTName_box.setEnabled(true);
 
                     if (databaseQueries.getPhotoLabel() != null){
                         photoPanel.removeAll();
@@ -212,9 +215,7 @@ public class EnterSRT extends JPanel {
         SRTName_box = new JComboBox();
         SRTName_box.setBackground(Color.WHITE);
         SRTName_box = databaseQueries.loadSRTNameBox(SRTName_box);
-
-
-
+        SRTName_box.setEnabled(false);
         SRTName_panel.add(SRTName_box);
         inputPanel.add(SRTName_box);
         SRTName_box.addActionListener (new ActionListener () {
@@ -245,6 +246,7 @@ public class EnterSRT extends JPanel {
         trainer_box = new JComboBox();
         trainer_box.setBackground(Color.WHITE);
         trainer_box = databaseQueries.loadTrainerBox(trainer_box);
+        trainer_box.setEnabled(false);
         trainer_panel.add(trainer_box);
         inputPanel.add(trainer_box);
         trainer_box.addActionListener (new ActionListener () {
@@ -414,6 +416,12 @@ public class EnterSRT extends JPanel {
     private void clearFields(){
 
         surnameSearch_button.setEnabled(true);
+
+        SRTName_box.setEnabled(false);
+        SRTName_box.setSelectedIndex(0);
+
+        trainer_box.setEnabled(false);
+        trainer_box.setSelectedItem(0);
 
         tableID_label.setForeground(Color.RED);
         tableID_text.setText("");

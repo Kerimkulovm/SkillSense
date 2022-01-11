@@ -135,10 +135,12 @@ public class OperationsDaily extends JPanel {
 
                     databaseQueries.queryEmployeeData(tableID_text.getText());
                     nameRus_text.setText(databaseQueries.getEmployeeName());
-                    enableComboText(trainer_box).setSelectedItem((databaseQueries.getSuperVisorName()));
-                    enableComboText(CourseName_box).setSelectedItem(databaseQueries.getJobName());
 
+                    trainer_box.setEnabled(true);
+                    enableComboText(trainer_box);
 
+                    CourseName_box.setEnabled(true);
+                    enableComboText(CourseName_box);
 
                     if (databaseQueries.getPhotoLabel() != null){
                         photoPanel.removeAll();
@@ -213,6 +215,7 @@ public class OperationsDaily extends JPanel {
         CourseName_box = new JComboBox();
         CourseName_box.setBackground(Color.WHITE);
         CourseName_box = databaseQueries.loadCourseNameBox(CourseName_box);
+        CourseName_box.setEnabled(false);
         courseName_panel.add(CourseName_box);
         inputPanel.add(CourseName_box);
         CourseName_box.addActionListener (new ActionListener () {
@@ -237,6 +240,7 @@ public class OperationsDaily extends JPanel {
         trainer_box = new JComboBox();
         trainer_box.setBackground(Color.WHITE);
         trainer_box = databaseQueries.loadTrainerBox(trainer_box);
+        trainer_box.setEnabled(false);
         trainer_panel.add(trainer_box);
         inputPanel.add(trainer_box);
         trainer_box.addActionListener (new ActionListener () {
@@ -368,12 +372,10 @@ public class OperationsDaily extends JPanel {
                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста, заполните дату.");
                 } else {
 
-
-
                     boolean res = false;
                     res = databaseQueries.saveOperationDaily(tableID_text.getText(), courseId, instructorId, Date_dtp.getJFormattedTextField().getText(),
-                            Integer.parseInt(theoryHours_text.getText()), Integer.parseInt(fieldHours_text.getText()),
-                            Integer.parseInt(practHours_text.getText()), Integer.parseInt(expHours_text.getText()));
+                            Float.parseFloat(theoryHours_text.getText()), Float.parseFloat(fieldHours_text.getText()),
+                            Float.parseFloat(practHours_text.getText()), Float.parseFloat(expHours_text.getText()));
 
                     if (res) JOptionPane.showMessageDialog(MineOperations.cardPane, "Запись сохранена успешно!");
 
@@ -426,6 +428,12 @@ public class OperationsDaily extends JPanel {
     private void clearFields(){
 
         surnameSearch_button.setEnabled(true);
+
+        CourseName_box.setEnabled(false);
+        CourseName_box.setSelectedIndex(0);
+
+        trainer_box.setEnabled(false);
+        trainer_box.setSelectedIndex(0);
 
         tableID_label.setForeground(Color.RED);
         tableID_text.setText("");
