@@ -44,6 +44,7 @@ public class EnterSRT extends JPanel {
     private Integer courseId=0;
     private Integer instructorId=0;
 
+    private Action searchAction;
 
     static DatabaseQueries databaseQueries = new DatabaseQueries();
 
@@ -84,6 +85,41 @@ public class EnterSRT extends JPanel {
         });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        searchAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("") )
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
+                else {
+
+                    databaseQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(databaseQueries.getEmployeeName());
+
+                    enableComboText(trainer_box);
+                    trainer_box.setEnabled(true);
+
+                    enableComboText(SRTName_box);
+                    SRTName_box.setEnabled(true);
+
+                    if (databaseQueries.getPhotoLabel() != null){
+                        photoPanel.removeAll();
+                        photoPanel.add(databaseQueries.getPhotoLabel());
+                        revalidate();
+                        repaint();
+                    } else {
+                        photoPanel.removeAll();
+                        revalidate();
+                        repaint();
+                    }
+                    setVisible(true);
+                }
+            }
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         LineBorder line = new LineBorder(Color.GRAY, 1, true);
         JPanel searchEmployee_panel = new JPanel();
         searchEmployee_panel.setBackground(Color.white);
@@ -118,6 +154,7 @@ public class EnterSRT extends JPanel {
 
         tableID_text = new JTextField();
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
 
@@ -128,37 +165,7 @@ public class EnterSRT extends JPanel {
         search_button.setBorder(new RoundedBorder(10));
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (tableID_text.getText().equals("") )
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
-                else {
-
-                    databaseQueries.queryEmployeeData(tableID_text.getText());
-                    nameRus_text.setText(databaseQueries.getEmployeeName());
-
-                    enableComboText(trainer_box);
-                    trainer_box.setEnabled(true);
-
-                    enableComboText(SRTName_box);
-                    SRTName_box.setEnabled(true);
-
-                    if (databaseQueries.getPhotoLabel() != null){
-                        photoPanel.removeAll();
-                        photoPanel.add(databaseQueries.getPhotoLabel());
-                        revalidate();
-                        repaint();
-                    } else {
-                        photoPanel.removeAll();
-                        revalidate();
-                        repaint();
-                    }
-                    setVisible(true);
-                }
-            }
-        });
-
+        search_button.addActionListener(searchAction);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel employeeInfo_panel = new JPanel();
@@ -561,6 +568,7 @@ public class EnterSRT extends JPanel {
                         int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
                         System.out.println(listOfEmployees_table.getValueAt(index1, 0));
                         tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                        search_button.doClick();
                     }
                 }
             });

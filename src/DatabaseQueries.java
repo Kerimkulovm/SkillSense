@@ -841,9 +841,9 @@ public class DatabaseQueries {
 
                 inputTable.setValueAt(courseName,courseNum,0);
                 inputTable.setValueAt(format.format(tHours),courseNum,1);
-                inputTable.setValueAt(format.format(pHours),courseNum,2);
-                inputTable.setValueAt(format.format(eHours),courseNum,3);
-                inputTable.setValueAt(format.format(fHours),courseNum,4);
+                inputTable.setValueAt(format.format(fHours),courseNum,2);
+                inputTable.setValueAt(format.format(pHours),courseNum,3);
+                inputTable.setValueAt(format.format(eHours),courseNum,4);
                 courseNum++;
              }
 

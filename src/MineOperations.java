@@ -5,8 +5,8 @@ import java.sql.*;
 public class MineOperations extends JFrame {
 
     //Connecting to Database
-    public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTrainingDb; username=MineTraining;password=qazwsx";
-    //public static String url = "jdbc:sqlserver://kyrkumms05.kumtor.kg:1433;databaseName=MineTrainingDB; username=mt;password=mineops_123456";
+    //public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineTrainingDb; username=MineTraining;password=qazwsx";
+    public static String url = "jdbc:sqlserver://kyrkumms05.kumtor.kg:1433;databaseName=MineTrainingDB; username=mt;password=mineops_123456";
     public static Connection conn;
     static {
         try {

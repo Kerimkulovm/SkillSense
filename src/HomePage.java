@@ -111,7 +111,7 @@ public class HomePage extends JPanel {
             }
         });
 
-        editSRT_button = new JButton("<html> <big> Часы SRT </big> <br /> (Управление часами SRT) </html>");
+        editSRT_button = new JButton("<html> <big> Часы Ежегодного Обучения  </big> <br /> (Управление часами ежегодного обучения) </html>");
         buttons_panel.add(editSRT_button);
         editSRT_button.setHorizontalAlignment(SwingConstants.LEFT);
         editSRT_button.setBackground(Color.WHITE);

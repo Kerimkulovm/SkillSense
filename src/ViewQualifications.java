@@ -44,6 +44,8 @@ public class ViewQualifications  extends JPanel{
 
     private JPanel photoPanel;
 
+    private Action searchAction;
+
     List<String> employeeQualifiedCourses_list = databaseQueries.loadCourses();
 
     public ViewQualifications(){
@@ -98,19 +100,9 @@ public class ViewQualifications  extends JPanel{
             }
         });
 
-        tableID_text = new JTextField();
-        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        tableID_panel.add(tableID_text);
-        searchEmployee_panel.add(tableID_text);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        search_button = new JButton("Поиск");
-        search_button.setForeground(Color.RED);
-        search_button.setBackground(Color.WHITE);
-        search_button.setBorder(new RoundedBorder(10));
-        search_button.setFont(Font.getFont("Lena"));
-        tableID_panel.add(search_button);
-        searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
+        searchAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tableID_text.getText().equals("")){
@@ -134,7 +126,25 @@ public class ViewQualifications  extends JPanel{
                     editButton.setEnabled(true);
                 }
             }
-        });
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        tableID_text = new JTextField();
+        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
+        tableID_panel.add(tableID_text);
+        searchEmployee_panel.add(tableID_text);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        search_button.setBorder(new RoundedBorder(10));
+        search_button.setFont(Font.getFont("Lena"));
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(searchAction);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -282,22 +292,22 @@ public class ViewQualifications  extends JPanel{
         tabCol0.setPreferredWidth(50);
 
         TableColumn tabCol1 = practiceHours_columns.getColumn(1);
-        tabCol1.setHeaderValue("Th");
+        tabCol1.setHeaderValue("Теор");
         tabCol1.setCellRenderer(practiceHoursRendered);
         tabCol1.setPreferredWidth(10);
 
         TableColumn tabCol2 = practiceHours_columns.getColumn(2);
-        tabCol2.setHeaderValue("Ph");
+        tabCol2.setHeaderValue("С Трен");
         tabCol2.setCellRenderer(practiceHoursRendered);
         tabCol2.setPreferredWidth(10);
 
         TableColumn tabCol3 = practiceHours_columns.getColumn(3);
-        tabCol3.setHeaderValue("Eh");
+        tabCol3.setHeaderValue("Прак");
         tabCol3.setCellRenderer(practiceHoursRendered);
         tabCol3.setPreferredWidth(10);
 
         TableColumn tabCol4 = practiceHours_columns.getColumn(4);
-        tabCol4.setHeaderValue("Fh");
+        tabCol4.setHeaderValue("Опыт");
         tabCol4.setCellRenderer(practiceHoursRendered);
         tabCol4.setPreferredWidth(10);
 
@@ -704,6 +714,7 @@ public class ViewQualifications  extends JPanel{
                         int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
                         System.out.println(listOfEmployees_table.getValueAt(index1, 0));
                         tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                        search_button.doClick();
                     }
                 }
             });

@@ -13,6 +13,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,7 +22,7 @@ import java.util.*;
 import java.util.Date;
 import java.util.List;
 
-public class EmployeeInfo extends JPanel {
+public class EmployeeInfo extends JPanel{
 
     private final JLabel tableID_label;
 
@@ -28,15 +30,17 @@ public class EmployeeInfo extends JPanel {
             nameRus_text,
             tableID_text;
 
-    private final JButton
+    private JButton
             search_button,
             surnameSearch_button,
             add_button,
             save_button,
             edit_button,
+            savePhoto_button,
             cancel_button,
             select_button,
-            upload_button;
+            upload_button,
+            eraseData_button;
 
     public static JComboBox
             departmentRus_box,
@@ -55,6 +59,8 @@ public class EmployeeInfo extends JPanel {
     private JTextField  photoPath;
 
     private JTable truckLicence_table, drivingLicence_table;
+
+    public Action searchAction;
 
     private boolean editUser;
     JFileChooser fileChooser;
@@ -81,52 +87,8 @@ public class EmployeeInfo extends JPanel {
         this.add(titleEng);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        LineBorder line = new LineBorder(Color.GRAY, 1, true);
-        JPanel searchEmployee_panel = new JPanel();
-        searchEmployee_panel.setBackground(Color.white);
-        searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
-        searchEmployee_panel.setBorder(new TitledBorder(line, "Поиск сотрудника"));
-        searchEmployee_panel.setBounds(20, 120, 500, 50);
-        this.add(searchEmployee_panel);
 
-        JPanel tableID_panel = new JPanel();
-
-        tableID_label = new JLabel(" Табельный номер:  ");
-        tableID_label.setForeground(Color.RED);
-        tableID_panel.setBackground(Color.WHITE);
-        tableID_label.setFont(Font.getFont("Lena"));
-        tableID_panel.add(tableID_label);
-        searchEmployee_panel.add(tableID_label);
-
-        surnameSearch_button = new JButton("Ф.И.О.");
-        surnameSearch_button.setForeground(Color.RED);
-        surnameSearch_button.setBackground(Color.WHITE);
-        surnameSearch_button.setBorder(new RoundedBorder(10));
-        surnameSearch_button.setFont(Font.getFont("Lena"));
-        tableID_panel.add(surnameSearch_button);
-        searchEmployee_panel.add(surnameSearch_button);
-        surnameSearch_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                searchBySurname = new SearchBySurname(tableID_text.getText());
-                searchBySurname.pack();
-                searchBySurname.setVisible(true);
-            }
-        });
-
-        tableID_text = new JTextField();
-        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        tableID_panel.add(tableID_text);
-        searchEmployee_panel.add(tableID_text);
-
-        search_button = new JButton("Поиск");
-        search_button.setForeground(Color.RED);
-        search_button.setBackground(Color.WHITE);
-        search_button.setBorder(new RoundedBorder(10));
-        search_button.setFont(Font.getFont("Lena"));
-        tableID_panel.add(search_button);
-        searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
+        searchAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tableID_text.getText().equals("") )
@@ -165,8 +127,56 @@ public class EmployeeInfo extends JPanel {
                     setVisible(true);
                 }
             }
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        LineBorder line = new LineBorder(Color.GRAY, 1, true);
+        JPanel searchEmployee_panel = new JPanel();
+        searchEmployee_panel.setBackground(Color.white);
+        searchEmployee_panel.setLayout(new BoxLayout(searchEmployee_panel, BoxLayout.X_AXIS));
+        searchEmployee_panel.setBorder(new TitledBorder(line, "Поиск сотрудника"));
+        searchEmployee_panel.setBounds(20, 120, 500, 50);
+        this.add(searchEmployee_panel);
+
+        JPanel tableID_panel = new JPanel();
+
+        tableID_label = new JLabel(" Табельный номер:  ");
+        tableID_label.setForeground(Color.RED);
+        tableID_panel.setBackground(Color.WHITE);
+        tableID_label.setFont(Font.getFont("Lena"));
+        tableID_panel.add(tableID_label);
+        searchEmployee_panel.add(tableID_label);
+
+        surnameSearch_button = new JButton("Ф.И.О.");
+        surnameSearch_button.setForeground(Color.RED);
+        surnameSearch_button.setBackground(Color.WHITE);
+        surnameSearch_button.setBorder(new RoundedBorder(10));
+        surnameSearch_button.setFont(Font.getFont("Lena"));
+        tableID_panel.add(surnameSearch_button);
+        searchEmployee_panel.add(surnameSearch_button);
+        surnameSearch_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchBySurname = new SearchBySurname(tableID_text.getText());
+                searchBySurname.pack();
+                searchBySurname.setVisible(true);
+            }
         });
 
+        tableID_text = new JTextField();
+        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
+        tableID_panel.add(tableID_text);
+        searchEmployee_panel.add(tableID_text);
+
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        search_button.setBorder(new RoundedBorder(10));
+        search_button.setFont(Font.getFont("Lena"));
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(searchAction);
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel employeeInfo_panel = new JPanel();
@@ -211,12 +221,14 @@ public class EmployeeInfo extends JPanel {
         driverLicenceInfo_panel.setBackground(Color.WHITE);
         driverLicenceInfo_panel.setBounds(360, 390, 380, 200);
         driverLicenceInfo_panel.setLayout(new BorderLayout());
+        driverLicenceInfo_panel.setBorder(new TitledBorder("Водительское Удостоверение"));
         this.add(driverLicenceInfo_panel);
 
         JPanel licenceInfoPanel = new JPanel();
         licenceInfoPanel.setBackground(Color.WHITE);
         licenceInfoPanel.setBounds(20, 390,330,200);
         licenceInfoPanel.setLayout(new BorderLayout());
+        licenceInfoPanel.setBorder(new TitledBorder("Удостоверение Тракториста"));
         this.add(licenceInfoPanel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,7 +387,7 @@ public class EmployeeInfo extends JPanel {
         }
 
         TableColumn tabCol1 = truckLicence_columns.getColumn(1);
-        tabCol1.setHeaderValue("Дата");
+        tabCol1.setHeaderValue("✓");
         tabCol1.setCellRenderer(centerRenderer);
         truckLicence_table.addMouseListener(new MouseAdapter() {
             @Override
@@ -490,7 +502,7 @@ public class EmployeeInfo extends JPanel {
         }
 
         TableColumn drivingCol1 = drivingLicence_columns.getColumn(1);
-        drivingCol1.setHeaderValue("Дата");
+        drivingCol1.setHeaderValue("✓");
         drivingCol1.setCellRenderer(drivingLicenceRendered);
         drivingCol1.setPreferredWidth(150);
 
@@ -578,8 +590,8 @@ public class EmployeeInfo extends JPanel {
         //Панель Управления
         JPanel buttons_panel = new JPanel(new GridLayout());
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 600, 500, 30);
-        buttons_panel.setLayout(new GridLayout(1, 5,5,0));
+        buttons_panel.setBounds(20, 600, 600, 60);
+        buttons_panel.setLayout(new GridLayout(2, 5,5,5));
         this.add(buttons_panel);
 
         edit_button = new JButton("Изменить");
@@ -670,6 +682,41 @@ public class EmployeeInfo extends JPanel {
             }
         });
 
+
+        savePhoto_button = new JButton("Скачать фото");
+        savePhoto_button.setBackground(Color.WHITE);
+        savePhoto_button.setForeground(Color.BLACK);
+        savePhoto_button.setBorder(new RoundedBorder(10));
+        savePhoto_button.setFont(Font.getFont("Lena"));
+        buttons_panel.add(savePhoto_button);
+        savePhoto_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveImage();
+            }
+        });
+
+        eraseData_button = new JButton("Обнулить данные");
+        eraseData_button.setBackground(Color.WHITE);
+        eraseData_button.setForeground(Color.BLACK);
+        eraseData_button.setBorder(new RoundedBorder(10));
+        eraseData_button.setFont(Font.getFont("Lena"));
+        buttons_panel.add(eraseData_button);
+        eraseData_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Objects.equals(tableID_text.getText(), "")){
+                     EraseConfirmationFrame eraseConfirmationFrame = new EraseConfirmationFrame(tableID_text.getText());
+                     eraseConfirmationFrame.pack();
+                     eraseConfirmationFrame.setVisible(true);
+                } else {
+                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите табельный номер сотрудника");
+                }
+            }
+        });
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         photoPath = new JTextField();
         photoPath.setForeground(Color.BLACK);
         photoPath.setDisabledTextColor(Color.BLACK);
@@ -685,7 +732,6 @@ public class EmployeeInfo extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                System.out.println("ыудддудудсе");
                 fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
                 fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "tif", "gif", "bmp"));
                 int returnVal = fileChooser.showOpenDialog(pobj);
@@ -781,6 +827,26 @@ public class EmployeeInfo extends JPanel {
         });
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void saveImage(){
+        if (tableID_text.getText() != null && databaseQueries.getPhotoLabel() != null){
+
+            try{
+
+                String path = new File(MineOperations.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+
+                Container c = databaseQueries.getPhotoLabel();
+                BufferedImage employeePhoto = new BufferedImage(c.getWidth(),c.getHeight(),BufferedImage.TYPE_INT_ARGB);
+                c.paint(employeePhoto.getGraphics());
+                ImageIO.write(employeePhoto,"PNG", new File(path + tableID_text.getText() + "-" + nameRus_text.getText() + ".png"));
+                System.out.println("Image has been saved");
+            } catch (IOException | URISyntaxException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // paint children
@@ -922,6 +988,113 @@ public class EmployeeInfo extends JPanel {
         upload_button.setEnabled(true);
     }
 
+
+    private class EraseConfirmationFrame extends JFrame{
+
+
+        String confirmationWord = "УДАЛИТЬ";
+        JLabel employeeIDInfo_label;
+        JTextField confirmationInput;
+        JButton confirmButton;
+        JButton cancelButton;
+
+        JPanel pageTitlePanel;
+
+        public EraseConfirmationFrame(String EmployeeID){
+
+            buildFrame(EmployeeID);
+
+
+            this.setPreferredSize(new Dimension(500,200));
+            this.setFocusableWindowState(true);
+            this.setAutoRequestFocus(true);
+            this.setLocation(900,40);
+            this.setLayout(null);
+        }
+
+        private void buildFrame(String EmployeeID){
+            pageTitlePanel = new JPanel();
+            pageTitlePanel.setBounds(0,0,500,50);
+            pageTitlePanel.setBackground(Color.WHITE);
+            pageTitlePanel.setVisible(true);
+            this.add(pageTitlePanel);
+
+            employeeIDInfo_label = new JLabel("<html> Вы уверены, что хотите удалить сотрудника: " + EmployeeID + "? <br /> Введите слово 'УДАЛИТЬ' для подтверждения. </html>");
+            employeeIDInfo_label.setFont(new Font("Helvetica",Font.BOLD, 15));
+            pageTitlePanel.add(employeeIDInfo_label);
+
+            confirmationInput = new JTextField();
+            confirmationInput.setBounds(50,60,400,25);
+            confirmationInput.setBorder(new LineBorder(Color.BLACK,1));
+            this.add(confirmationInput);
+
+            JPanel buttonsPanel = new JPanel();
+            buttonsPanel.setBounds(50,90,400,40);
+            buttonsPanel.setLayout(new GridLayout(1,2,5,0));
+            this.add(buttonsPanel);
+
+            confirmButton = new JButton("Удалить");
+            confirmButton.setForeground(Color.BLACK);
+            confirmButton.setBackground(Color.WHITE);
+            confirmButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (Objects.equals(confirmationInput.getText(), confirmationWord)){
+                        erasingData(EmployeeID);
+                    } else {
+                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите повторно 'УДАЛИТЬ'");
+                    }
+                }
+            });
+            buttonsPanel.add(confirmButton);
+
+            cancelButton = new JButton("Отменить");
+            cancelButton.setForeground(Color.BLACK);
+            cancelButton.setBackground(Color.WHITE);
+            cancelButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(false);
+                    dispose();
+                }
+            });
+            buttonsPanel.add(cancelButton);
+
+            JPanel backgroundPanel = new JPanel();
+            backgroundPanel.setBackground(Color.WHITE);
+            backgroundPanel.setBounds(0,0,500,200);
+            this.add(backgroundPanel);
+        }
+
+        private void erasingData(String employeeID){
+            try {
+                PreparedStatement eraseDataStatement;
+                String deleteQueryTrainingData = "DELETE FROM TrainingData Where EmployeeID = '"+employeeID+"'";
+                String deleteQuerySRT = "DELETE FROM SRT Where EmployeeID = '"+employeeID+"'";
+                String deleteQueryQualified = "DELETE FROM Qualified Where EmployeeID = '"+employeeID+"'";
+
+                System.out.println(deleteQueryTrainingData);
+                System.out.println(deleteQuerySRT);
+
+                eraseDataStatement = MineOperations.conn.prepareStatement(deleteQueryTrainingData);
+                eraseDataStatement.executeUpdate();
+
+                eraseDataStatement = MineOperations.conn.prepareStatement(deleteQuerySRT);
+                eraseDataStatement.executeUpdate();
+
+                eraseDataStatement = MineOperations.conn.prepareStatement(deleteQueryQualified);
+                eraseDataStatement.executeUpdate();
+
+                JOptionPane.showMessageDialog(MineOperations.cardPane, "Данные обнулены");
+                setVisible(false);
+                dispose();
+
+            } catch (SQLException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
     private class SearchBySurname extends JFrame{
 
         private JTable listOfEmployees_table;
@@ -1014,7 +1187,6 @@ public class EmployeeInfo extends JPanel {
                 listOfEmployees_table.setValueAt(employeeNames_list.get(i),i,1);
             }
 
-
             listOfEmployees_table.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -1022,10 +1194,10 @@ public class EmployeeInfo extends JPanel {
                         int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
                         System.out.println(listOfEmployees_table.getValueAt(index1, 0));
                         tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                        search_button.doClick();
                     }
                 }
             });
-
             tablePanel.add(new JScrollPane(listOfEmployees_table));
         }
 

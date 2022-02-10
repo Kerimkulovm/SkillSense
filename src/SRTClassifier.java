@@ -40,7 +40,7 @@ public class SRTClassifier extends JPanel {
         setLayout(null);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'SRT'</big><br /></html>");
+        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Ежегодного Обучения'</big><br /></html>");
         titleEng.setBounds(160, 0, 600, 100);
         titleEng.setFont(Font.getFont("Lena"));
         titleEng.setForeground(Color.BLACK);

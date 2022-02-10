@@ -42,6 +42,8 @@ public class DailyEditorial extends JPanel {
     private DefaultTableModel dailyHours_tableModel;
     private JTable dailyHours_table;
 
+    private Action searchAction;
+
     public DailyEditorial(){
 
         try {
@@ -93,19 +95,9 @@ public class DailyEditorial extends JPanel {
             }
         });
 
-        tableID_text = new JTextField();
-        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
-        tableID_panel.add(tableID_text);
-        searchEmployee_panel.add(tableID_text);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        search_button = new JButton("Поиск");
-        search_button.setForeground(Color.RED);
-        search_button.setBackground(Color.WHITE);
-        search_button.setFont(Font.getFont("Lena"));
-        search_button.setBorder(new RoundedBorder(10));
-        tableID_panel.add(search_button);
-        searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
+        searchAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tableID_text.getText().equals("") )
@@ -116,8 +108,24 @@ public class DailyEditorial extends JPanel {
                     loadHours();
                 }
             }
-        });
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+        tableID_text = new JTextField();
+        tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
+        tableID_panel.add(tableID_text);
+        searchEmployee_panel.add(tableID_text);
+
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        search_button.setFont(Font.getFont("Lena"));
+        search_button.setBorder(new RoundedBorder(10));
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(searchAction);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -475,6 +483,7 @@ public class DailyEditorial extends JPanel {
                         nameRus_text.setText(dailyEditorialQueries.getEmployeeName());
 
                         loadHours();
+
                     }
                 }
             });

@@ -38,6 +38,8 @@ public class OperationsDaily extends JPanel {
 
     JDatePickerImpl Date_dtp = null;
 
+    private Action searchAction;
+
     private BufferedImage logo_image, bg_image;
     private JPanel photoPanel; 
 
@@ -116,17 +118,13 @@ public class OperationsDaily extends JPanel {
 
         tableID_text = new JTextField();
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
 
-        search_button = new JButton("Поиск");
-        search_button.setForeground(Color.RED);
-        search_button.setBackground(Color.WHITE);
-        search_button.setBorder(new RoundedBorder(10));
-        search_button.setFont(Font.getFont("Lena"));
-        tableID_panel.add(search_button);
-        searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        searchAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (tableID_text.getText().equals("") )
@@ -157,7 +155,17 @@ public class OperationsDaily extends JPanel {
                     setVisible(true);
                 }
             }
-        });
+        };
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        search_button = new JButton("Поиск");
+        search_button.setForeground(Color.RED);
+        search_button.setBackground(Color.WHITE);
+        search_button.setBorder(new RoundedBorder(10));
+        search_button.setFont(Font.getFont("Lena"));
+        tableID_panel.add(search_button);
+        searchEmployee_panel.add(search_button);
+        search_button.addActionListener(searchAction);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -374,8 +382,8 @@ public class OperationsDaily extends JPanel {
 
                     boolean res = false;
                     res = databaseQueries.saveOperationDaily(tableID_text.getText(), courseId, instructorId, Date_dtp.getJFormattedTextField().getText(),
-                            Float.parseFloat(theoryHours_text.getText()), Float.parseFloat(fieldHours_text.getText()),
-                            Float.parseFloat(practHours_text.getText()), Float.parseFloat(expHours_text.getText()));
+                            Float.parseFloat(theoryHours_text.getText().replace(",",".")), Float.parseFloat(fieldHours_text.getText().replace(",",".")),
+                            Float.parseFloat(practHours_text.getText().replace(",",".")), Float.parseFloat(expHours_text.getText().replace(",",".")));
 
                     if (res) JOptionPane.showMessageDialog(MineOperations.cardPane, "Запись сохранена успешно!");
 
@@ -551,6 +559,7 @@ public class OperationsDaily extends JPanel {
                         int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
                         System.out.println(listOfEmployees_table.getValueAt(index1, 0));
                         tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
+                        search_button.doClick();
                     }
                 }
             });

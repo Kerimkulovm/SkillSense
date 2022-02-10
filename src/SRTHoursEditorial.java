@@ -37,6 +37,8 @@ public class SRTHoursEditorial extends JPanel {
 
     private List<Object[]> acceptedHours_list = new ArrayList<Object[]>();
 
+    private Action searchAction;
+
     int numOfAcceptedHours = 0;
 
     private DefaultTableModel acceptedHours_tableModel;
@@ -62,6 +64,20 @@ public class SRTHoursEditorial extends JPanel {
         title_label.setFont(Font.getFont("Lena"));
         this.add(title_label);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        searchAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("") )
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
+                else {
+                    srtEditorialQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(srtEditorialQueries.getEmployeeName());
+                    loadHours();
+                }
+            }
+        };
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         LineBorder line = new LineBorder(Color.GRAY, 1, true);
         JPanel searchEmployee_panel = new JPanel();
@@ -97,6 +113,7 @@ public class SRTHoursEditorial extends JPanel {
 
         tableID_text = new JTextField();
         tableID_text.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1, true));
+        tableID_text.addActionListener(searchAction);
         tableID_panel.add(tableID_text);
         searchEmployee_panel.add(tableID_text);
 
@@ -107,18 +124,7 @@ public class SRTHoursEditorial extends JPanel {
         search_button.setFont(Font.getFont("Lena"));
         tableID_panel.add(search_button);
         searchEmployee_panel.add(search_button);
-        search_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (tableID_text.getText().equals("") )
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
-                else {
-                    srtEditorialQueries.queryEmployeeData(tableID_text.getText());
-                    nameRus_text.setText(srtEditorialQueries.getEmployeeName());
-                    loadHours();
-                }
-            }
-        });
+        search_button.addActionListener(searchAction);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -469,6 +475,7 @@ public class SRTHoursEditorial extends JPanel {
                         nameRus_text.setText(srtEditorialQueries.getEmployeeName());
 
                         loadHours();
+
                     }
                 }
             });

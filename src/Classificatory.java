@@ -111,7 +111,7 @@ public class Classificatory extends JPanel {
             }
         });
 
-        JButton SRT_button = new JButton("<html> <big> SRT </big><br />(Просмотреть/Изменить/Данные о SRT)</html>");
+        JButton SRT_button = new JButton("<html> <big> Ежегодное Обучение </big><br />(Просмотреть/Изменить/Данные о SRT)</html>");
         buttons_panel.add(SRT_button);
         SRT_button.setHorizontalAlignment(SwingConstants.LEFT);
         SRT_button.setBackground(Color.WHITE);
