@@ -38,7 +38,7 @@ public class OperationsDaily extends JPanel {
 
     JDatePickerImpl Date_dtp = null;
 
-    private Action searchAction;
+    public Action searchAction;
 
     private BufferedImage logo_image, bg_image;
     private JPanel photoPanel; 
@@ -67,6 +67,40 @@ public class OperationsDaily extends JPanel {
         titleEng.setFont(Font.getFont("Lena"));
         this.add(titleEng);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        searchAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tableID_text.getText().equals("") )
+                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
+                else {
+
+                    databaseQueries.queryEmployeeData(tableID_text.getText());
+                    nameRus_text.setText(databaseQueries.getEmployeeName());
+
+                    trainer_box.setEnabled(true);
+                    enableComboText(trainer_box);
+
+                    CourseName_box.setEnabled(true);
+                    enableComboText(CourseName_box);
+
+                    if (databaseQueries.getPhotoLabel() != null){
+                        photoPanel.removeAll();
+                        photoPanel.add(databaseQueries.getPhotoLabel());
+                        revalidate();
+                        repaint();
+                    } else {
+                        photoPanel.removeAll();
+                        revalidate();
+                        repaint();
+                    }
+
+                    //LastDate_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
+                    setVisible(true);
+                }
+            }
+        };
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");
@@ -124,39 +158,6 @@ public class OperationsDaily extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        searchAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (tableID_text.getText().equals("") )
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите табельный номер");
-                else {
-
-                    databaseQueries.queryEmployeeData(tableID_text.getText());
-                    nameRus_text.setText(databaseQueries.getEmployeeName());
-
-                    trainer_box.setEnabled(true);
-                    enableComboText(trainer_box);
-
-                    CourseName_box.setEnabled(true);
-                    enableComboText(CourseName_box);
-
-                    if (databaseQueries.getPhotoLabel() != null){
-                        photoPanel.removeAll();
-                        photoPanel.add(databaseQueries.getPhotoLabel());
-                        revalidate();
-                        repaint();
-                    } else {
-                        photoPanel.removeAll();
-                        revalidate();
-                        repaint();
-                    }
-
-                    //LastDate_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
-                    setVisible(true);
-                }
-            }
-        };
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         search_button = new JButton("Поиск");
         search_button.setForeground(Color.RED);

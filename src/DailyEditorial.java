@@ -191,7 +191,7 @@ public class DailyEditorial extends JPanel {
                         int selectedRowIndex = dailyHours_table.getSelectedRow();
                         System.out.println(selectedRowIndex);
 
-                        int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex,7);
+                        int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex,8);
 
                         String delete_query = "DELETE FROM dbo.TrainingData WHERE RecID = " + selectedRecord;
                         try {
