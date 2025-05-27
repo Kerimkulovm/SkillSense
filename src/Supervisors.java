@@ -175,13 +175,13 @@ public class Supervisors extends JPanel {
         inputList.clear();
 
         try {
-            String supervisors_query = "SELECT * FROM dbo.Supervisors";
+            String supervisors_query = "SELECT * FROM Supervisors";
             Statement supervisors_statement = MineOperations.conn.createStatement();
             ResultSet supervisors_results = supervisors_statement.executeQuery(supervisors_query);
 
             if (supervisors_results.next()){
                 do{
-                    String supervisorName= supervisors_results.getString("Russian");
+                    String supervisorName= supervisors_results.getString("RusName");
                     inputList.add(supervisorName);
                 } while (supervisors_results.next());
             }
@@ -201,7 +201,7 @@ public class Supervisors extends JPanel {
         int supervisorID = 0;
 
         try {
-            String supervisors_query = "SELECT * FROM dbo.Supervisors WHERE Russian = N'" + supervisorName +"'";
+            String supervisors_query = "SELECT * FROM Supervisors WHERE RusName = N'" + supervisorName +"'";
             Statement supervisor_statement = MineOperations.conn.createStatement();
             ResultSet supervisor_results = supervisor_statement.executeQuery(supervisors_query);
             if (supervisor_results.next()){
@@ -226,7 +226,7 @@ public class Supervisors extends JPanel {
         int statusID = 0;
 
         try {
-            String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE Russian = N'" + supervisorName +"'";
+            String supervisorName_query = "SELECT * FROM Supervisors WHERE RusName = N'" + supervisorName +"'";
             Statement supervisorName_statement = MineOperations.conn.createStatement();
             ResultSet supervisor_results = supervisorName_statement.executeQuery(supervisorName_query);
 
@@ -310,28 +310,16 @@ public class Supervisors extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите имя руководителя");
                     } else {
                         int maxIDSupervisor = 0;
-                        String checkSupervisor_query = "SELECT * FROM dbo.Supervisors WHERE Russian = N'" + supervisor_textField.getText() +"'";
+                        String checkSupervisor_query = "SELECT * FROM Supervisors WHERE RusName = N'" + supervisor_textField.getText() +"'";
                         try {
                             Statement checkSupervisor_st = MineOperations.conn.createStatement();
                             ResultSet supervisorExists_rs = checkSupervisor_st.executeQuery(checkSupervisor_query);
                             if (!supervisorExists_rs.next()){
-                                String maxSupervisorId_query = "SELECT max (SupervisorId) as SupervisorId FROM dbo.Supervisors";
-                                try{
-                                    Statement maxSupervisorId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxSupervisorId_rs = maxSupervisorId_st.executeQuery(maxSupervisorId_query);
-                                    if (maxSupervisorId_rs.next()){
-                                        maxIDSupervisor = maxSupervisorId_rs.getInt(1);
-                                        System.out.println(maxIDSupervisor);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDSupervisor++;
 
-                                String insert_query = "INSERT INTO dbo.Supervisors " +
-                                        "(SupervisorId, Supervisor, Russian, isActive) " +
-                                        "VALUES (" + maxIDSupervisor + ", ? , ? , 1)";
+                                String insert_query = "INSERT INTO Supervisors " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ? , ? , 1)";
 
                                 PreparedStatement insertSupervisor = MineOperations.conn.prepareStatement(insert_query);
                                 insertSupervisor.setString(1,supervisor_textField.getText());
@@ -417,7 +405,7 @@ public class Supervisors extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Supervisors set isActive = " + isActive_int + "WHERE Russian = N'" + supervisor_label.getText() + "'";
+                        String update_query = "UPDATE Supervisors set isActive = " + isActive_int + "WHERE RusName = N'" + supervisor_label.getText() + "'";
                         PreparedStatement updateSupervisor_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
                         updateSupervisor_pst.executeUpdate();

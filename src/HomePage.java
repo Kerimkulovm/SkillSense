@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -57,7 +56,7 @@ public class HomePage extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MineOperations.card.show(MineOperations.cardPane,"Employee Info");
-                EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadJobTitlesBox(EmployeeInfo.positionRus_box);
+                EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadPositionBox(EmployeeInfo.positionRus_box);
                 EmployeeInfo.supervisor_box = EmployeeInfo.databaseQueries.loadSupervisorBox(EmployeeInfo.supervisor_box);
                 EmployeeInfo.departmentRus_box = EmployeeInfo.databaseQueries.loadDepartmentsBox(EmployeeInfo.departmentRus_box);
                 EmployeeInfo.crewRus_box = EmployeeInfo.databaseQueries.loadCrewBox(EmployeeInfo.crewRus_box);

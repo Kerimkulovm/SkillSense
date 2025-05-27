@@ -176,13 +176,13 @@ public class SRTClassifier extends JPanel {
         inputList.clear();
 
         try {
-            String SRT_query = "SELECT * FROM dbo.SafetyNames";
+            String SRT_query = "SELECT * FROM SafetyNames";
             Statement SRT_statement = MineOperations.conn.createStatement();
             ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
 
             if (SRT_results.next()){
                 do{
-                    String SRTName= SRT_results.getString("course");
+                    String SRTName= SRT_results.getString("RusName");
                     inputList.add(SRTName);
                 } while (SRT_results.next());
             }
@@ -202,7 +202,7 @@ public class SRTClassifier extends JPanel {
         int SRTID = 0;
 
         try {
-            String SRT_query = "SELECT * FROM dbo.SafetyNames WHERE course  = N'" + SRTName +"'";
+            String SRT_query = "SELECT * FROM SafetyNames WHERE RusName  = N'" + SRTName +"'";
             Statement SRT_statement = MineOperations.conn.createStatement();
             ResultSet SRT_results = SRT_statement.executeQuery(SRT_query);
 
@@ -229,7 +229,7 @@ public class SRTClassifier extends JPanel {
         int statusID = 0;
 
         try {
-            String intsructors_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + SRTName +"'";
+            String intsructors_query = "SELECT * FROM SafetyNames WHERE RusName = N'" + SRTName +"'";
             Statement SRT_statement = MineOperations.conn.createStatement();
             ResultSet SRT_results = SRT_statement.executeQuery(intsructors_query);
 
@@ -289,7 +289,7 @@ public class SRTClassifier extends JPanel {
             SRTInfo_panel.setLayout(new BorderLayout());
             this.add(SRTInfo_panel);
 
-            JLabel SRT_label = new JLabel("  Ф.И.О Инструктора:  ");
+            JLabel SRT_label = new JLabel("  Наименование курса:  ");
             SRT_label.setForeground(Color.BLACK);
             SRTInfo_panel.add(SRT_label, BorderLayout.WEST);
 
@@ -310,37 +310,24 @@ public class SRTClassifier extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (SRT_textField.getText() == null){
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите имя инструктора");
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите наименование курса");
                     } else {
                         int maxIDSRT = 0;
-                        String checkSRT_query = "SELECT * FROM dbo.SafetyNames WHERE course = N'" + SRT_textField.getText() +"'";
+                        String checkSRT_query = "SELECT * FROM SafetyNames WHERE RusName = N'" + SRT_textField.getText() +"'";
                         try {
                             Statement checkSRT_st = MineOperations.conn.createStatement();
                             ResultSet SRTExists_rs = checkSRT_st.executeQuery(checkSRT_query);
                             if (!SRTExists_rs.next()){
-                                String maxSRTId_query = "SELECT max (ReviewNo) as ReviewNo FROM dbo.SafetyNames";
-                                try{
-                                    Statement maxSRTId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxSRTd_rs = maxSRTId_st.executeQuery(maxSRTId_query);
-                                    if (maxSRTd_rs.next()){
-                                        maxIDSRT = maxSRTd_rs.getInt(1);
-                                        System.out.println(maxIDSRT);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDSRT++;
-
-                                String insert_query = "INSERT INTO dbo.SafetyNames " +
-                                        "(ReviewNo, ReviewName, course, isActive) " +
-                                        "VALUES (" + maxIDSRT + ", ?, ? , 1)";
+                                String insert_query = "INSERT INTO SafetyNames " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ?, ? , 1)";
 
                                 PreparedStatement insertSRTr = MineOperations.conn.prepareStatement(insert_query);
                                 insertSRTr.setString(1, SRT_textField.getText());
                                 insertSRTr.setString(2, SRT_textField.getText());
                                 insertSRTr.executeUpdate();
-                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
+                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Курс успешно добавлен!!!");
 
 
                                 srt_tableModel.addRow(new Object[]{maxIDSRT,SRT_textField.getText(), "Активен" });
@@ -350,7 +337,7 @@ public class SRTClassifier extends JPanel {
                                 updateComboboxes();
 
                             } else {
-                                JOptionPane.showMessageDialog(MineOperations.cardPane,"SRT: " +
+                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
                                         SRT_textField.getText() + " уже существует");
                             }
                         } catch (SQLException ex) {
@@ -388,7 +375,7 @@ public class SRTClassifier extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить инструктора");
+            this.setTitle("Добавить курс");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -425,7 +412,7 @@ public class SRTClassifier extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.SafetyNames set isActive = " + isActive_int + "WHERE course = N'" + SRT_label.getText() + "'";
+                        String update_query = "UPDATE SafetyNames set isActive = " + isActive_int + "WHERE RusName = N'" + SRT_label.getText() + "'";
                         PreparedStatement updateSRTpst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обнавлен");
                         updateSRTpst.executeUpdate();

@@ -57,7 +57,7 @@ public class SRTHoursEditorial extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel title_label = new JLabel("<html><big>Часы SRT</big><br />Поиск данных о часах SRT</html>");
+        JLabel title_label = new JLabel("<html><big>Часы ежегодного обучения</big><br />Поиск данных об ежегодном обучении</html>");
         title_label.setBounds(160, 0, 500, 100);
         title_label.setBackground(Color.WHITE);
         title_label.setForeground(Color.BLACK);
@@ -176,7 +176,7 @@ public class SRTHoursEditorial extends JPanel {
 
                         int selectedRecord = (Integer) acceptedHours_table.getValueAt(selectedRowIndex,7);
 
-                        String delete_query = "DELETE FROM dbo.SRT WHERE RecID = " + selectedRecord;
+                        String delete_query = "DELETE FROM AnnualTraining WHERE RecID = " + selectedRecord;
                         try {
                             PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
                             delete_pst.executeUpdate();
@@ -296,9 +296,9 @@ public class SRTHoursEditorial extends JPanel {
 
         acceptedHours_list.clear();
 
-        String hours_query = "select s.lastdate as date, s.EmployeeId, cc.Course, s.RecID, s.Thours,  s.Phours, Fieldhours as fHours,  ii.Instructor from dbo.SRT s\n" +
-                "\tleft join dbo.SafetyNames cc on s.Coarse = cc.ReviewNo \n" +
-                "\tleft join dbo.Instructor ii on s.instructor = ii.InstructoId \n" +
+        String hours_query = "select s.lastdate as date, s.EmployeeId, cc.RusName as CourseName, s.RecID, s.Thours,  s.Phours, Fieldhours as fHours,  ii.RusName as InstructorName from AnnualTraining s\n" +
+                "\tleft join SafetyNames cc on s.Coarse = cc.ReviewNo \n" +
+                "\tleft join Instructor ii on s.instructor = ii.InstructoId \n" +
                 "\twhere s.EmployeeID = '"+ tableID_text.getText() +"'\n" +
                 "\torder by  s.lastdate  desc";
 
@@ -311,11 +311,11 @@ public class SRTHoursEditorial extends JPanel {
 
                     Date date = hours_rs.getDate("date");
                     int EmployeeId = hours_rs.getInt("EmployeeId");
-                    String course = hours_rs.getString("Course");
+                    String course = hours_rs.getString("CourseName");
                     int tHours = hours_rs.getInt("Thours");
                     int pHours = hours_rs.getInt("Phours");
                     int fHours = hours_rs.getInt("fHours");
-                    String instructor = hours_rs.getString("Instructor");
+                    String instructor = hours_rs.getString("InstructorName");
                     int recId = hours_rs.getInt("RecID");
 
                     acceptedHours_list.add(new Object[]{date,EmployeeId, course, tHours, pHours, fHours,instructor,recId});

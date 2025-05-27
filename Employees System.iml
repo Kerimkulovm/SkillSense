@@ -27,5 +27,14 @@
     </orderEntry>
     <orderEntry type="library" name="LGoodDatePicker-11.2.1-javadoc" level="project" />
     <orderEntry type="library" name="mssql-jdbc-9.4.0.jre8" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/postgresql-42.2.29.jre7.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

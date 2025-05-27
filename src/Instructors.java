@@ -175,13 +175,13 @@ public class Instructors extends JPanel {
         inputList.clear();
 
         try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor";
+            String intsructors_query = "SELECT * FROM Instructor";
             Statement instructors_statement = MineOperations.conn.createStatement();
             ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
 
             if (instructors_results.next()){
                 do{
-                    String instructorName= instructors_results.getString("Instructor");
+                    String instructorName= instructors_results.getString("RusName");
                     inputList.add(instructorName);
                 } while (instructors_results.next());
             }
@@ -201,7 +201,7 @@ public class Instructors extends JPanel {
         int instructorID = 0;
 
         try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
+            String intsructors_query = "SELECT * FROM Instructor WHERE RusName = N'" + instructorName +"'";
             Statement instructors_statement = MineOperations.conn.createStatement();
             ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
 
@@ -228,7 +228,7 @@ public class Instructors extends JPanel {
         int statusID = 0;
 
         try {
-            String intsructors_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructorName +"'";
+            String intsructors_query = "SELECT * FROM Instructor WHERE RusName = N'" + instructorName +"'";
             Statement instructors_statement = MineOperations.conn.createStatement();
             ResultSet instructors_results = instructors_statement.executeQuery(intsructors_query);
 
@@ -312,28 +312,15 @@ public class Instructors extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите имя инструктора");
                     } else {
                         int maxIDInstructor = 0;
-                        String checkInstructor_query = "SELECT * FROM dbo.Instructor WHERE Instructor = N'" + instructor_textField.getText() +"'";
+                        String checkInstructor_query = "SELECT * FROM Instructor WHERE RusName = N'" + instructor_textField.getText() +"'";
                         try {
                             Statement checkInstructor_st = MineOperations.conn.createStatement();
                             ResultSet instructorExists_rs = checkInstructor_st.executeQuery(checkInstructor_query);
                             if (!instructorExists_rs.next()){
-                                String maxInstructorId_query = "SELECT max (InstructoId) as InstructoId FROM dbo.Instructor";
-                                try{
-                                    Statement maxInstructorId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxInstructorId_rs = maxInstructorId_st.executeQuery(maxInstructorId_query);
-                                    if (maxInstructorId_rs.next()){
-                                        maxIDInstructor = maxInstructorId_rs.getInt(1);
-                                        System.out.println(maxIDInstructor);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDInstructor++;
-
-                                String insert_query = "INSERT INTO dbo.Instructor " +
-                                        "(InstructoId, InstructorName, Instructor, isActive) " +
-                                        "VALUES (" + maxIDInstructor + ", ? , ? , 1)";
+                                String insert_query = "INSERT INTO Instructor " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ? , ? , 1)";
 
                                 PreparedStatement insertInstructor = MineOperations.conn.prepareStatement(insert_query);
                                 insertInstructor.setString(1,instructor_textField.getText());
@@ -426,7 +413,7 @@ public class Instructors extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Instructor set isActive = " + isActive_int + "WHERE Instructor = N'" + instructor_label.getText() + "'";
+                        String update_query = "UPDATE Instructor set isActive = " + isActive_int + "WHERE RusName = N'" + instructor_label.getText() + "'";
                         PreparedStatement updateInstructor_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
                         updateInstructor_pst.executeUpdate();

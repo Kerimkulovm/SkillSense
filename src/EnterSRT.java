@@ -232,6 +232,7 @@ public class EnterSRT extends JPanel {
                     JComboBox c = (JComboBox) e.getSource();
                     DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
                     System.out.println(item.getId() + " : " + item.getDescription());
+
                     String lastDate = databaseQueries.getLastDate(tableID_text.getText(), item.getId());
                     System.out.println(lastDate);
                     if (lastDate != null && !lastDate.equals("")) {

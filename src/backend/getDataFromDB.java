@@ -14,7 +14,7 @@ public class getDataFromDB {
             Statement statement = conn.createStatement();
             ResultSet resultSet;
             System.out.println("qweqweqwe");
-            resultSet = statement.executeQuery("select top 1   * from dbo.crew");
+            resultSet = statement.executeQuery("select top 1   * from crew");
 
             String crew = "";
             if (!resultSet.next())

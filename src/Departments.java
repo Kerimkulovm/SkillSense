@@ -183,13 +183,13 @@ public class Departments extends JPanel {
 
         try {
 
-            String departments_query = "SELECT * FROM dbo.Departments";
+            String departments_query = "SELECT * FROM Departments";
             Statement departments_st = MineOperations.conn.createStatement();
             ResultSet departments_rs = departments_st.executeQuery(departments_query);
 
             if (departments_rs.next()){
                 do {
-                    String departmentsTitle = departments_rs.getString("russian");
+                    String departmentsTitle = departments_rs.getString("RusName");
                     inputList.add(departmentsTitle);
                 } while (departments_rs.next());
             }
@@ -209,7 +209,7 @@ public class Departments extends JPanel {
         int departmentID = 0;
 
         try {
-            String departmentID_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            String departmentID_query = "SELECT * FROM Departments WHERE RusName = N'" + departmentTitle +"'";
             Statement departmentID_statement = MineOperations.conn.createStatement();
             ResultSet departmentID_results = departmentID_statement.executeQuery(departmentID_query);
 
@@ -237,7 +237,7 @@ public class Departments extends JPanel {
         int statusID = 0;
 
         try {
-            String department_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departmentTitle +"'";
+            String department_query = "SELECT * FROM Departments WHERE RusName = N'" + departmentTitle +"'";
             Statement department_statement = MineOperations.conn.createStatement();
             ResultSet department_results = department_statement.executeQuery(department_query);
 
@@ -317,34 +317,22 @@ public class Departments extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название отдела");
                     } else {
                         int maxIDDepartment = 0;
-                        String checkDepartment_query = "SELECT * FROM dbo.Departments WHERE russian = N'" + departments_textField.getText() +"'";
+                        String checkDepartment_query = "SELECT * FROM Departments WHERE RusName = N'" + departments_textField.getText() +"'";
                         try {
                             Statement checkDepartment_st = MineOperations.conn.createStatement();
                             ResultSet departmentExists_rs = checkDepartment_st.executeQuery(checkDepartment_query);
                             if (!departmentExists_rs.next()){
-                                String maxInstructorId_query = "SELECT max (DeptId) as DeptId FROM dbo.Departments";
-                                try{
-                                    Statement maxDepartmentId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxDepartmentId_rs = maxDepartmentId_st.executeQuery(maxInstructorId_query);
-                                    if (maxDepartmentId_rs.next()){
-                                        maxIDDepartment = maxDepartmentId_rs.getInt(1);
-                                        System.out.println(maxIDDepartment);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDDepartment++;
 
-                                String insert_query = "INSERT INTO dbo.Departments " +
-                                        "(DeptId, Departmant, russian, isActive) " +
-                                        "VALUES (" + maxIDDepartment + ", ? , ? , 1)";
+                                String insert_query = "INSERT INTO Departments " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ? , ? , 1)";
 
                                 PreparedStatement insertDepartment = MineOperations.conn.prepareStatement(insert_query);
                                 insertDepartment.setString(1, departments_textField.getText());
                                 insertDepartment.setString(2, departments_textField.getText());
                                 insertDepartment.executeUpdate();
-                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
+                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Отдел успешно добавлен");
 
                                 departments_tableModel.addRow(new Object[]{maxIDDepartment,departments_textField.getText(), "Активен" });
                                 departments_tableModel.fireTableDataChanged();
@@ -352,7 +340,7 @@ public class Departments extends JPanel {
                                 dispose();
                                 updateComboboxes();
                             } else {
-                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор: " +
+                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел: " +
                                         departments_textField.getText() + " уже существует");
                             }
                         } catch (SQLException ex) {
@@ -422,7 +410,7 @@ public class Departments extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Departments set isActive = " + isActive_int + "WHERE russian = N'" + department_label.getText() + "'";
+                        String update_query = "UPDATE Departments set isActive = " + isActive_int + "WHERE RusName = N'" + department_label.getText() + "'";
                         PreparedStatement updateDepartment_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел успешно обнавлен");
                         updateDepartment_pst.executeUpdate();

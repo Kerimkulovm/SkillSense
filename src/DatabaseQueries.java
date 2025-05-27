@@ -26,7 +26,9 @@ public class DatabaseQueries {
     int ReportsTo;
     String superVisorName;
 
-    String jobTitle;
+
+    int PositionID;
+    String positionName;
 
     int departmentID;
     String departmentName;
@@ -55,13 +57,13 @@ public class DatabaseQueries {
     Date gos_D1E_date;
 
     JTable truckLicence_table = new JTable(7,2);
-    Date kumtor_A_date;
-    Date kumtor_B_date;
-    Date kumtor_V_date;
-    Date kumtor_G_date;
-    Date kumtor_D_date;
-    Date kumtor_E_date;
-    Date kumtor_E1_date;
+    Date local_A_date;
+    Date local_B_date;
+    Date local_V_date;
+    Date local_G_date;
+    Date local_D_date;
+    Date local_E_date;
+    Date local_E1_date;
 
     JLabel photoLabel = new JLabel();
 
@@ -69,10 +71,11 @@ public class DatabaseQueries {
     List<String> courses_list = new ArrayList<>();
     List<String> employeeID_list = new ArrayList<>();
 
+
     public void queryEmployeeData(String EmployeeID) {
 
         employeeID = EmployeeID;
-        String id_query = "SELECT * FROM dbo.Employees WHERE EmployeeID =?";
+        String id_query = "SELECT * FROM Employees WHERE EmployeeID =?";
         try {
             st = MineOperations.conn.prepareStatement(id_query);
             st.setString(1,employeeID);
@@ -81,28 +84,28 @@ public class DatabaseQueries {
             if (!employeeSearch_resultSet.next()){
                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Сотрудник не найден!");
             } else {
-                fullName = employeeSearch_resultSet.getString("LastName");
+                fullName = employeeSearch_resultSet.getString("RusName");
                 ReportsTo = findSupervisorName(employeeSearch_resultSet.getInt("ReportsTo"));
-                jobTitle = employeeSearch_resultSet.getString("RusTitle");
+                PositionID = findPositionName(employeeSearch_resultSet.getInt("position"));
                 departmentID = findDepartmentName(employeeSearch_resultSet.getInt("Department"));
                 terminatedID = findTerminatedStatus(employeeSearch_resultSet.getInt("Terminated"));
                 crewID = findCrewName(employeeSearch_resultSet.getInt("Shiftn"));
                 lastSafetyOr = employeeSearch_resultSet.getString("SafteyOrin");
 
-                kumtor_A_date = employeeSearch_resultSet.getDate("kumtor_A");
-                truckLicence_table.setValueAt(kumtor_A_date, 0, 1);
-                kumtor_B_date = employeeSearch_resultSet.getDate("kumtor_B");
-                truckLicence_table.setValueAt(kumtor_B_date,1,1);
-                kumtor_V_date = employeeSearch_resultSet.getDate("kumtor_V");
-                truckLicence_table.setValueAt(kumtor_V_date, 2, 1);
-                kumtor_G_date = employeeSearch_resultSet.getDate("kumtor_G");
-                truckLicence_table.setValueAt(kumtor_G_date, 3, 1);
-                kumtor_D_date = employeeSearch_resultSet.getDate("kumtor_D");
-                truckLicence_table.setValueAt(kumtor_D_date, 4, 1);
-                kumtor_E_date = employeeSearch_resultSet.getDate("kumtor_E");
-                truckLicence_table.setValueAt(kumtor_E_date, 5, 1);
-                kumtor_E1_date = employeeSearch_resultSet.getDate("kumtor_E1");
-                truckLicence_table.setValueAt(kumtor_E1_date, 6, 1);
+                local_A_date = employeeSearch_resultSet.getDate("local_A");
+                truckLicence_table.setValueAt(local_A_date, 0, 1);
+                local_B_date = employeeSearch_resultSet.getDate("local_B");
+                truckLicence_table.setValueAt(local_B_date,1,1);
+                local_V_date = employeeSearch_resultSet.getDate("local_V");
+                truckLicence_table.setValueAt(local_V_date, 2, 1);
+                local_G_date = employeeSearch_resultSet.getDate("local_G");
+                truckLicence_table.setValueAt(local_G_date, 3, 1);
+                local_D_date = employeeSearch_resultSet.getDate("local_D");
+                truckLicence_table.setValueAt(local_D_date, 4, 1);
+                local_E_date = employeeSearch_resultSet.getDate("local_E");
+                truckLicence_table.setValueAt(local_E_date, 5, 1);
+                local_E1_date = employeeSearch_resultSet.getDate("local_E1");
+                truckLicence_table.setValueAt(local_E1_date, 6, 1);
 
                 gos_A_date = employeeSearch_resultSet.getDate("gos_A");
                 drivingLicence_table.setValueAt(gos_A_date,0,1);
@@ -131,12 +134,15 @@ public class DatabaseQueries {
                 gos_D1E_date = employeeSearch_resultSet.getDate("gos_D1E");
                 drivingLicence_table.setValueAt(gos_D1E_date,12,1);
 
-                if (employeeSearch_resultSet.getBlob("Photo") != null){
+                if (employeeSearch_resultSet.getBytes("Photo") != null){
                     InputStream is = null;
                     try {
-                        Blob aBlob = employeeSearch_resultSet.getBlob("Photo");
-                        byte[] imageByte = aBlob.getBytes(1, (int) aBlob.length());
+                        byte[] imageByte = employeeSearch_resultSet.getBytes("Photo");
+
                         is = new ByteArrayInputStream(imageByte);
+
+
+
                     } catch (NullPointerException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -165,9 +171,10 @@ public class DatabaseQueries {
         }
     }
 
+
     private int findSupervisorName(int supervisorID_input) {
 
-        String supervisorName_query = "SELECT * FROM dbo.Supervisors WHERE SupervisorId = " + supervisorID_input;
+        String supervisorName_query = "SELECT * FROM Supervisors WHERE SupervisorId = " + supervisorID_input;
 
         try {
 
@@ -175,7 +182,7 @@ public class DatabaseQueries {
             ResultSet supervisorName_result = supervisorName_statement.executeQuery(supervisorName_query);
 
             while (supervisorName_result.next()) {
-                superVisorName = supervisorName_result.getString("Russian");
+                superVisorName = supervisorName_result.getString("RusName");
             }
 
         } catch (SQLException ex) {
@@ -184,9 +191,28 @@ public class DatabaseQueries {
         return supervisorID_input;
     }
 
+    private int findPositionName(int positionID_input) {
+
+        String positionName_query = "SELECT * FROM Position WHERE PositionId = " + positionID_input;
+
+        try {
+
+            Statement positionName_statement = MineOperations.conn.createStatement();
+            ResultSet positionName_result = positionName_statement.executeQuery(positionName_query);
+
+            while (positionName_result.next()) {
+                positionName = positionName_result.getString("RusName");
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return positionID_input;
+    }
+
     private int findDepartmentName(int departmentID_input){
 
-        String departmentID_query = "SELECT * FROM dbo.Departments WHERE DeptID = " + departmentID_input;
+        String departmentID_query = "SELECT * FROM Departments WHERE DeptID = " + departmentID_input;
 
         try {
 
@@ -194,7 +220,7 @@ public class DatabaseQueries {
             ResultSet departmentName_result = departmentName_statement.executeQuery(departmentID_query);
 
             while(departmentName_result.next()){
-                departmentName = departmentName_result.getString("russian");
+                departmentName = departmentName_result.getString("RusName");
             }
 
         } catch (SQLException ex){
@@ -217,7 +243,7 @@ public class DatabaseQueries {
 
     private int findCrewName(int crewID_input){
 
-        String crewID_query = "SELECT * FROM dbo.Crews WHERE CrewNo = " + crewID_input;
+        String crewID_query = "SELECT * FROM Crews WHERE CrewNo = " + crewID_input;
 
         try {
 
@@ -225,7 +251,7 @@ public class DatabaseQueries {
             ResultSet crewName_result = crewName_statement.executeQuery(crewID_query);
 
             while (crewName_result.next()){
-                crewName = crewName_result.getString("Crew");
+                crewName = crewName_result.getString("CrewName");
             }
 
         } catch (SQLException ex){
@@ -243,8 +269,8 @@ public class DatabaseQueries {
         return Objects.requireNonNullElse(superVisorName, "Нет данных");
     }
 
-    public String getJobName(){
-        return Objects.requireNonNullElse(jobTitle, "Нет данных");
+    public String getPositionName(){
+        return Objects.requireNonNullElse(positionName, "Нет данных");
     }
 
     public String getDepartmentName(){
@@ -268,20 +294,20 @@ public class DatabaseQueries {
     public void updateEmployee(){
 
         String updateQuery =
-                "UPDATE dbo.Employees SET LastName = N'" + fullName + "', " +
-                        "RusTitle = N'" + jobTitle + "', " +
+                "UPDATE Employees SET RusName = N'" + fullName + "', " +
+                        "position = " + PositionID + ", " +
                         "Shiftn = " + crewID + ", " +
                         "Department = " + departmentID + ", " +
                         "ReportsTo = " + ReportsTo + ", " +
                         "Terminated = " + terminatedID + ", " +
                         "SafteyOrin = " + checkTablesContent(lastSafetyOr) + ", " +
-                        "kumtor_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
-                        "kumtor_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
-                        "kumtor_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
-                        "kumtor_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
-                        "kumtor_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
-                        "kumtor_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
-                        "kumtor_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
+                        "local_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
+                        "local_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
+                        "local_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
+                        "local_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
+                        "local_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
+                        "local_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
+                        "local_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
                         "gos_A = " + checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
                         "gos_A1 = " + checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
                         "gos_B = " + checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
@@ -314,7 +340,7 @@ public class DatabaseQueries {
 
     public void setCrewID(JComboBox inputBox){
 
-        String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + (String) inputBox.getSelectedItem() + "'";
+        String crew_query = "SELECT * FROM Crews WHERE CrewName = N'" + (String) inputBox.getSelectedItem() + "'";
 
         try{
             Statement crew_statement = MineOperations.conn.createStatement();
@@ -331,7 +357,7 @@ public class DatabaseQueries {
 
     public void setDepartmentID(JComboBox inputBox){
 
-        String departQuery = "SELECT * FROM dbo.Departments WHERE russian = N'" + (String) inputBox.getSelectedItem()+"'";
+        String departQuery = "SELECT * FROM Departments WHERE RusName = N'" + (String) inputBox.getSelectedItem()+"'";
 
         try {
             Statement departmentSt = MineOperations.conn.createStatement();
@@ -346,14 +372,29 @@ public class DatabaseQueries {
             ex.printStackTrace();
         }
     }
+    public void setPositionID(JComboBox inputBox){
 
-    public void setJobTitle(JComboBox inputBox){
-        jobTitle = inputBox.getSelectedItem().toString();
+        String departQuery = "SELECT * FROM Position WHERE RusName = N'" + (String) inputBox.getSelectedItem()+"'";
+
+        try {
+            Statement positionSt = MineOperations.conn.createStatement();
+            ResultSet positionResult = positionSt.executeQuery(departQuery);
+
+            while(positionResult.next())
+            {
+                PositionID = positionResult.getInt("positionId");
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
     }
+
+
 
     public void setReportsTo(JComboBox inputBox){
 
-        String supervisorID_query = "SELECT * FROM dbo.Supervisors WHERE Russian = N'" + (String) inputBox.getSelectedItem() + "'";
+        String supervisorID_query = "SELECT * FROM Supervisors WHERE RusName = N'" + (String) inputBox.getSelectedItem() + "'";
 
         try {
 
@@ -416,7 +457,7 @@ public class DatabaseQueries {
 
     public void createEmployee(){
 
-        final String checkEmployee_query = "SELECT * FROM dbo.Employees WHERE EmployeeID = ?";
+        final String checkEmployee_query = "SELECT * FROM Employees WHERE EmployeeID = ?";
 
         try {
 
@@ -425,16 +466,15 @@ public class DatabaseQueries {
             ResultSet employeeExist_result = checkEmployee_st.executeQuery();
 
             if (!employeeExist_result.next()){
-                String insertQuery = "INSERT INTO dbo.Employees " +
-                        "(EmployeeID, LastName, FirstName, RusTitle, ReportsTo, Shiftn, Department, Terminated, SafteyOrin, " +
-                        "kumtor_A, kumtor_B, kumtor_V, kumtor_G, kumtor_D, kumtor_E, kumtor_E1, " +
-                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E, Transfered," +
-                        "Driverschk, LightTtruck, MineResc, CraneTr) " +
+                String insertQuery = "INSERT INTO Employees " +
+                        "(EmployeeID, RusName, EngName, position, ReportsTo, Shiftn, Department, Terminated, SafteyOrin, " +
+                        "local_A, local_B, local_V, local_G, local_D, local_E, local_E1, " +
+                        "gos_A, gos_A1, gos_B, gos_B1, gos_C, gos_C1, gos_D, gos_D1, gos_BE, gos_CE, gos_C1E, gos_DE, gos_D1E) " +
                         "VALUES ('" +
                         employeeID + "', N'" +
                         fullName + "', N'" +
-                        fullName + "', N'" +
-                        jobTitle + "', " +
+                        fullName + "', " +
+                        PositionID + ", " +
                         ReportsTo + ", " +
                         crewID + ", " +
                         departmentID + ", " +
@@ -459,7 +499,7 @@ public class DatabaseQueries {
                         checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
                         checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
                         checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
-                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ",0,0,0,0,0)";
+                        checkTablesContent(drivingLicence_table.getValueAt(12,1)) + ")";
 
                 System.out.println(insertQuery);
                 insertEmployee = MineOperations.conn.prepareStatement(insertQuery);
@@ -483,8 +523,8 @@ public class DatabaseQueries {
 
         try{
             Statement searchStatement = MineOperations.conn.createStatement();
-            String query_text = "SELECT LastName, EmployeeID  FROM dbo.Employees " +
-                    "WHERE EmployeeID is not null and LastName like N'%"+ surname_input +"%' order by LastName desc";
+            String query_text = "SELECT RusName, EmployeeID  FROM Employees " +
+                    "WHERE EmployeeID is not null and RusName like N'%"+ surname_input +"%' order by RusName desc";
 
             System.out.println(query_text);
             ResultSet rs = searchStatement.executeQuery(query_text);
@@ -493,8 +533,8 @@ public class DatabaseQueries {
 
             if (rs.next()){
                 do {
-                    String LastName = rs.getString("LastName");
-                    employeeNames_list.add(LastName);
+                    String RusName = rs.getString("RusName");
+                    employeeNames_list.add(RusName);
 
                     String employeeID = rs.getString("EmployeeID");
                     employeeID_list.add(employeeID);
@@ -517,7 +557,7 @@ public class DatabaseQueries {
     public boolean ifUserExists( String userID){
 
         boolean isExists = false;
-        String query = "SELECT * FROM dbo.Employees WHERE EmployeeID = '" + userID + "'";
+        String query = "SELECT * FROM Employees WHERE EmployeeID = '" + userID + "'";
 
         try {
             Statement st = MineOperations.conn.createStatement();
@@ -540,12 +580,12 @@ public class DatabaseQueries {
 
         try{
 
-            String reportsTo_query = "SELECT * FROM dbo.Supervisors WHERE isActive = 1";
+            String reportsTo_query = "SELECT * FROM Supervisors WHERE isActive = 1";
             Statement reportsTo_statement = MineOperations.conn.createStatement();
             ResultSet reportsTo_result = reportsTo_statement.executeQuery((reportsTo_query));
 
             while(reportsTo_result.next()){
-                String addReportsTo = reportsTo_result.getString("Russian");
+                String addReportsTo = reportsTo_result.getString("RusName");
                 inputBox.addItem(addReportsTo);
             }
         }
@@ -557,19 +597,19 @@ public class DatabaseQueries {
         return inputBox;
     }
 
-    public JComboBox loadJobTitlesBox(JComboBox inputBox){
+    public JComboBox loadPositionBox(JComboBox inputBox){
 
         inputBox.removeAllItems();
 
         try {
 
-            String positionRus_query = "SELECT * FROM dbo.JobTitles WHERE isActive = 1";
+            String positionRus_query = "SELECT * FROM position WHERE isActive = 1 order by RusName";
             Statement positionRus_statement = MineOperations.conn.createStatement();
             ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
 
             while(positionRus_result.next())
             {
-                String addPositionRusItem = positionRus_result.getString("RusTitle");
+                String addPositionRusItem = positionRus_result.getString("RusName");
                 if (addPositionRusItem != null){
                     inputBox.addItem(addPositionRusItem);
                 } else continue;
@@ -586,12 +626,12 @@ public class DatabaseQueries {
         inputBox.removeAllItems();
 
         try{
-            String departmentRus_query = "SELECT * FROM dbo.Departments WHERE isActive = 1";
+            String departmentRus_query = "SELECT * FROM Departments WHERE isActive = 1 order by RusName ";
             Statement departmentRus_statement = MineOperations.conn.createStatement();
             ResultSet departmentRus_result = departmentRus_statement.executeQuery(departmentRus_query);
 
             while(departmentRus_result.next()){
-                String addDepartmentRus = departmentRus_result.getString("russian");
+                String addDepartmentRus = departmentRus_result.getString("RusName");
                 int isActive = departmentRus_result.getInt("IsActive");
 
                 if (isActive == 1){
@@ -613,12 +653,12 @@ public class DatabaseQueries {
 
         try {
 
-            String crews_query = "SELECT * FROM dbo.Crews WHERE isActive = 1";
+            String crews_query = "SELECT * FROM Crews WHERE isActive = 1";
             Statement crews_statement = MineOperations.conn.createStatement();
             ResultSet crews_results = crews_statement.executeQuery(crews_query);
 
             while (crews_results.next()){
-                String addCrew = crews_results.getString("Crew");
+                String addCrew = crews_results.getString("CrewName");
                 int isActive = crews_results.getInt("IsActive");
 
                 if (isActive == 1){
@@ -637,13 +677,13 @@ public class DatabaseQueries {
 
         try {
 
-            String courses_query = "select * from dbo.Courses Where isActive = " + 1 + " AND Course is not null";
+            String courses_query = "select * from Courses Where isActive = " + 1 + " AND RusName is not null order by RusName ";
             Statement courseSearchStatement = MineOperations.conn.createStatement();
             ResultSet coursesResult = courseSearchStatement.executeQuery(courses_query);
 
             if (coursesResult.next()){
                 do{
-                    String courseName= coursesResult.getString("Course");
+                    String courseName= coursesResult.getString("RusName");
                     courses_list.add(courseName);
                 } while (coursesResult.next());
             }
@@ -682,10 +722,10 @@ public class DatabaseQueries {
                          int training = acceptedQResult.getInt("Training");
 
                          Statement courseSearchSt = MineOperations.conn.createStatement();
-                         ResultSet courseNames = courseSearchSt.executeQuery("select * from dbo.Courses where CoarseNo = " +  QualifiedID);
+                         ResultSet courseNames = courseSearchSt.executeQuery("select * from Courses where CoarseNo = " +  QualifiedID);
                          while(courseNames.next()){
-                             System.out.println("select * from dbo.Courses where CoarseNo = " +  QualifiedID);
-                             courseName = courseNames.getString("Course");
+                             System.out.println("select * from Courses where CoarseNo = " +  QualifiedID);
+                             courseName = courseNames.getString("RusName");
                              System.out.println("Qualified " + courseName);
                          }
 
@@ -748,9 +788,9 @@ public class DatabaseQueries {
 
             for (int i = 0; i < inputTable.getRowCount(); i++){
                   if (inputTable.getValueAt(i,5) != ""){
-                      String insertQuery = "INSERT INTO dbo.Qualified " +
-                              "(RecID, Equipment, EmployeeID, Date, Experienced, Qualified, Approved, Training) " +
-                                      "VALUES (" + 0 + ", " +
+                      String insertQuery = "INSERT INTO Qualified " +
+                              "( Equipment, EmployeeID, Date, Experienced, Qualified, Approved, Training) " +
+                                      "VALUES ( " +
                                       convertQualificationName((String) inputTable.getValueAt(i,0)) + ", '" +
                                       employeeID + "', " +
                                       checkTablesContent(inputTable.getValueAt(i,5)) + ", " +
@@ -775,7 +815,7 @@ public class DatabaseQueries {
     public int convertQualificationName(String inputString){
 
         int qualifID = 0;
-        String QUI_query = "SELECT * FROM dbo.Courses WHERE Course = N'" + inputString+"'";
+        String QUI_query = "SELECT * FROM Courses WHERE RusName = N'" + inputString+"'";
 
         try {
 
@@ -819,10 +859,10 @@ public class DatabaseQueries {
         }
 
          try {
-            String loadHours_query = "select t.employeeID, t.coarse, c.Course, sum(thours) as thours, sum(Phours) as Phours, sum(ExpHours) as Ehours, sum(fhours) as fhours   from TrainingData t " +
-                    "left join dbo.Courses c on c.coarseNo = t.coarse " +
+            String loadHours_query = "select t.employeeID, t.coarse, c.RusName, sum(thours) as thours, sum(Phours) as Phours, sum(ExpHours) as Ehours, sum(fhours) as fhours   from TrainingData t " +
+                    "left join Courses c on c.coarseNo = t.coarse " +
                     "where c.IsActive = 1 and  t.employeeID = '" + employeeID + "' " +
-                    "group by  t.employeeID, t.coarse, c.Course";
+                    "group by  t.employeeID, t.coarse, c.RusName";
 
              System.out.println(loadHours_query);
 
@@ -833,7 +873,7 @@ public class DatabaseQueries {
              DecimalFormat format = new DecimalFormat("0.#");
              while (practicedHoursResult.next()){
 
-                String courseName = practicedHoursResult.getString("Course");
+                String courseName = practicedHoursResult.getString("RusName");
                 double tHours = practicedHoursResult.getDouble("thours");
                 double pHours = practicedHoursResult.getDouble("Phours");
                 double eHours = practicedHoursResult.getDouble("Ehours");
@@ -859,15 +899,15 @@ public class DatabaseQueries {
 
         try {
 
-            String positionRus_query = " select 0 CoarseNo, N'Нет данных' Equipment, N'Нет данных' Course, 1 isActive\n" +
+            String positionRus_query = " select 0 as flag, 0 CoarseNo, N'Нет данных' EngName, N'Нет данных' RusName, 1 isActive\n" +
                     " union all \n" +
-                    " SELECT * FROM dbo.Courses where isactive = 1";
+                    " SELECT 1 as flag, * FROM Courses where isactive = 1 order by flag, RusName";
             Statement positionRus_statement = MineOperations.conn.createStatement();
             ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
 
             while(positionRus_result.next())
             {
-                String addCourseNameItem = positionRus_result.getString("Course");
+                String addCourseNameItem = positionRus_result.getString("RusName");
                 Integer addCourseId = positionRus_result.getInt("CoarseNo");
                 if (addCourseNameItem != null){
                     inputBox.addItem(new Item(addCourseId, addCourseNameItem));
@@ -884,15 +924,15 @@ public class DatabaseQueries {
 
         try {
 
-            String positionRus_query = " select 0 CoarseNo, N'Нет данных' Equipment, N'Нет данных' Course, 1 isActive\n" +
+            String positionRus_query = " select  0 as flag, 0 CoarseNo, N'Нет данных' EngName, N'Нет данных' RusName, 1 isActive\n" +
                     " union all \n" +
-                    " SELECT * FROM dbo.SafetyNames where isactive = 1";
+                    " SELECT 1 as flag, * FROM SafetyNames where isactive = 1  order by flag, RusName";
             Statement positionRus_statement = MineOperations.conn.createStatement();
             ResultSet positionRus_result = positionRus_statement.executeQuery(positionRus_query);
 
             while(positionRus_result.next())
             {
-                String addCourseNameItem = positionRus_result.getString("Course");
+                String addCourseNameItem = positionRus_result.getString("RusName");
                 Integer addCourseId = positionRus_result.getInt("CoarseNo");
                 if (addCourseNameItem != null){
                     inputBox.addItem(new Item(addCourseId, addCourseNameItem));
@@ -909,14 +949,14 @@ public class DatabaseQueries {
 
         try{
 
-            String Trainer_query = "  select 0 InstructoId, N'Нет данных' InstructorName, N'Нет данных' Instructor, 1 isActive\n" +
+            String Trainer_query = "  select 0 as flag, 0 InstructoId, N'Нет данных' EngName, N'Нет данных' RusName, 1 isActive\n" +
                     " union all \n" +
-                    " SELECT * FROM dbo.Instructor where isactive = 1";
+                    " SELECT 1 as flag, * FROM Instructor where isactive = 1 order by flag, RusName";
             Statement rs = MineOperations.conn.createStatement();
             ResultSet reportsTo_result = rs.executeQuery((Trainer_query));
 
             while(reportsTo_result.next()){
-                String addTrainer = reportsTo_result.getString("Instructor");
+                String addTrainer = reportsTo_result.getString("RusName");
                 Integer addTrainerId = reportsTo_result.getInt("InstructoId");
                // inputBox.addItem(addTrainer);
                 inputBox.addItem(new Item(addTrainerId, addTrainer));
@@ -931,21 +971,24 @@ public class DatabaseQueries {
     }
 
     public String getLastDate(String idUser, int idCourse){
-
-        String lastDate_query = " select max(LastDate) as lastDate from SRT where employeeId = '"+idUser+"' and coarse = " + idCourse;
-        System.out.println(lastDate_query);
         String lastDate = "";
-        try {
+        System.out.println ("---" + idUser + "---");
+        if (idUser != null && !idUser.equals("")) {
+            String lastDate_query = " select max(LastDate) as lastDate from AnnualTraining where employeeId = '" + idUser + "' and coarse = " + idCourse;
+            System.out.println(lastDate_query);
 
-            Statement st = MineOperations.conn.createStatement();
-            ResultSet rs = st.executeQuery(lastDate_query);
+            try {
 
-            while (rs.next()){
-                lastDate = rs.getString("lastDate");
+                Statement st = MineOperations.conn.createStatement();
+                ResultSet rs = st.executeQuery(lastDate_query);
+
+                while (rs.next()) {
+                    lastDate = rs.getString("lastDate");
+                }
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
             }
-
-        } catch (SQLException ex){
-            ex.printStackTrace();
         }
         return lastDate;
     }
@@ -981,10 +1024,10 @@ public class DatabaseQueries {
             //int m = getMaxIDFromTable("SRT");
            // m++;
             PreparedStatement insertQStatement;
-            String insertQuery = "INSERT INTO dbo.SRT " +
-                    "( EmployeeID, LastDate, ScheduledDate, coarse, payslip, FieldHours, Thours, Instructor, Mark) " +
-                    "VALUES ( '" + empId + "', '" + lastDate + "', DATEADD(year, 1, '" + lastDate + "'), " +
-                    CourseId + ", 0,  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
+            String insertQuery = "INSERT INTO AnnualTraining " +
+                    "( EmployeeID, LastDate, ScheduledDate, coarse, FieldHours, Thours, Instructor, Mark) " +
+                    "VALUES ( '" + empId + "', '" + lastDate + "', TO_TIMESTAMP('" + lastDate + " ', 'YYYY-MM-DD') + interval '1 year', " +
+                    CourseId + ",  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
 
             System.out.println(insertQuery);
             insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
@@ -1008,7 +1051,7 @@ public class DatabaseQueries {
             //int m = getMaxIDFromTable("TrainingData");
             //m++;
             PreparedStatement insertQStatement;
-            String insertQuery = "INSERT INTO dbo.TrainingData " +
+            String insertQuery = "INSERT INTO TrainingData " +
                         "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
                     "VALUES ( '" + empId + "', '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
                      CourseId + ", " + instructorId + ")";
@@ -1022,6 +1065,26 @@ public class DatabaseQueries {
             ex.printStackTrace();
         }
 
+        return res;
+    }
+
+
+    public boolean checkLoginPswDB(String l, String p){
+        boolean res = false;
+        String crew_query = "SELECT * FROM Users WHERE login = '" + l + "' and psw = '" + p + "'";
+        System.out.println(crew_query) ;
+        try{
+            Statement crew_statement = MineOperations.conn.createStatement();
+            ResultSet crew_results = crew_statement.executeQuery(crew_query);
+
+
+            while (crew_results.next()){
+                res = true;
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
         return res;
     }
 }

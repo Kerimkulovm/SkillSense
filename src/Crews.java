@@ -183,13 +183,13 @@ public class Crews extends JPanel {
 
         try {
 
-            String crews_query = "SELECT * FROM dbo.Crews";
+            String crews_query = "SELECT * FROM Crews";
             Statement crews_st = MineOperations.conn.createStatement();
             ResultSet crews_rs = crews_st.executeQuery(crews_query);
 
             if (crews_rs.next()){
                 do {
-                    String departmentsTitle = crews_rs.getString("Crew");
+                    String departmentsTitle = crews_rs.getString("CrewName");
                     inputList.add(departmentsTitle);
                 } while (crews_rs.next());
             }
@@ -208,7 +208,7 @@ public class Crews extends JPanel {
         int crewID = 0;
 
         try {
-            String crewID_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + crewTitle +"'";
+            String crewID_query = "SELECT * FROM Crews WHERE CrewName = N'" + crewTitle +"'";
             Statement crewID_statement = MineOperations.conn.createStatement();
             ResultSet crewID_results = crewID_statement.executeQuery(crewID_query);
 
@@ -234,7 +234,7 @@ public class Crews extends JPanel {
         int statusID = 0;
 
         try {
-            String crew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + departmentTitle +"'";
+            String crew_query = "SELECT * FROM Crews WHERE CrewName = N'" + departmentTitle +"'";
             Statement crew_statement = MineOperations.conn.createStatement();
             ResultSet crew_results = crew_statement.executeQuery(crew_query);
 
@@ -317,28 +317,16 @@ public class Crews extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название смены");
                     } else {
                         int maxIDCrew = 0;
-                        String checkCrew_query = "SELECT * FROM dbo.Crews WHERE Crew = N'" + crew_textField.getText() +"'";
+                        String checkCrew_query = "SELECT * FROM Crews WHERE CrewName = N'" + crew_textField.getText() +"'";
                         try {
                             Statement checkCrew_st = MineOperations.conn.createStatement();
                             ResultSet crewExists_rs = checkCrew_st.executeQuery(checkCrew_query);
                             if (!crewExists_rs.next()){
-                                String maxCrewId_query = "SELECT max (CrewNo) as CrewNo FROM dbo.Crews";
-                                try{
-                                    Statement maxCrewId_st = MineOperations.conn.createStatement();
-                                    ResultSet maxCrewId_rs = maxCrewId_st.executeQuery(maxCrewId_query);
-                                    if (maxCrewId_rs.next()){
-                                        maxIDCrew = maxCrewId_rs.getInt(1);
-                                        System.out.println(maxIDCrew);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDCrew++;
 
-                                String insert_query = "INSERT INTO dbo.Crews " +
-                                        "(CrewNo, Crew, isActive) " +
-                                        "VALUES (" + maxIDCrew + ", ? , 1)";
+                                String insert_query = "INSERT INTO Crews " +
+                                        "( CrewName, isActive) " +
+                                        "VALUES ( ? , 1)";
 
                                 PreparedStatement insertCrew = MineOperations.conn.prepareStatement(insert_query);
                                 insertCrew.setString(1, crew_textField.getText());
@@ -425,7 +413,7 @@ public class Crews extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.Crews set isActive = " + isActive_int + "WHERE Crew = N'" + crew_label.getText() + "'";
+                        String update_query = "UPDATE Crews set isActive = " + isActive_int + "WHERE CrewName = N'" + crew_label.getText() + "'";
                         PreparedStatement updateCrew_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
                         updateCrew_pst.executeUpdate();

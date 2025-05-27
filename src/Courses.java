@@ -133,7 +133,7 @@ public class Courses extends JPanel {
 
         try{
             Statement searchStatement = MineOperations.conn.createStatement();
-            String query_text = "select coarseNo, Course, isActive from Courses where course is not null order by CoarseNo";
+            String query_text = "select coarseNo, RusName, isActive from Courses where RusName is not null order by CoarseNo";
 
             ResultSet rs = searchStatement.executeQuery(query_text);
 
@@ -144,7 +144,7 @@ public class Courses extends JPanel {
                     int courseNum = rs.getInt("coarseNo");
                     coursesNum_list.add(courseNum);
 
-                    String courseName = rs.getString("Course");
+                    String courseName = rs.getString("RusName");
                     coursesName_list.add(courseName);
 
                     int isActive = rs.getInt("isActive");
@@ -293,27 +293,15 @@ public class Courses extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название курса");
                     } else {
                             int maxCourse = 0;
-                            String checkCourse_query = "SELECT * FROM dbo.Courses WHERE Course = '" + newCourse_text.getText() + "'";
+                            String checkCourse_query = "SELECT * FROM Courses WHERE RusName = '" + newCourse_text.getText() + "'";
                             try {
                                 Statement checkCourse_st = MineOperations.conn.createStatement();
                                 ResultSet courseExist_result = checkCourse_st.executeQuery(checkCourse_query);
                                 if (!courseExist_result.next()) {
-                                    String MaxCourse_query = "SELECT max (coarseNo) as coarseNo FROM dbo.Courses";
-                                    try{
-                                        Statement maxCourse_st = MineOperations.conn.createStatement();
-                                        ResultSet maxCourse_result = maxCourse_st.executeQuery(MaxCourse_query);
-                                        if (maxCourse_result.next()) {
-                                            maxCourse = maxCourse_result.getInt(1);
-                                            System.out.println("maxId = " + maxCourse);
-                                        }
-                                    }catch (SQLException ex) {
-                                        ex.printStackTrace();
-                                    }
 
-                                    maxCourse++;
-                                    String insert_query = "INSERT INTO dbo.Courses " +
-                                            "(coarseNo, Course  , isActive ) " +
-                                            "VALUES (" + maxCourse +  ", ? , 1)";
+                                    String insert_query = "INSERT INTO Courses " +
+                                            "( RusName  , isActive ) " +
+                                            "VALUES ( ? , 1)";
 
                                     System.out.println(insert_query);
                                     PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
@@ -403,7 +391,7 @@ public class Courses extends JPanel {
                     try {
                             Integer isact = isActive_box.getSelectedItem() == "Нет" ? 0 : 1;
                         System.out.println("Isact = " + isact);
-                            String insert_query = "update dbo.Courses set isActive = " + isact + " where coarseNo = " + hiddenCourseId_text.getText() ;
+                            String insert_query = "update Courses set isActive = " + isact + " where coarseNo = " + hiddenCourseId_text.getText() ;
                             PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
                             JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обновлен");
                             insertCourse.executeUpdate();

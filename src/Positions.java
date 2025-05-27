@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -180,13 +179,13 @@ public class Positions extends JPanel {
 
         try {
 
-            String positions_query = "SELECT * FROM dbo.JobTitles";
+            String positions_query = "SELECT * FROM Position";
             Statement positions_st = MineOperations.conn.createStatement();
             ResultSet positions_rs = positions_st.executeQuery(positions_query);
 
             if (positions_rs.next()){
                 do {
-                    String positionTitle = positions_rs.getString("RusTitle");
+                    String positionTitle = positions_rs.getString("RusName");
                     inputList.add(positionTitle);
                 } while (positions_rs.next());
             }
@@ -205,13 +204,13 @@ public class Positions extends JPanel {
         int positionID = 0;
 
         try {
-            String positionID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
+            String positionID_query = "SELECT * FROM Position WHERE RusName = N'" + positionTitle +"'";
             Statement positionID_statement = MineOperations.conn.createStatement();
             ResultSet positionID_results = positionID_statement.executeQuery(positionID_query);
 
             if (positionID_results.next()){
                 do{
-                    int instructorId= positionID_results.getInt("JobTitleId");
+                    int instructorId= positionID_results.getInt("PositionId");
                     positionID = instructorId;
                 } while (positionID_results.next());
             }
@@ -232,7 +231,7 @@ public class Positions extends JPanel {
         int statusID = 0;
 
         try {
-            String position_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + positionTitle +"'";
+            String position_query = "SELECT * FROM Position WHERE RusName = N'" + positionTitle +"'";
             Statement position_statement = MineOperations.conn.createStatement();
             ResultSet position_results = position_statement.executeQuery(position_query);
 
@@ -315,28 +314,16 @@ public class Positions extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название должности");
                     } else {
                         int maxIDPosition = 0;
-                        String checkPositionID_query = "SELECT * FROM dbo.JobTitles WHERE RusTitle = N'" + position_textField.getText() +"'";
+                        String checkPositionID_query = "SELECT * FROM Position WHERE RusName = N'" + position_textField.getText() +"'";
                         try{
                             Statement checkPosition_st = MineOperations.conn.createStatement();
                             ResultSet positionExists_rs = checkPosition_st.executeQuery(checkPositionID_query);
                             if (!positionExists_rs.next()){
-                                String maxPositionId_query = "SELECT max (JobTitleId) as JobTitleId FROM dbo.JobTitles";
-                                try{
-                                    Statement maxPositionID_st = MineOperations.conn.createStatement();
-                                    ResultSet maxInstructorId_rs = maxPositionID_st.executeQuery(maxPositionId_query);
-                                    if (maxInstructorId_rs.next()){
-                                        maxIDPosition = maxInstructorId_rs.getInt(1);
-                                        System.out.println(maxIDPosition);
-                                    }
-                                } catch (SQLException ex){
-                                    ex.printStackTrace();
-                                }
 
-                                maxIDPosition++;
 
-                                String insert_query = "INSERT INTO dbo.JobTitles " +
-                                        "(JobTitleId, Title, RusTitle, isActive) " +
-                                        "VALUES (" + maxIDPosition + ", ? , ? , 1)";
+                                String insert_query = "INSERT INTO Position " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ? , ? , 1)";
 
 
                                 PreparedStatement insertPosition = MineOperations.conn.prepareStatement(insert_query);
@@ -415,7 +402,7 @@ public class Positions extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE dbo.JobTitles set isActive = " + isActive_int + "WHERE RusTitle = N'" + position_label.getText() + "'";
+                        String update_query = "UPDATE Position set isActive = " + isActive_int + "WHERE RusName = N'" + position_label.getText() + "'";
                         PreparedStatement updatePosition_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Должность успешно обнавлена");
                         updatePosition_pst.executeUpdate();
@@ -471,6 +458,6 @@ public class Positions extends JPanel {
 
     private void updateComboboxes() {
         EmployeeInfo.positionRus_box.removeAllItems();
-        EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadJobTitlesBox(EmployeeInfo.positionRus_box);
+        EmployeeInfo.positionRus_box = EmployeeInfo.databaseQueries.loadPositionBox(EmployeeInfo.positionRus_box);
     }
 }

@@ -14,7 +14,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -98,7 +97,7 @@ public class EmployeeInfo extends JPanel{
                     databaseQueries.queryEmployeeData(tableID_text.getText());
                     nameRus_text.setText(databaseQueries.getEmployeeName());
                     enableComboText(supervisor_box).setSelectedItem((databaseQueries.getSuperVisorName()));
-                    enableComboText(positionRus_box).setSelectedItem(databaseQueries.getJobName());
+                    enableComboText(positionRus_box).setSelectedItem(databaseQueries.getPositionName());
                     enableComboText(departmentRus_box).setSelectedItem(databaseQueries.getDepartmentName());
                     enableComboText(terminatedStatus_box).setSelectedItem(databaseQueries.getTerminatedStatus());
                     enableComboText(crewRus_box).setSelectedItem(databaseQueries.getCrewName());
@@ -261,7 +260,7 @@ public class EmployeeInfo extends JPanel{
         positionRus_box.setBackground(Color.WHITE);
         positionRus_box.setFont(Font.getFont("Lena"));
         positionRus_box.setEnabled(false);
-        positionRus_box = databaseQueries.loadJobTitlesBox(positionRus_box);
+        positionRus_box = databaseQueries.loadPositionBox(positionRus_box);
         positionRus_panel.add(positionRus_box);
         inputPanel.add(positionRus_box);
 
@@ -646,7 +645,7 @@ public class EmployeeInfo extends JPanel{
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
-                        databaseQueries.setJobTitle(positionRus_box);
+                        databaseQueries.setPositionID(positionRus_box);
                         databaseQueries.updateEmployee();
 
                     } else {
@@ -660,7 +659,7 @@ public class EmployeeInfo extends JPanel{
                         databaseQueries.setDrivingLicence_table(drivingLicence_table);
                         databaseQueries.setTruckLicence_table(truckLicence_table);
                         databaseQueries.setLastSafetyOr(LastOr_dtp);
-                        databaseQueries.setJobTitle(positionRus_box);
+                        databaseQueries.setPositionID(positionRus_box);
                         databaseQueries.createEmployee();
                     }
 
@@ -784,7 +783,7 @@ public class EmployeeInfo extends JPanel{
                         }
 
                         String updateQuery =
-                                "UPDATE dbo.Employees SET Photo = ? WHERE EmployeeID = '" + tableID_text.getText() +"'";
+                                "UPDATE Employees SET Photo = ? WHERE EmployeeID = '" + tableID_text.getText() +"'";
 
                         try{
                             PreparedStatement updateEmployee = MineOperations.conn.prepareStatement(updateQuery);

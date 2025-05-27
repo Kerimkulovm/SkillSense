@@ -193,7 +193,7 @@ public class DailyEditorial extends JPanel {
 
                         int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex,8);
 
-                        String delete_query = "DELETE FROM dbo.TrainingData WHERE RecID = " + selectedRecord;
+                        String delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
                         try {
                             PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
                             delete_pst.executeUpdate();
@@ -304,9 +304,9 @@ public class DailyEditorial extends JPanel {
 
         dailyHours_list.clear();
 
-        String hours_query = "select td.date, td.EmployeeId, cc.Course, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.Instructor from dbo.TrainingData td\n" +
-                "\tleft join dbo.Courses cc on td.Coarse = cc.CoarseNo \n" +
-                "\tleft join dbo.Instructor ii on td.instructor = ii.InstructoId \n" +
+        String hours_query = "select td.date, td.EmployeeId, cc.RusName as CourseName, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.RusName as InstructorName from TrainingData td\n" +
+                "\tleft join Courses cc on td.Coarse = cc.CoarseNo \n" +
+                "\tleft join Instructor ii on td.instructor = ii.InstructoId \n" +
                 "\twhere td.EmployeeID = '" + tableID_text.getText() + "'\n" +
                 "\torder by date desc";
 
@@ -319,12 +319,12 @@ public class DailyEditorial extends JPanel {
 
                     Date date = hours_rs.getDate("date");
                     String EmployeeId = hours_rs.getString("EmployeeId");
-                    String course = hours_rs.getString("Course");
+                    String course = hours_rs.getString("CourseName");
                     float tHours = hours_rs.getFloat("Thours");
                     float pHours = hours_rs.getFloat("Phours");
                     float expHours = hours_rs.getFloat("ExpHours");
                     float fHours = hours_rs.getFloat("fHours");
-                    String instructor = hours_rs.getString("Instructor");
+                    String instructor = hours_rs.getString("InstructorName");
                     int recId = hours_rs.getInt("RecID");
 
                     dailyHours_list.add(new Object[]{date,EmployeeId, course, tHours, pHours, expHours,fHours,instructor,recId});
