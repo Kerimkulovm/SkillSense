@@ -77,36 +77,37 @@ public class Supervisors extends JPanel {
         supervisors_panel.add(supervisors_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton edit_button = new JButton("Изменить");
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditSupervisorFrame editSupervisorFrame = new EditSupervisorFrame();
+                    editSupervisorFrame.setVisible(true);
+                    editSupervisorFrame.pack();
+                }
+            });
 
-        JButton edit_button = new JButton("Изменить");
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setFont(Font.getFont("Lena"));
-        edit_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditSupervisorFrame editSupervisorFrame = new EditSupervisorFrame();
-                editSupervisorFrame.setVisible(true);
-                editSupervisorFrame.pack();
-            }
-        });
-
-        JButton create_button = new JButton("Создать");
-        create_button.setBackground(Color.WHITE);
-        create_button.setForeground(Color.BLACK);
-        create_button.setFont(Font.getFont("Lena"));
-        create_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(create_button);
-        create_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddSupervisorFrame createSupervisorFrame = new AddSupervisorFrame();
-                createSupervisorFrame.setVisible(true);
-                createSupervisorFrame.pack();
-            }
-        });
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setFont(Font.getFont("Lena"));
+            create_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddSupervisorFrame createSupervisorFrame = new AddSupervisorFrame();
+                    createSupervisorFrame.setVisible(true);
+                    createSupervisorFrame.pack();
+                }
+            });
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -123,7 +123,9 @@ public class ViewQualifications  extends JPanel{
                         revalidate();
                         repaint();
                     }
-                    editButton.setEnabled(true);
+                    if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+                        editButton.setEnabled(true);
+                    }
                 }
             }
         };
@@ -207,49 +209,50 @@ public class ViewQualifications  extends JPanel{
         secondLineButtons.setLayout(new BorderLayout());
         buttonsPanel.add(secondLineButtons);
 
-        editButton = new JButton("Изменить");
-        editButton.setForeground(Color.BLUE);
-        editButton.setBackground(Color.WHITE);
-        editButton.setBorder(new RoundedBorder(10));
-        editButton.setFont(Font.getFont("Lena"));
-        firstLineButtons.add(editButton);
-        editButton.setEnabled(false);
-        editButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editFields();
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            editButton = new JButton("Изменить");
+            editButton.setForeground(Color.BLUE);
+            editButton.setBackground(Color.WHITE);
+            editButton.setBorder(new RoundedBorder(10));
+            editButton.setFont(Font.getFont("Lena"));
+            firstLineButtons.add(editButton);
+            editButton.setEnabled(false);
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    editFields();
+                }
+            });
 
-        saveButton = new JButton("Сохранить");
-        saveButton.setForeground(Color.GREEN);
-        saveButton.setBackground(Color.WHITE);
-        saveButton.setBorder(new RoundedBorder(10));
-        saveButton.setFont(Font.getFont("Lena"));
-        saveButton.setEnabled(false);
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                courseQualifications_table = databaseQueries.saveAcceptedQualifications(courseQualifications_table);
-                JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике успешно изменена!");
-                clearFields();
-            }
-        });
-        firstLineButtons.add(saveButton);
+            saveButton = new JButton("Сохранить");
+            saveButton.setForeground(Color.GREEN);
+            saveButton.setBackground(Color.WHITE);
+            saveButton.setBorder(new RoundedBorder(10));
+            saveButton.setFont(Font.getFont("Lena"));
+            saveButton.setEnabled(false);
+            saveButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    courseQualifications_table = databaseQueries.saveAcceptedQualifications(courseQualifications_table);
+                    JOptionPane.showMessageDialog(MineOperations.cardPane, "Информация о сотруднике успешно изменена!");
+                    clearFields();
+                }
+            });
+            firstLineButtons.add(saveButton);
 
-        cancelButton = new JButton("Сброс");
-        cancelButton.setForeground(Color.RED);
-        cancelButton.setBackground(Color.WHITE);
-        cancelButton.setFont(Font.getFont("Lena"));
-        cancelButton.setBorder(new RoundedBorder(10));
-        secondLineButtons.add(cancelButton);
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearFields();
-            }
-        });
-
+            cancelButton = new JButton("Сброс");
+            cancelButton.setForeground(Color.RED);
+            cancelButton.setBackground(Color.WHITE);
+            cancelButton.setFont(Font.getFont("Lena"));
+            cancelButton.setBorder(new RoundedBorder(10));
+            secondLineButtons.add(cancelButton);
+            cancelButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    clearFields();
+                }
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel nameRus_panel = new JPanel();
@@ -471,8 +474,10 @@ public class ViewQualifications  extends JPanel{
 
     public void clearFields(){
 
-        editButton.setEnabled(false);
-        saveButton.setEnabled(false);
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            editButton.setEnabled(false);
+            saveButton.setEnabled(false);
+        }
 
         nameRus_text.setText("");
         tableID_text.setText("");

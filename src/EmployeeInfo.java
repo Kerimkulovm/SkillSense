@@ -122,7 +122,9 @@ public class EmployeeInfo extends JPanel{
                     }
 
                     LastOr_dtp.getJFormattedTextField().setText(databaseQueries.getLastSafetyOr());
-                    edit_button.setEnabled(true);
+                    if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+                        edit_button.setEnabled(true);
+                    }
                     setVisible(true);
                 }
             }
@@ -593,127 +595,128 @@ public class EmployeeInfo extends JPanel{
         buttons_panel.setLayout(new GridLayout(2, 5,5,5));
         this.add(buttons_panel);
 
-        edit_button = new JButton("Изменить");
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setForeground(Color.BLUE);
-        edit_button.setBorder(new RoundedBorder(10));
-        edit_button.setFont(Font.getFont("Lena"));
-        edit_button.setEnabled(false);
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editUser = true;
-                editFields();
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            edit_button = new JButton("Изменить");
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setForeground(Color.BLUE);
+            edit_button.setBorder(new RoundedBorder(10));
+            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setEnabled(false);
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    editUser = true;
+                    editFields();
+                }
+            });
 
-        add_button = new JButton("Создать");
-        add_button.setBackground(Color.WHITE);
-        add_button.setForeground(new Color(255,140,0));
-        add_button.setBorder(new RoundedBorder(10));
-        add_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(add_button);
-        add_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editUser = false;
-                enableFields();
-            }
-        });
+            add_button = new JButton("Создать");
+            add_button.setBackground(Color.WHITE);
+            add_button.setForeground(new Color(255, 140, 0));
+            add_button.setBorder(new RoundedBorder(10));
+            add_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(add_button);
+            add_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    editUser = false;
+                    enableFields();
+                }
+            });
 
-        save_button = new JButton("Сохранить");
-        save_button.setBackground(Color.WHITE);
-        save_button.setForeground(Color.BLACK);
-        save_button.setBorder(new RoundedBorder(10));
-        save_button.setFont(Font.getFont("Lena"));
-        save_button.setEnabled(false);
-        buttons_panel.add(save_button);
-        save_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")){
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста введите данные сотрудника");
-                } else {
-                    if (editUser){
-
-                        databaseQueries.setFullName(nameRus_text.getText());
-                        databaseQueries.setCrewID(crewRus_box);
-                        databaseQueries.setTerminatedID(terminatedStatus_box);
-                        databaseQueries.setDepartmentID(departmentRus_box);
-                        databaseQueries.setReportsTo(supervisor_box);
-                        databaseQueries.setDrivingLicence_table(drivingLicence_table);
-                        databaseQueries.setTruckLicence_table(truckLicence_table);
-                        databaseQueries.setLastSafetyOr(LastOr_dtp);
-                        databaseQueries.setPositionID(positionRus_box);
-                        databaseQueries.updateEmployee();
-
+            save_button = new JButton("Сохранить");
+            save_button.setBackground(Color.WHITE);
+            save_button.setForeground(Color.BLACK);
+            save_button.setBorder(new RoundedBorder(10));
+            save_button.setFont(Font.getFont("Lena"));
+            save_button.setEnabled(false);
+            buttons_panel.add(save_button);
+            save_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (tableID_text.getText().equals("") || nameRus_text.getText().equals("")) {
+                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Пожалуйста введите данные сотрудника");
                     } else {
+                        if (editUser) {
 
-                        databaseQueries.setEmployeeID(tableID_text.getText());
-                        databaseQueries.setFullName(nameRus_text.getText());
-                        databaseQueries.setCrewID(crewRus_box);
-                        databaseQueries.setTerminatedID(terminatedStatus_box);
-                        databaseQueries.setDepartmentID(departmentRus_box);
-                        databaseQueries.setReportsTo(supervisor_box);
-                        databaseQueries.setDrivingLicence_table(drivingLicence_table);
-                        databaseQueries.setTruckLicence_table(truckLicence_table);
-                        databaseQueries.setLastSafetyOr(LastOr_dtp);
-                        databaseQueries.setPositionID(positionRus_box);
-                        databaseQueries.createEmployee();
+                            databaseQueries.setFullName(nameRus_text.getText());
+                            databaseQueries.setCrewID(crewRus_box);
+                            databaseQueries.setTerminatedID(terminatedStatus_box);
+                            databaseQueries.setDepartmentID(departmentRus_box);
+                            databaseQueries.setReportsTo(supervisor_box);
+                            databaseQueries.setDrivingLicence_table(drivingLicence_table);
+                            databaseQueries.setTruckLicence_table(truckLicence_table);
+                            databaseQueries.setLastSafetyOr(LastOr_dtp);
+                            databaseQueries.setPositionID(positionRus_box);
+                            databaseQueries.updateEmployee();
+
+                        } else {
+
+                            databaseQueries.setEmployeeID(tableID_text.getText());
+                            databaseQueries.setFullName(nameRus_text.getText());
+                            databaseQueries.setCrewID(crewRus_box);
+                            databaseQueries.setTerminatedID(terminatedStatus_box);
+                            databaseQueries.setDepartmentID(departmentRus_box);
+                            databaseQueries.setReportsTo(supervisor_box);
+                            databaseQueries.setDrivingLicence_table(drivingLicence_table);
+                            databaseQueries.setTruckLicence_table(truckLicence_table);
+                            databaseQueries.setLastSafetyOr(LastOr_dtp);
+                            databaseQueries.setPositionID(positionRus_box);
+                            databaseQueries.createEmployee();
+                        }
+
+                        clearFields();
                     }
+                }
+            });
 
+            cancel_button = new JButton("Сброс");
+            cancel_button.setBackground(Color.WHITE);
+            cancel_button.setForeground(Color.RED);
+            cancel_button.setBorder(new RoundedBorder(10));
+            cancel_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(cancel_button);
+            cancel_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     clearFields();
                 }
-            }
-        });
-
-        cancel_button = new JButton("Сброс");
-        cancel_button.setBackground(Color.WHITE);
-        cancel_button.setForeground(Color.RED);
-        cancel_button.setBorder(new RoundedBorder(10));
-        cancel_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(cancel_button);
-        cancel_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearFields();
-            }
-        });
+            });
 
 
-        savePhoto_button = new JButton("Скачать фото");
-        savePhoto_button.setBackground(Color.WHITE);
-        savePhoto_button.setForeground(Color.BLACK);
-        savePhoto_button.setBorder(new RoundedBorder(10));
-        savePhoto_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(savePhoto_button);
-        savePhoto_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveImage();
-            }
-        });
-
-        eraseData_button = new JButton("Обнулить данные");
-        eraseData_button.setBackground(Color.WHITE);
-        eraseData_button.setForeground(Color.BLACK);
-        eraseData_button.setBorder(new RoundedBorder(10));
-        eraseData_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(eraseData_button);
-        eraseData_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!Objects.equals(tableID_text.getText(), "")){
-                     EraseConfirmationFrame eraseConfirmationFrame = new EraseConfirmationFrame(tableID_text.getText());
-                     eraseConfirmationFrame.pack();
-                     eraseConfirmationFrame.setVisible(true);
-                } else {
-                     JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите табельный номер сотрудника");
+            savePhoto_button = new JButton("Скачать фото");
+            savePhoto_button.setBackground(Color.WHITE);
+            savePhoto_button.setForeground(Color.BLACK);
+            savePhoto_button.setBorder(new RoundedBorder(10));
+            savePhoto_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(savePhoto_button);
+            savePhoto_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveImage();
                 }
-            }
-        });
+            });
 
+            eraseData_button = new JButton("Обнулить данные");
+            eraseData_button.setBackground(Color.WHITE);
+            eraseData_button.setForeground(Color.BLACK);
+            eraseData_button.setBorder(new RoundedBorder(10));
+            eraseData_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(eraseData_button);
+            eraseData_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (!Objects.equals(tableID_text.getText(), "")) {
+                        EraseConfirmationFrame eraseConfirmationFrame = new EraseConfirmationFrame(tableID_text.getText());
+                        eraseConfirmationFrame.pack();
+                        eraseConfirmationFrame.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите табельный номер сотрудника");
+                    }
+                }
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         photoPath = new JTextField();
@@ -882,11 +885,14 @@ public class EmployeeInfo extends JPanel{
     public void clearFields(){
 
         search_button.setEnabled(true);
-        add_button.setEnabled(true);
+
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            add_button.setEnabled(true);
+            save_button.setEnabled(false);
+            edit_button.setEnabled(false);
+        }
         surnameSearch_button.setEnabled(true);
 
-        save_button.setEnabled(false);
-        edit_button.setEnabled(false);
 
         tableID_label.setForeground(Color.RED);
         tableID_text.setText("");

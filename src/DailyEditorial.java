@@ -173,42 +173,44 @@ public class DailyEditorial extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton deleteRecord_button = new JButton("Удалить запись");
-        deleteRecord_button.setBackground(Color.WHITE);
-        deleteRecord_button.setForeground(Color.BLACK);
-        deleteRecord_button.setFont(Font.getFont("Lena"));
-        deleteRecord_button.setBorder(new RoundedBorder(10));
-        deleteRecord_button.setBounds(20,650,150,30);
-        this.add(deleteRecord_button);
-        deleteRecord_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (dailyHours_table.getSelectionModel().isSelectionEmpty()){
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Выберите запись");
-                } else {
-                    int input = JOptionPane.showConfirmDialog(null,"Вы уверены что хотите удалить эту запись?","Удаление записи",JOptionPane.YES_NO_CANCEL_OPTION);
-                    if (input == 0){
-                        int selectedRowIndex = dailyHours_table.getSelectedRow();
-                        System.out.println(selectedRowIndex);
 
-                        int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex,8);
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton deleteRecord_button = new JButton("Удалить запись");
+            deleteRecord_button.setBackground(Color.WHITE);
+            deleteRecord_button.setForeground(Color.BLACK);
+            deleteRecord_button.setFont(Font.getFont("Lena"));
+            deleteRecord_button.setBorder(new RoundedBorder(10));
+            deleteRecord_button.setBounds(20, 650, 150, 30);
+            this.add(deleteRecord_button);
+            deleteRecord_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (dailyHours_table.getSelectionModel().isSelectionEmpty()) {
+                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Выберите запись");
+                    } else {
+                        int input = JOptionPane.showConfirmDialog(null, "Вы уверены что хотите удалить эту запись?", "Удаление записи", JOptionPane.YES_NO_CANCEL_OPTION);
+                        if (input == 0) {
+                            int selectedRowIndex = dailyHours_table.getSelectedRow();
+                            System.out.println(selectedRowIndex);
 
-                        String delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
-                        try {
-                            PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
-                            delete_pst.executeUpdate();
+                            int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex, 8);
 
-                            dailyHours_tableModel.removeRow(selectedRowIndex);
-                            dailyHours_tableModel.fireTableDataChanged();
+                            String delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
+                            try {
+                                PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
+                                delete_pst.executeUpdate();
 
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
+                                dailyHours_tableModel.removeRow(selectedRowIndex);
+                                dailyHours_tableModel.fireTableDataChanged();
+
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
-        });
-
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         dailyHours_tableModel = new DefaultTableModel(numOfAcceptedHours, 9){

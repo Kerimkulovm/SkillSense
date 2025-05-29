@@ -85,35 +85,38 @@ public class Positions extends JPanel {
         positions_panel.add(positions_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        JButton edit_button = new JButton("Изменить");
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setBorder(new RoundedBorder(10));
-        edit_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditPositionFrame editPositionFrame = new EditPositionFrame();
-                editPositionFrame.setVisible(true);
-                editPositionFrame.pack();
-            }
-        });
 
-        JButton create_button = new JButton("Создать");
-        create_button.setBackground(Color.WHITE);
-        create_button.setForeground(Color.BLACK);
-        create_button.setBorder(new RoundedBorder(10));
-        create_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(create_button);
-        create_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddPositionFrame createPositionFrame = new AddPositionFrame();
-                createPositionFrame.setVisible(true);
-                createPositionFrame.pack();
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton edit_button = new JButton("Изменить");
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setBorder(new RoundedBorder(10));
+            edit_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditPositionFrame editPositionFrame = new EditPositionFrame();
+                    editPositionFrame.setVisible(true);
+                    editPositionFrame.pack();
+                }
+            });
+
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setBorder(new RoundedBorder(10));
+            create_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddPositionFrame createPositionFrame = new AddPositionFrame();
+                    createPositionFrame.setVisible(true);
+                    createPositionFrame.pack();
+                }
+            });
+        }
     }
 
     private void buildTable(){

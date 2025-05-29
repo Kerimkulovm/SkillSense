@@ -1069,17 +1069,30 @@ public class DatabaseQueries {
     }
 
 
-    public boolean checkLoginPswDB(String l, String p){
-        boolean res = false;
-        String crew_query = "SELECT * FROM Users WHERE login = '" + l + "' and psw = '" + p + "'";
+    public objectUser checkLoginPswDB(String l, String p){
+        objectUser res = new objectUser();
+
+        String crew_query = "SELECT u.userid, u.login, u.role, r.rolename, u.isactive FROM Users u " +
+                "left join roles r on u.role = r.roleid " +
+                "where u.login = '" + l + "' and u.psw = '" + p + "'";
         System.out.println(crew_query) ;
         try{
-            Statement crew_statement = MineOperations.conn.createStatement();
-            ResultSet crew_results = crew_statement.executeQuery(crew_query);
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(crew_query);
+            res= null;
+
+            while (rs.next()){
+                res = new objectUser();
+                res.setId(Integer.parseInt( rs.getString("userid")));
+                res.setRoleid(Integer.parseInt( rs.getString("role")));
+                res.setIsactive(Integer.parseInt( rs.getString("isactive")));
+                res.setLogin( rs.getString("login"));
+                res.setRolename( rs.getString("rolename"));
+                System.out.println(res.getId()) ;
+                System.out.println(res.getLogin()) ;
+                System.out.println(res.getRolename()) ;
 
 
-            while (crew_results.next()){
-                res = true;
             }
 
         } catch (SQLException ex){

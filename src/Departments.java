@@ -82,37 +82,37 @@ public class Departments extends JPanel {
         departments_panel.add(instructors_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton edit_button = new JButton("Изменить");
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setBorder(new RoundedBorder(10));
+            edit_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditDepartmentFrame editDepartmentFrame = new EditDepartmentFrame();
+                    editDepartmentFrame.setVisible(true);
+                    editDepartmentFrame.pack();
+                }
+            });
 
-        JButton edit_button = new JButton("Изменить");
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setBorder(new RoundedBorder(10));
-        edit_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditDepartmentFrame editDepartmentFrame= new EditDepartmentFrame();
-                editDepartmentFrame.setVisible(true);
-                editDepartmentFrame.pack();
-            }
-        });
-
-        JButton create_button = new JButton("Создать");
-        create_button.setBackground(Color.WHITE);
-        create_button.setForeground(Color.BLACK);
-        create_button.setFont(Font.getFont("Lena"));
-        create_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(create_button);
-        create_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddDepartmentFrame addDepartmentFrame = new AddDepartmentFrame();
-                addDepartmentFrame.setVisible(true);
-                addDepartmentFrame.pack();
-            }
-        });
-
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setFont(Font.getFont("Lena"));
+            create_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddDepartmentFrame addDepartmentFrame = new AddDepartmentFrame();
+                    addDepartmentFrame.setVisible(true);
+                    addDepartmentFrame.pack();
+                }
+            });
+        }
 
     }
 

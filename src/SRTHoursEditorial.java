@@ -156,42 +156,43 @@ public class SRTHoursEditorial extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton deleteRecord_button = new JButton("Удалить запись");
-        deleteRecord_button.setBackground(Color.WHITE);
-        deleteRecord_button.setForeground(Color.BLACK);
-        deleteRecord_button.setFont(Font.getFont("Lena"));
-        deleteRecord_button.setBorder(new RoundedBorder(10));
-        deleteRecord_button.setBounds(20,650,150,30);
-        this.add(deleteRecord_button);
-        deleteRecord_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (acceptedHours_table.getSelectionModel().isSelectionEmpty()){
-                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Выберите запись");
-                } else {
-                    int input = JOptionPane.showConfirmDialog(null,"Вы уверены что хотите удалить эту запись?","Удаление записи",JOptionPane.YES_NO_CANCEL_OPTION);
-                    if (input == 0){
-                        int selectedRowIndex = acceptedHours_table.getSelectedRow();
-                        System.out.println(selectedRowIndex);
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton deleteRecord_button = new JButton("Удалить запись");
+            deleteRecord_button.setBackground(Color.WHITE);
+            deleteRecord_button.setForeground(Color.BLACK);
+            deleteRecord_button.setFont(Font.getFont("Lena"));
+            deleteRecord_button.setBorder(new RoundedBorder(10));
+            deleteRecord_button.setBounds(20, 650, 150, 30);
+            this.add(deleteRecord_button);
+            deleteRecord_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (acceptedHours_table.getSelectionModel().isSelectionEmpty()) {
+                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Выберите запись");
+                    } else {
+                        int input = JOptionPane.showConfirmDialog(null, "Вы уверены что хотите удалить эту запись?", "Удаление записи", JOptionPane.YES_NO_CANCEL_OPTION);
+                        if (input == 0) {
+                            int selectedRowIndex = acceptedHours_table.getSelectedRow();
+                            System.out.println(selectedRowIndex);
 
-                        int selectedRecord = (Integer) acceptedHours_table.getValueAt(selectedRowIndex,7);
+                            int selectedRecord = (Integer) acceptedHours_table.getValueAt(selectedRowIndex, 7);
 
-                        String delete_query = "DELETE FROM AnnualTraining WHERE RecID = " + selectedRecord;
-                        try {
-                            PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
-                            delete_pst.executeUpdate();
+                            String delete_query = "DELETE FROM AnnualTraining WHERE RecID = " + selectedRecord;
+                            try {
+                                PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
+                                delete_pst.executeUpdate();
 
-                            acceptedHours_tableModel.removeRow(selectedRowIndex);
-                            acceptedHours_tableModel.fireTableDataChanged();
+                                acceptedHours_tableModel.removeRow(selectedRowIndex);
+                                acceptedHours_tableModel.fireTableDataChanged();
 
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
-            }
-        });
-
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JPanel nameRus_panel = new JPanel();

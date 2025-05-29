@@ -11,8 +11,6 @@ import java.util.Objects;
 public class HomePage extends JPanel {
 
 
-    private JLabel title_label;
-    private JLabel gorniy_label;
 
     private JPanel buttons_panel;
 
@@ -63,21 +61,22 @@ public class HomePage extends JPanel {
             }
         });
 
-
-        operations_button = new JButton("<html> <big>  Ввод Ежедневной Информации </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
-        buttons_panel.add(operations_button);
-        operations_button.setHorizontalAlignment(SwingConstants.LEFT);
-        operations_button.setBackground(Color.WHITE);
-        operations_button.setFont(Font.getFont("Lena"));
-        operations_button.setBorder(new RoundedBorder(20));
-        operations_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane, "Operations Daily");
-                //OperationsDaily.CourseName_box = OperationsDaily.databaseQueries.loadCourseNameBox(OperationsDaily.CourseName_box);
-                //OperationsDaily.trainer_box = OperationsDaily.databaseQueries.loadTrainerBox(OperationsDaily.trainer_box);
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            operations_button = new JButton("<html> <big>  Ввод Ежедневной Информации </big><br />(Ввод ежедневной информации о сотрудниках и данных по ТБ)</html>");
+            buttons_panel.add(operations_button);
+            operations_button.setHorizontalAlignment(SwingConstants.LEFT);
+            operations_button.setBackground(Color.WHITE);
+            operations_button.setFont(Font.getFont("Lena"));
+            operations_button.setBorder(new RoundedBorder(20));
+            operations_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MineOperations.card.show(MineOperations.cardPane, "Operations Daily");
+                    //OperationsDaily.CourseName_box = OperationsDaily.databaseQueries.loadCourseNameBox(OperationsDaily.CourseName_box);
+                    //OperationsDaily.trainer_box = OperationsDaily.databaseQueries.loadTrainerBox(OperationsDaily.trainer_box);
+                }
+            });
+        }
 
         viewFiles_button = new JButton("<html> <big> Квалификации Сотрудников  </big> <br /> (Обзор квалификации по сменам и часов работ по оборудованию) </html>");
         buttons_panel.add(viewFiles_button);
@@ -94,21 +93,23 @@ public class HomePage extends JPanel {
             }
         });
 
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            viewSchedule_button = new JButton("<html> <big> Ежегодное Обучение </big> <br /> (Ввод данных по ТБ) </html>");
+            buttons_panel.add(viewSchedule_button);
+            viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
+            viewSchedule_button.setBackground(Color.WHITE);
+            viewSchedule_button.setFont(Font.getFont("Lena"));
+            viewSchedule_button.setBorder(new RoundedBorder(20));
+            viewSchedule_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MineOperations.card.show(MineOperations.cardPane, "Enter SRT");
+                    //EnterSRT.SRTName_box = EnterSRT.databaseQueries.loadSRTNameBox(EnterSRT.SRTName_box);
+                    //EnterSRT.trainer_box = EnterSRT.databaseQueries.loadTrainerBox(EnterSRT.trainer_box);
+                }
+            });
+        }
 
-        viewSchedule_button = new JButton("<html> <big> Ежегодное Обучение </big> <br /> (Ввод данных по ТБ) </html>");
-        buttons_panel.add(viewSchedule_button);
-        viewSchedule_button.setHorizontalAlignment(SwingConstants.LEFT);
-        viewSchedule_button.setBackground(Color.WHITE);
-        viewSchedule_button.setFont(Font.getFont("Lena"));
-        viewSchedule_button.setBorder(new RoundedBorder(20));
-        viewSchedule_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane, "Enter SRT");
-                //EnterSRT.SRTName_box = EnterSRT.databaseQueries.loadSRTNameBox(EnterSRT.SRTName_box);
-                //EnterSRT.trainer_box = EnterSRT.databaseQueries.loadTrainerBox(EnterSRT.trainer_box);
-            }
-        });
 
         editSRT_button = new JButton("<html> <big> Часы Ежегодного Обучения  </big> <br /> (Управление часами ежегодного обучения) </html>");
         buttons_panel.add(editSRT_button);

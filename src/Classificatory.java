@@ -137,19 +137,21 @@ public class Classificatory extends JPanel {
         });
 
 
-        JButton users_button = new JButton("<html> <big> Пользователи </big><br />(Просмотреть/Изменить/Данные о пользователях)</html>");
-        buttons_panel.add(users_button);
-        users_button.setHorizontalAlignment(SwingConstants.LEFT);
-        users_button.setBackground(Color.WHITE);
-        users_button.setFont(Font.getFont("Lena"));
-        users_button.setBorder(new RoundedBorder(10));
-        users_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MineOperations.card.show(MineOperations.cardPane,"Users");
-            }
-        });
 
+        if (LoginWin.user.getRoleid() == 1) {
+        JButton users_button = new JButton("<html> <big> Пользователи </big><br />(Просмотреть/Изменить/Данные о пользователях)</html>");
+            buttons_panel.add(users_button);
+            users_button.setHorizontalAlignment(SwingConstants.LEFT);
+            users_button.setBackground(Color.WHITE);
+            users_button.setFont(Font.getFont("Lena"));
+            users_button.setBorder(new RoundedBorder(10));
+            users_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MineOperations.card.show(MineOperations.cardPane, "Users");
+                }
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JButton exit_button = new JButton("Выход");

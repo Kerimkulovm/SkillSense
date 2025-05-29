@@ -15,9 +15,10 @@ public class LoginWin extends JPanel {
 
 
 
-    public String instructorSelected;
+
     public static CardLayout card;
     public static DatabaseQueries databaseQueries = new DatabaseQueries();
+    public static objectUser user = new objectUser();
 
 
 
@@ -113,7 +114,9 @@ public class LoginWin extends JPanel {
                     JOptionPane.showMessageDialog(null, "Заполните логин или пароль!");
                 }else
                 if (loginChecking(login, psw)) {
+
                     MineOperations.launchMineOperationsTraining();
+
 
                     Container frame = enter_button.getParent();
                     do
@@ -150,7 +153,10 @@ public class LoginWin extends JPanel {
 
     private boolean loginChecking(JTextField l, JPasswordField p) {
 
-        return databaseQueries.checkLoginPswDB(l.getText(), p.getText());
+        user = databaseQueries.checkLoginPswDB(l.getText(), p.getText());
+
+        if (user != null)   return true;
+        else return false;
     }
 
 

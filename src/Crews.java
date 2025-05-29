@@ -87,35 +87,37 @@ public class Crews extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JButton edit_button = new JButton("Изменить");
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setFont(Font.getFont("Lena"));
-        edit_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditCrewFrame editCrewFrame= new EditCrewFrame();
-                editCrewFrame.setVisible(true);
-                editCrewFrame.pack();
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton edit_button = new JButton("Изменить");
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditCrewFrame editCrewFrame = new EditCrewFrame();
+                    editCrewFrame.setVisible(true);
+                    editCrewFrame.pack();
+                }
+            });
 
-        JButton create_button = new JButton("Создать");
-        create_button.setBackground(Color.WHITE);
-        create_button.setForeground(Color.BLACK);
-        create_button.setBorder(new RoundedBorder(10));
-        create_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(create_button);
-        create_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddCrewFrame addCrewFrame = new AddCrewFrame();
-                addCrewFrame.setVisible(true);
-                addCrewFrame.pack();
-            }
-        });
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setBorder(new RoundedBorder(10));
+            create_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddCrewFrame addCrewFrame = new AddCrewFrame();
+                    addCrewFrame.setVisible(true);
+                    addCrewFrame.pack();
+                }
+            });
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 

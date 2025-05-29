@@ -96,35 +96,38 @@ public class Courses extends JPanel {
         buttons_panel.setLayout(new GridLayout(1, 5,5,0));
         this.add(buttons_panel);
 
-        edit_button = new JButton("Изменить");
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setFont(Font.getFont("Lena"));
-        edit_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Courses.editCourse editCourse = new Courses.editCourse();
-                editCourse.pack();
-                editCourse.setVisible(true);
-            }
-        });
 
-        add_button = new JButton("Создать");
-        add_button.setBackground(Color.WHITE);
-        add_button.setForeground(Color.BLACK);
-        add_button.setFont(Font.getFont("Lena"));
-        add_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(add_button);
-        add_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Courses.createNewCourse newCourse = new Courses.createNewCourse();
-                newCourse.pack();
-                newCourse.setVisible(true);
-            }
-        });
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            edit_button = new JButton("Изменить");
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Courses.editCourse editCourse = new Courses.editCourse();
+                    editCourse.pack();
+                    editCourse.setVisible(true);
+                }
+            });
+
+            add_button = new JButton("Создать");
+            add_button.setBackground(Color.WHITE);
+            add_button.setForeground(Color.BLACK);
+            add_button.setFont(Font.getFont("Lena"));
+            add_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(add_button);
+            add_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Courses.createNewCourse newCourse = new Courses.createNewCourse();
+                    newCourse.pack();
+                    newCourse.setVisible(true);
+                }
+            });
+        }
     }
 
     private void loadCourses(){

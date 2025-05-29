@@ -77,36 +77,37 @@ public class Instructors extends JPanel {
         instructors_panel.add(instructors_scrollPane);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
+            JButton edit_button = new JButton("Изменить");
+            edit_button.setForeground(Color.BLACK);
+            edit_button.setBackground(Color.WHITE);
+            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
+                    editInstructorFrame.setVisible(true);
+                    editInstructorFrame.pack();
+                }
+            });
 
-        JButton edit_button = new JButton("Изменить");
-        edit_button.setForeground(Color.BLACK);
-        edit_button.setBackground(Color.WHITE);
-        edit_button.setFont(Font.getFont("Lena"));
-        edit_button.setBorder(new RoundedBorder(10));
-        buttons_panel.add(edit_button);
-        edit_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
-                editInstructorFrame.setVisible(true);
-                editInstructorFrame.pack();
-            }
-        });
-
-        JButton create_button = new JButton("Создать");
-        create_button.setBackground(Color.WHITE);
-        create_button.setForeground(Color.BLACK);
-        create_button.setBorder(new RoundedBorder(10));
-        create_button.setFont(Font.getFont("Lena"));
-        buttons_panel.add(create_button);
-        create_button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AddInstructorFrame createInstructorFrame = new AddInstructorFrame();
-                createInstructorFrame.setVisible(true);
-                createInstructorFrame.pack();
-            }
-        });
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setBorder(new RoundedBorder(10));
+            create_button.setFont(Font.getFont("Lena"));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddInstructorFrame createInstructorFrame = new AddInstructorFrame();
+                    createInstructorFrame.setVisible(true);
+                    createInstructorFrame.pack();
+                }
+            });
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
