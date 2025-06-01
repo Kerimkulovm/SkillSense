@@ -341,6 +341,11 @@ public class Crews extends JPanel {
 
                                 dispose();
                                 updateComboboxes();
+
+                                insert_query = "INSERT INTO Crews " +
+                                        "( CrewName, isActive) " +
+                                        "VALUES ( '" + crew_textField.getText() +  "' , 1)";
+                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Смена: " +
                                         crew_textField.getText() + " уже существует");
@@ -413,9 +418,10 @@ public class Crews extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String update_query ="";
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE Crews set isActive = " + isActive_int + "WHERE CrewName = N'" + crew_label.getText() + "'";
+                        update_query = "UPDATE Crews set isActive = " + isActive_int + "WHERE CrewName = N'" + crew_label.getText() + "'";
                         PreparedStatement updateCrew_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
                         updateCrew_pst.executeUpdate();
@@ -428,6 +434,7 @@ public class Crews extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
+                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
                 }
             });
 

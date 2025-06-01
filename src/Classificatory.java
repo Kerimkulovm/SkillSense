@@ -30,7 +30,7 @@ public class Classificatory extends JPanel {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        title_label = new JLabel("<html><big>Управление классификаторами</big><br />(Курсы, Инструктора, Позиции, Отделы, SRT)</html>");
+        title_label = new JLabel("<html><big>Управление классификаторами</big></html>");
         title_label.setBounds(160, 0, 500, 100);
         title_label.setForeground(Color.BLACK);
         title_label.setFont(Font.getFont("Lena"));
@@ -40,7 +40,7 @@ public class Classificatory extends JPanel {
 
         buttons_panel = new JPanel();
         buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(30, 120, 500, 500);
+        buttons_panel.setBounds(30, 120, 800, 500);
         buttons_panel.setLayout(new GridLayout(7, 1, 5, 5));
         this.add(buttons_panel);
 

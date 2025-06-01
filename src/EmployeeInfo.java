@@ -651,6 +651,7 @@ public class EmployeeInfo extends JPanel{
                             databaseQueries.setPositionID(positionRus_box);
                             databaseQueries.updateEmployee();
 
+
                         } else {
 
                             databaseQueries.setEmployeeID(tableID_text.getText());
@@ -860,7 +861,7 @@ public class EmployeeInfo extends JPanel{
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
-    private JComboBox enableComboText(JComboBox inputCombobox){
+    public static JComboBox enableComboText(JComboBox inputCombobox){
         inputCombobox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public void paint(Graphics g) {

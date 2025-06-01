@@ -60,7 +60,6 @@ public class LoginWin extends JPanel {
         JTextField login = new JTextField(5);
         login.setBackground(Color.WHITE);
         login.setFont(Font.getFont("Lena"));
-
         Logfield_panel.add(login);
 
 
@@ -131,6 +130,22 @@ public class LoginWin extends JPanel {
 
             }
         });
+
+        login.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                    psw.requestFocus();
+
+            }
+        });
+
+        psw.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                enter_button.doClick();
+            }
+        });
+
+
 
         JButton exit_button = new JButton("Закрыть");
         exit_button.setBackground(Color.WHITE);

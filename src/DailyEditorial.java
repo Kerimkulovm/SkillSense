@@ -185,6 +185,8 @@ public class DailyEditorial extends JPanel {
             deleteRecord_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+
+                    String delete_query = "";
                     if (dailyHours_table.getSelectionModel().isSelectionEmpty()) {
                         JOptionPane.showMessageDialog(MineOperations.cardPane, "Выберите запись");
                     } else {
@@ -195,7 +197,7 @@ public class DailyEditorial extends JPanel {
 
                             int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex, 8);
 
-                            String delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
+                            delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
                             try {
                                 PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
                                 delete_pst.executeUpdate();
@@ -206,6 +208,7 @@ public class DailyEditorial extends JPanel {
                             } catch (SQLException ex) {
                                 ex.printStackTrace();
                             }
+                            DatabaseQueries.saveLogs(delete_query, LoginWin.user.getId());
                         }
                     }
                 }

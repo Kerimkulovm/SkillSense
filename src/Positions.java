@@ -317,6 +317,7 @@ public class Positions extends JPanel {
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название должности");
                     } else {
                         int maxIDPosition = 0;
+                        String insert_query = "";
                         String checkPositionID_query = "SELECT * FROM Position WHERE RusName = N'" + position_textField.getText() +"'";
                         try{
                             Statement checkPosition_st = MineOperations.conn.createStatement();
@@ -324,7 +325,7 @@ public class Positions extends JPanel {
                             if (!positionExists_rs.next()){
 
 
-                                String insert_query = "INSERT INTO Position " +
+                                insert_query = "INSERT INTO Position " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ? , ? , 1)";
 
@@ -345,6 +346,10 @@ public class Positions extends JPanel {
                         } catch (SQLException ex){
                             ex.printStackTrace();
                         }
+                        insert_query = "INSERT INTO Position " +
+                                "( EngName, RusName, isActive) " +
+                                "VALUES ( '" + position_textField.getText() + "' , '" + position_textField.getText() + "' , 1)";
+                        DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
                     }
                 }
             });
@@ -403,9 +408,10 @@ public class Positions extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String update_query = "";
                     try {
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE Position set isActive = " + isActive_int + "WHERE RusName = N'" + position_label.getText() + "'";
+                        update_query = "UPDATE Position set isActive = " + isActive_int + "WHERE RusName = N'" + position_label.getText() + "'";
                         PreparedStatement updatePosition_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Должность успешно обнавлена");
                         updatePosition_pst.executeUpdate();
@@ -418,6 +424,7 @@ public class Positions extends JPanel {
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
+                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
 
                 }
             });

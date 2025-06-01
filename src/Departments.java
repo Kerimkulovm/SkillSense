@@ -339,6 +339,10 @@ public class Departments extends JPanel {
 
                                 dispose();
                                 updateComboboxes();
+                                insert_query = "INSERT INTO Departments " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( '" + departments_textField.getText() + "' , '" + departments_textField.getText() + "' , 1)";
+                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел: " +
                                         departments_textField.getText() + " уже существует");
@@ -408,9 +412,10 @@ public class Departments extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String update_query = "";
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE Departments set isActive = " + isActive_int + "WHERE RusName = N'" + department_label.getText() + "'";
+                        update_query = "UPDATE Departments set isActive = " + isActive_int + "WHERE RusName = N'" + department_label.getText() + "'";
                         PreparedStatement updateDepartment_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел успешно обнавлен");
                         updateDepartment_pst.executeUpdate();
@@ -422,6 +427,8 @@ public class Departments extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
+                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+
                 }
             });
 

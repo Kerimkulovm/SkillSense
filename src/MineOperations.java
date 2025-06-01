@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class MineOperations extends JFrame {
 
-
+//   PgAdmin pass:741852
 
     //Connecting to Database
     //public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDB; username=MineTraining;password=qazwsx";

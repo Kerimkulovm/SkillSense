@@ -316,6 +316,11 @@ public class Courses extends JPanel {
                                     listOfCourses_model.fireTableDataChanged();
                                     dispose();
                                     updateComboboxes();
+
+                                    insert_query = "INSERT INTO Courses " +
+                                            "( RusName  , isActive ) " +
+                                            "VALUES ( '" + newCourse_text.getText() + "' , 1)";
+                                    DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
                                 } else {
                                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
                                                 newCourse_text.getText() + " уже существует");
@@ -403,6 +408,7 @@ public class Courses extends JPanel {
 
                             dispose();
                             updateComboboxes();
+                            DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
 
                     } catch (SQLException ex) {
                         ex.printStackTrace();

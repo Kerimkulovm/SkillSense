@@ -324,7 +324,7 @@ public class DatabaseQueries {
                         "WHERE EmployeeID = '" + employeeID+"'";
 
         System.out.println(updateQuery);
-
+        DatabaseQueries.saveLogs(updateQuery, LoginWin.user.getId());
         try{
             updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
             updateEmployee.executeUpdate();
@@ -504,6 +504,8 @@ public class DatabaseQueries {
                 System.out.println(insertQuery);
                 insertEmployee = MineOperations.conn.prepareStatement(insertQuery);
                 insertEmployee.executeUpdate();
+                DatabaseQueries.saveLogs(insertQuery, LoginWin.user.getId());
+
                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
 
             } else {
@@ -777,7 +779,7 @@ public class DatabaseQueries {
     }
 
     public JTable saveAcceptedQualifications(JTable inputTable){
-
+        String insertQuery= "";
         try{
             String deleteQuery = "DELETE FROM Qualified WHERE EmployeeID= '" + employeeID +"'  and Equipment in (select distinct CoarseNo from Courses where isActive = 1)";
             PreparedStatement deleteQualifications_st = MineOperations.conn.prepareStatement(deleteQuery);
@@ -788,7 +790,7 @@ public class DatabaseQueries {
 
             for (int i = 0; i < inputTable.getRowCount(); i++){
                   if (inputTable.getValueAt(i,5) != ""){
-                      String insertQuery = "INSERT INTO Qualified " +
+                      insertQuery = "INSERT INTO Qualified " +
                               "( Equipment, EmployeeID, Date, Experienced, Qualified, Approved, Training) " +
                                       "VALUES ( " +
                                       convertQualificationName((String) inputTable.getValueAt(i,0)) + ", '" +
@@ -808,7 +810,7 @@ public class DatabaseQueries {
         } catch (SQLException ex){
             ex.printStackTrace();
         }
-
+        saveLogs(insertQuery, LoginWin.user.getId());
         return inputTable;
     }
 
@@ -945,6 +947,31 @@ public class DatabaseQueries {
         return inputBox;
     }
 
+
+    public JComboBox loadRoleBox(JComboBox inputBox){
+
+        try {
+
+            String positionRus_query = "select 100 as roleid, 'Выберите роль' as rolename\n " +
+                    "union all select roleid, rolename from roles where isactive =1 order by roleid desc";
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(positionRus_query);
+
+            while(rs.next())
+            {
+                String addRoleNameItem = rs.getString("rolename");
+                Integer addRoleId = rs.getInt("roleid");
+                if (addRoleNameItem != null){
+                    inputBox.addItem(new Item(addRoleId, addRoleNameItem));
+                } else continue;
+            }
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return inputBox;
+    }
+
     public JComboBox loadTrainerBox( JComboBox inputBox) {
 
         try{
@@ -1019,12 +1046,13 @@ public class DatabaseQueries {
 
     public boolean saveSRT(String empId, int CourseId, int instructorId, String lastDate, int mark_text, int fHours, int tHours){
         boolean res = false;
+        String insertQuery = "";
         try{
 
             //int m = getMaxIDFromTable("SRT");
            // m++;
             PreparedStatement insertQStatement;
-            String insertQuery = "INSERT INTO AnnualTraining " +
+            insertQuery = "INSERT INTO AnnualTraining " +
                     "( EmployeeID, LastDate, ScheduledDate, coarse, FieldHours, Thours, Instructor, Mark) " +
                     "VALUES ( '" + empId + "', '" + lastDate + "', TO_TIMESTAMP('" + lastDate + " ', 'YYYY-MM-DD') + interval '1 year', " +
                     CourseId + ",  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
@@ -1037,12 +1065,14 @@ public class DatabaseQueries {
         } catch (SQLException ex){
             ex.printStackTrace();
         }
+        saveLogs(insertQuery, LoginWin.user.getId());
 
         return res;
     }
 
     public boolean saveOperationDaily(String empId, int CourseId, int instructorId, String Date, float tHours, float fHours, float pHours, float expHours){
         boolean res = false;
+        String insertQuery = "";
         try{
             System.out.println(tHours);
             System.out.println(fHours);
@@ -1051,7 +1081,7 @@ public class DatabaseQueries {
             //int m = getMaxIDFromTable("TrainingData");
             //m++;
             PreparedStatement insertQStatement;
-            String insertQuery = "INSERT INTO TrainingData " +
+            insertQuery = "INSERT INTO TrainingData " +
                         "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
                     "VALUES ( '" + empId + "', '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
                      CourseId + ", " + instructorId + ")";
@@ -1061,10 +1091,12 @@ public class DatabaseQueries {
             insertQStatement.executeUpdate();
             res = true;
 
+
         } catch (SQLException ex){
             ex.printStackTrace();
         }
 
+        saveLogs(insertQuery, LoginWin.user.getId());
         return res;
     }
 
@@ -1074,7 +1106,7 @@ public class DatabaseQueries {
 
         String crew_query = "SELECT u.userid, u.login, u.role, r.rolename, u.isactive FROM Users u " +
                 "left join roles r on u.role = r.roleid " +
-                "where u.login = '" + l + "' and u.psw = '" + p + "'";
+                "where u.login = '" + l + "' and u.psw = '" + p + "' and u.isactive =1";
         System.out.println(crew_query) ;
         try{
             Statement st = MineOperations.conn.createStatement();
@@ -1099,5 +1131,58 @@ public class DatabaseQueries {
             ex.printStackTrace();
         }
         return res;
+    }
+
+
+    public static objectUser getUserInfoByName(String l){
+        objectUser res = new objectUser();
+
+        String crew_query = "SELECT u.userid, u.login, u.role, r.rolename, u.isactive FROM Users u " +
+                "left join roles r on u.role = r.roleid " +
+                "where u.login = '" + l + "' ";
+        System.out.println(crew_query) ;
+        try{
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(crew_query);
+            res= null;
+
+            while (rs.next()){
+                res = new objectUser();
+                res.setId(Integer.parseInt( rs.getString("userid")));
+                res.setRoleid(Integer.parseInt( rs.getString("role")));
+                res.setIsactive(Integer.parseInt( rs.getString("isactive")));
+                res.setLogin( rs.getString("login"));
+                res.setRolename( rs.getString("rolename"));
+
+
+
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+        return res;
+    }
+
+
+
+    public static void saveLogs(String log, int userid){
+
+        try{
+            PreparedStatement insertQStatement;
+            String insertQuery = "INSERT INTO logs " +
+                    "( Date, Userid, LogText, isActive  ) " +
+                    "VALUES ( CURRENT_DATE, " + userid + ", '" + log.replace( "'", "''") + "', 1)";
+
+            System.out.println(insertQuery);
+            insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
+            insertQStatement.executeUpdate();
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+
     }
 }

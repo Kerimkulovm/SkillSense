@@ -333,6 +333,11 @@ public class Supervisors extends JPanel {
 
                                 dispose();
                                 updateComboboxes();
+
+                                insert_query = "INSERT INTO Supervisors " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( '"+ supervisor_textField.getText() + "' , '"+ supervisor_textField.getText() + "' , 1)";
+                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Руководитель: " +
                                         supervisor_textField.getText() + " уже существует");
@@ -404,9 +409,10 @@ public class Supervisors extends JPanel {
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String update_query = "";
                     try{
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
-                        String update_query = "UPDATE Supervisors set isActive = " + isActive_int + "WHERE RusName = N'" + supervisor_label.getText() + "'";
+                        update_query = "UPDATE Supervisors set isActive = " + isActive_int + "WHERE RusName = N'" + supervisor_label.getText() + "'";
                         PreparedStatement updateSupervisor_pst = MineOperations.conn.prepareStatement(update_query);
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
                         updateSupervisor_pst.executeUpdate();
@@ -415,9 +421,11 @@ public class Supervisors extends JPanel {
                         supervisors_tableModel.fireTableDataChanged();
                         dispose();
                         updateComboboxes();
+
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
+                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
                 }
             });
 

@@ -188,6 +188,8 @@ public class SRTHoursEditorial extends JPanel {
                             } catch (SQLException ex) {
                                 ex.printStackTrace();
                             }
+                            DatabaseQueries.saveLogs(delete_query, LoginWin.user.getId());
+
                         }
                     }
                 }
