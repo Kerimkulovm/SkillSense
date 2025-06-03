@@ -6,17 +6,30 @@ public class MineOperations extends JFrame {
 
 //   PgAdmin pass:741852
 
-    //Connecting to Database
-    //public static String url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDB; username=MineTraining;password=qazwsx";
-    //public static String url = "jdbc:sqlserver://localhost:1433;databaseName=SkillSense; username=MineTraining;password=qazwsx";
 
+    //public static String db = "pg";
+    public static String db = "sql";
 
-    //public static String url = "jdbc:sqlserver://kyrkumms05.kumtor.kg:1433;databaseName=MineTrainingDB; username=mt;password=weKnowNothing01";
     public static Connection conn;
+
+
+    public static String url ;
+
     static {
         try {
-            //conn = DriverManager.getConnection(url);
-            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/SkillSense", "postgres", "741852" );
+            if (db.equals("pg")){
+                url = "jdbc:postgresql://localhost:5432/SkillSense";
+                conn = DriverManager.getConnection(url, "postgres", "741852" );
+            }else {
+
+                //url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDB; username=MineTraining;password=qazwsx";
+                url = "jdbc:sqlserver://localhost:1433;databaseName=MineOps; username=MineTraining;password=qazwsx";
+                //url = "jdbc:sqlserver://localhost:1433;databaseName=MineSkillV2; username=MineTraining;password=qazwsx";
+                //url = "jdbc:sqlserver://localhost:1433;databaseName=SkillSense; username=MineTraining;password=qazwsx";
+                //url = "jdbc:sqlserver://kyrkumms05.kumtor.kg:1433;databaseName=MineTrainingDB; username=mt;password=weKnowNothing01";
+
+                conn = DriverManager.getConnection(url);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -29,7 +42,8 @@ public class MineOperations extends JFrame {
 
     public static JFrame login_frame;
     public static final int LOGIN_WIDTH = 300;
-    public static final int LOGIN_HEIGHT = 180;
+    public static final int LOGIN_HEIGHT = 200;
+
 
 
 
@@ -65,11 +79,8 @@ public class MineOperations extends JFrame {
     }
 
     public static void launchMineOperationsTraining() {
-        System.out.println("launchMineOperationsTraining");
 
-
-
-        homePagePanel = new HomePage();
+       homePagePanel = new HomePage();
         employeeInfoPanel = new EmployeeInfo();
         operationsDailyPanel = new OperationsDaily();
         enterSRTPanel = new EnterSRT();
@@ -121,6 +132,7 @@ public class MineOperations extends JFrame {
         application_frame.setVisible(true);
 
 
+
     }
 
 
@@ -129,6 +141,7 @@ public class MineOperations extends JFrame {
         login_frame.setSize(LOGIN_WIDTH, LOGIN_HEIGHT);
         login_frame.setTitle("Login Window");
         login_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        login_frame.setLocationRelativeTo(null);
 
         cardPane = new JPanel();
         card = new CardLayout();

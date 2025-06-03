@@ -804,13 +804,15 @@ public class DatabaseQueries {
                       System.out.println(insertQuery);
                       insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
                       insertQStatement.executeUpdate();
+                      saveLogs(insertQuery, LoginWin.user.getId());
                   }
+
             }
 
         } catch (SQLException ex){
             ex.printStackTrace();
         }
-        saveLogs(insertQuery, LoginWin.user.getId());
+
         return inputTable;
     }
 
@@ -1049,12 +1051,14 @@ public class DatabaseQueries {
         String insertQuery = "";
         try{
 
-            //int m = getMaxIDFromTable("SRT");
-           // m++;
+            String val = "";
+            if (MineOperations.db.equals("pg")) val = "TO_TIMESTAMP('" + lastDate + "', 'YYYY-MM-DD') + interval '1 year'";
+            else val = "DATEADD(year, 1, '" + lastDate + "')";
             PreparedStatement insertQStatement;
+
             insertQuery = "INSERT INTO AnnualTraining " +
                     "( EmployeeID, LastDate, ScheduledDate, coarse, FieldHours, Thours, Instructor, Mark) " +
-                    "VALUES ( '" + empId + "', '" + lastDate + "', TO_TIMESTAMP('" + lastDate + " ', 'YYYY-MM-DD') + interval '1 year', " +
+                    "VALUES ( '" + empId + "', '" + lastDate + "', " + val + ", " +
                     CourseId + ",  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
 
             System.out.println(insertQuery);
@@ -1170,9 +1174,14 @@ public class DatabaseQueries {
 
         try{
             PreparedStatement insertQStatement;
+
+            String curdate = "";
+            if (MineOperations.db.equals("pg")) curdate = "CURRENT_DATE";
+            else curdate = "getdate()";
+
             String insertQuery = "INSERT INTO logs " +
                     "( Date, Userid, LogText, isActive  ) " +
-                    "VALUES ( CURRENT_DATE, " + userid + ", '" + log.replace( "'", "''") + "', 1)";
+                    "VALUES ( " + curdate + ", " + userid + ", '" + log.replace( "'", "''") + "', 1)";
 
             System.out.println(insertQuery);
             insertQStatement = MineOperations.conn.prepareStatement(insertQuery);

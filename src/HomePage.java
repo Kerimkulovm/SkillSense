@@ -13,6 +13,7 @@ public class HomePage extends JPanel {
 
 
     private JPanel buttons_panel;
+    private JPanel menu_panel;
 
     private JButton viewFiles_button;
     private JButton viewSchedule_button;
@@ -23,9 +24,13 @@ public class HomePage extends JPanel {
     private JButton dailyEditorial_button;
     private BufferedImage logo_image, bg_image;
 
+    static JToolBar tbar;
+    static JButton menuBut;
+
     public HomePage()
     {
         setLayout(null);
+
 
         try {
             logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/logo1.1.png")));
@@ -33,6 +38,18 @@ public class HomePage extends JPanel {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+/*
+        //toolbar menu
+        menu_panel = new JPanel();
+        tbar = new JToolBar();
+        tbar.setVisible(true);
+        tbar.setOrientation(SwingConstants.VERTICAL);
+        menuBut = new JButton("Menu");
+        tbar.add (menuBut);
+        menu_panel.add(tbar);
+*/
+//-----------------------
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

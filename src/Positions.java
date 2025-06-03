@@ -27,6 +27,7 @@ public class Positions extends JPanel {
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
     public String positionSelected;
+    public String statusSelected;
 
     public List<String> positions_list = new ArrayList<>();
 
@@ -96,9 +97,13 @@ public class Positions extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditPositionFrame editPositionFrame = new EditPositionFrame();
-                    editPositionFrame.setVisible(true);
-                    editPositionFrame.pack();
+                    if (positionSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать должность");
+                    } else {
+                        EditPositionFrame editPositionFrame = new EditPositionFrame();
+                        editPositionFrame.setVisible(true);
+                        editPositionFrame.pack();
+                    }
                 }
             });
 
@@ -168,6 +173,7 @@ public class Positions extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     positionSelected = (String) positions_table.getValueAt(positions_table.getSelectedRow(),1);
+                    statusSelected = (String) positions_table.getValueAt(positions_table.getSelectedRow(),2);
                     System.out.println(positionSelected);
                 }
             }
@@ -374,7 +380,7 @@ public class Positions extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить должность");
+            this.setTitle("Изменить статус должности");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -394,7 +400,7 @@ public class Positions extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             positionInfo_panel.add(isActive_box);
-
+            isActive_box.setSelectedItem(statusSelected);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             JPanel buttons_panel = new JPanel();

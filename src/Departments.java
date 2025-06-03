@@ -25,6 +25,7 @@ public class Departments extends JPanel {
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
     public String departmentSelected;
+    public String statusSelected;
 
     public List<String> departments_list = new ArrayList<>();
 
@@ -92,9 +93,13 @@ public class Departments extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditDepartmentFrame editDepartmentFrame = new EditDepartmentFrame();
-                    editDepartmentFrame.setVisible(true);
-                    editDepartmentFrame.pack();
+                    if (departmentSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать отдел");
+                    } else {
+                        EditDepartmentFrame editDepartmentFrame = new EditDepartmentFrame();
+                        editDepartmentFrame.setVisible(true);
+                        editDepartmentFrame.pack();
+                    }
                 }
             });
 
@@ -167,6 +172,7 @@ public class Departments extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     departmentSelected = (String) departments_table.getValueAt(departments_table.getSelectedRow(),1);
+                    statusSelected = (String) departments_table.getValueAt(departments_table.getSelectedRow(),1);
                     System.out.println(departmentSelected);
                 }
             }
@@ -377,7 +383,7 @@ public class Departments extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить инструктора");
+            this.setTitle("Изменить статус отдела");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -398,6 +404,7 @@ public class Departments extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             departmentInfo_panel.add(isActive_box);
+            isActive_box.setSelectedItem(statusSelected);
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

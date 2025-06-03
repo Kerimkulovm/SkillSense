@@ -28,6 +28,7 @@ public class Crews extends JPanel {
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
     public String crewsSelected;
+    public String statusSelected;
 
     public List<String> crews_list = new ArrayList<>();
 
@@ -97,9 +98,13 @@ public class Crews extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditCrewFrame editCrewFrame = new EditCrewFrame();
-                    editCrewFrame.setVisible(true);
-                    editCrewFrame.pack();
+                    if (crewsSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать смену");
+                    } else {
+                        EditCrewFrame editCrewFrame = new EditCrewFrame();
+                        editCrewFrame.setVisible(true);
+                        editCrewFrame.pack();
+                    }
                 }
             });
 
@@ -172,7 +177,8 @@ public class Crews extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     crewsSelected = (String) crews_table.getValueAt(crews_table.getSelectedRow(),1);
-                    System.out.println(crewsSelected);
+                    statusSelected = (String) crews_table.getValueAt(crews_table.getSelectedRow(),2);
+
                 }
             }
         });
@@ -383,7 +389,7 @@ public class Crews extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить инструктора");
+            this.setTitle("Изменить статус смены");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -404,7 +410,7 @@ public class Crews extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             crewInfo_panel.add(isActive_box);
-
+            isActive_box.setSelectedItem(statusSelected);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             JPanel buttons_panel = new JPanel();

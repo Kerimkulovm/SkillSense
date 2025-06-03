@@ -96,8 +96,6 @@ public class Users extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                System.out.println("+++" + usersSelected);
-                System.out.println("+++" + LoginWin.user.getLogin().toString());
                 if (usersSelected == null) {
                     JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать пользователя");
                 }else if (usersSelected.equals(LoginWin.user.getLogin().toString())  || usersSelected == LoginWin.user.getLogin().toString()){
@@ -373,7 +371,7 @@ public class Users extends JPanel {
                         JComboBox c = (JComboBox) e.getSource();
                         DatabaseQueries.Item item = (DatabaseQueries.Item) c.getSelectedItem();
                         roleId = item.getId();
-                        System.out.println(roleId);
+
                     }
                 }
             });

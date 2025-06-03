@@ -25,6 +25,7 @@ public class SRTClassifier extends JPanel {
 
     public DatabaseQueries databaseQueries = new DatabaseQueries();
     public String srtSelected;
+    public String statusSelected;
 
     public List<String> srt_list = new ArrayList<>();
 
@@ -91,9 +92,13 @@ public class SRTClassifier extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditSRTFrame editSRTFrame = new EditSRTFrame();
-                    editSRTFrame.setVisible(true);
-                    editSRTFrame.pack();
+                    if (srtSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать обучение");
+                    } else {
+                        EditSRTFrame editSRTFrame = new EditSRTFrame();
+                        editSRTFrame.setVisible(true);
+                        editSRTFrame.pack();
+                    }
                 }
             });
 
@@ -166,7 +171,8 @@ public class SRTClassifier extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     srtSelected = (String) srt_table.getValueAt(srt_table.getSelectedRow(),1);
-                    System.out.println(srtSelected);
+                    statusSelected = (String) srt_table.getValueAt(srt_table.getSelectedRow(),2);
+
                 }
             }
         });
@@ -383,7 +389,7 @@ public class SRTClassifier extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить курс");
+            this.setTitle("Изменить статус обучения");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -404,7 +410,7 @@ public class SRTClassifier extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             SRTInfo_panel.add(isActive_box);
-
+            isActive_box.setSelectedItem(statusSelected);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             JPanel buttons_panel = new JPanel();

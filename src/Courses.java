@@ -2,51 +2,35 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Courses extends JPanel {
 
     private BufferedImage logo_image, bg_image;
-    private JTextField newCourse_text = null;
-    private JTextField hiddenCourseId_text = new JTextField();
-    private JTextField hiddenCourseName_text = new JTextField();
-    private JTextField hiddenIsActive_text = new JTextField();
 
-    private final JPanel coursesList_panel;
-    private JTable listOfCourses_table;
-    private DefaultTableModel listOfCourses_model;
-    private int numOfRows = 1, numOfColumns = 3;
+    private JTable courses_table;
+    private DefaultTableModel courses_tableModel;
 
-    private List<Integer> coursesNum_list = new ArrayList<>();
-    private List<String> coursesName_list = new ArrayList<>();
-    private List<Integer> coursesActive_list = new ArrayList<>();
+    public DatabaseQueries databaseQueries = new DatabaseQueries();
+    public String courseSelected;
+    public String statusSelected;
 
-    private JButton  add_button;
-    private JButton  edit_button;
-    private JButton  save_button;
-    private JButton  cancel_button;
-
-    private JComboBox isActive_box;
+    public List<String> course_list = new ArrayList<>();
 
 
-    public Courses()
-    {
+    public Courses(){
+
         try {
             logo_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/Logo2.png")));
             bg_image = ImageIO.read(Objects.requireNonNull(getClass().getResource("resources/logo/bg.jpg")));
@@ -55,21 +39,32 @@ public class Courses extends JPanel {
         }
 
         setLayout(null);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Курсы'</big></html>");
+        JLabel titleEng = new JLabel("<html><big>Управление классификаторами 'Курсы'</big><br /></html>");
         titleEng.setBounds(160, 0, 600, 100);
-        titleEng.setBackground(Color.WHITE);
-        titleEng.setForeground(Color.BLACK);
         titleEng.setFont(Font.getFont("Lena"));
+        titleEng.setForeground(Color.BLACK);
         this.add(titleEng);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        JTable courses_panel = new JTable();
+        courses_panel.setBackground(Color.WHITE);
+        courses_panel.setBounds(20,120,650,500);
+        courses_panel.setLayout(new BorderLayout());
+        this.add(courses_panel);
+
+        JPanel buttons_panel = new JPanel(new GridLayout(1,2,5,0));
+        buttons_panel.setBackground(Color.WHITE);
+        buttons_panel.setBounds(20,635,300,30);
+        this.add(buttons_panel);
 
         JButton exit_button = new JButton("Выход");
         exit_button.setBounds(720, 60, 150, 30);
         exit_button.setBackground(Color.WHITE);
         exit_button.setForeground(Color.RED);
-        exit_button.setFont(Font.getFont("Lena"));
         exit_button.setBorder(new RoundedBorder(10));
         add(exit_button);
         exit_button.addActionListener(new ActionListener() {
@@ -78,162 +73,202 @@ public class Courses extends JPanel {
                 MineOperations.card.show(MineOperations.cardPane,"Classificatory");
             }
         });
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        coursesList_panel = new JPanel();
-        coursesList_panel.setBackground(Color.WHITE);
-        coursesList_panel.setBounds(20, 120, 650, 500);
-        coursesList_panel.setLayout(new BorderLayout());
-        coursesList_panel.setBorder(new LineBorder(Color.BLACK));
-        coursesList_panel.setVisible(true);
-        this.add(coursesList_panel);
+        buildTable();
+        JScrollPane instructors_scrollPane = new JScrollPane(courses_table);
+        instructors_scrollPane.setBackground(Color.WHITE);
+        courses_panel.add(instructors_scrollPane);
 
-        createTable();
-
-        JPanel buttons_panel = new JPanel(new GridLayout());
-        buttons_panel.setBackground(Color.WHITE);
-        buttons_panel.setBounds(20, 635, 300, 30);
-        buttons_panel.setLayout(new GridLayout(1, 5,5,0));
-        this.add(buttons_panel);
-
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (LoginWin.user.getRoleid() == 1 || LoginWin.user.getRoleid() == 2) {
-            edit_button = new JButton("Изменить");
-            edit_button.setBackground(Color.WHITE);
+            JButton edit_button = new JButton("Изменить");
             edit_button.setForeground(Color.BLACK);
-            edit_button.setFont(Font.getFont("Lena"));
+            edit_button.setBackground(Color.WHITE);
             edit_button.setBorder(new RoundedBorder(10));
+            edit_button.setFont(Font.getFont("Lena"));
             buttons_panel.add(edit_button);
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Courses.editCourse editCourse = new Courses.editCourse();
-                    editCourse.pack();
-                    editCourse.setVisible(true);
+                    if (courseSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать курс");
+                    } else {
+                        EditCourseFrame editCourseFrame = new EditCourseFrame();
+                        editCourseFrame.setVisible(true);
+                        editCourseFrame.pack();
+                    }
                 }
             });
 
-            add_button = new JButton("Создать");
-            add_button.setBackground(Color.WHITE);
-            add_button.setForeground(Color.BLACK);
-            add_button.setFont(Font.getFont("Lena"));
-            add_button.setBorder(new RoundedBorder(10));
-            buttons_panel.add(add_button);
-            add_button.addActionListener(new ActionListener() {
+            JButton create_button = new JButton("Создать");
+            create_button.setBackground(Color.WHITE);
+            create_button.setForeground(Color.BLACK);
+            create_button.setFont(Font.getFont("Lena"));
+            create_button.setBorder(new RoundedBorder(10));
+            buttons_panel.add(create_button);
+            create_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Courses.createNewCourse newCourse = new Courses.createNewCourse();
-                    newCourse.pack();
-                    newCourse.setVisible(true);
+                    AddCourseFrame addCourseFrame = new AddCourseFrame();
+                    addCourseFrame.setVisible(true);
+                    addCourseFrame.pack();
                 }
             });
+
         }
+
     }
 
-    private void loadCourses(){
+    private void buildTable(){
 
-        coursesActive_list.clear();
+        course_list = loadCourses(course_list);
 
-        try{
-            Statement searchStatement = MineOperations.conn.createStatement();
-            String query_text = "select coarseNo, RusName, isActive from Courses where RusName is not null order by CoarseNo";
-
-            ResultSet rs = searchStatement.executeQuery(query_text);
-
-            if (rs.next()){
-
-                do {
-
-                    int courseNum = rs.getInt("coarseNo");
-                    coursesNum_list.add(courseNum);
-
-                    String courseName = rs.getString("RusName");
-                    coursesName_list.add(courseName);
-
-                    int isActive = rs.getInt("isActive");
-                    coursesActive_list.add(isActive);
-
-                }while (rs.next());
-            }
-
-        } catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
-
-    private void createTable(){
-
-        loadCourses();
-
-        numOfRows = coursesName_list.size();
-
-        listOfCourses_model = new DefaultTableModel(numOfRows, numOfColumns) {
+        courses_tableModel = new DefaultTableModel(course_list.size(),3){
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column){
                 return false;
             }
         };
+        DefaultTableCellRenderer courses_cellRenderer = new DefaultTableCellRenderer();
+        courses_cellRenderer.setHorizontalAlignment(JLabel.CENTER);
 
-        DefaultTableCellRenderer centerRederer = new DefaultTableCellRenderer();
-        centerRederer.setHorizontalAlignment(JLabel.CENTER);
+        courses_table = new JTable(courses_tableModel);
+        courses_table.setBorder(new LineBorder(Color.BLACK));
+        courses_table.setBackground(Color.WHITE);
+        courses_table.setRowHeight(20);
 
-        listOfCourses_table = new JTable(listOfCourses_model);
-        listOfCourses_table.setBorder(new LineBorder(Color.BLACK));
-        listOfCourses_table.setBackground(Color.WHITE);
-        listOfCourses_table.setRowHeight(25);
-        listOfCourses_table.setVisible(true);
+        JTableHeader courses_header = courses_table.getTableHeader();
+        courses_header.setBorder(new LineBorder(Color.BLACK));
+        courses_header.setBackground(Color.WHITE);
+        courses_header.setFont(Font.getFont("Lena"));
 
-        JTableHeader listHeader= listOfCourses_table.getTableHeader();
-        listHeader.setBorder(new LineBorder(Color.BLACK));
-        listHeader.setBackground(Color.WHITE);
-        listHeader.setFont(Font.getFont("Lena"));
+        TableColumnModel courses_columns = courses_header.getColumnModel();
 
-        TableColumnModel listOfCourses_columns = listHeader.getColumnModel();
+        TableColumn tabCol0 = courses_columns.getColumn(0);
+        tabCol0.setHeaderValue("ID курса");
+        tabCol0.setCellRenderer(courses_cellRenderer);
+        tabCol0.setPreferredWidth(50);
 
-        TableColumn tabCol0 = listOfCourses_columns.getColumn(0);
-        tabCol0.setHeaderValue("Номер");
-        tabCol0.setCellRenderer(centerRederer);
-        tabCol0.setPreferredWidth(10);
-        for (int i = 0; i < numOfRows; i++){
-            listOfCourses_table.setValueAt(coursesNum_list.get(i),i,0);
+        TableColumn tabCol1 = courses_columns.getColumn(1);
+        tabCol1.setHeaderValue("Наименование курса");
+        tabCol1.setCellRenderer(courses_cellRenderer);
+        tabCol1.setPreferredWidth(50);
+
+        TableColumn tabCol2 = courses_columns.getColumn(2);
+        tabCol2.setHeaderValue("Статус");
+        tabCol2.setCellRenderer(courses_cellRenderer);
+        tabCol2.setPreferredWidth(50);
+
+        for (int i = 0; i <  courses_table.getRowCount(); i++){
+            courses_table.setValueAt(getCourseID(course_list.get(i)),i,0);
+            courses_table.setValueAt(course_list.get(i),i,1);
+            courses_table.setValueAt(getCourseActivity(course_list.get(i)),i,2);
         }
 
-        TableColumn tabCol1 = listOfCourses_columns.getColumn(1);
-        tabCol1.setHeaderValue("Курс");
-        tabCol1.setCellRenderer(centerRederer);
-        tabCol1.setPreferredWidth(200);
-        for (int i = 0; i < numOfRows; i++){
-            listOfCourses_table.setValueAt(coursesName_list.get(i),i,1);
-        }
-
-        TableColumn tabCol2 = listOfCourses_columns.getColumn(2);
-        tabCol2.setCellRenderer(centerRederer);
-        tabCol2.setHeaderValue("Активный");
-        tabCol2.setPreferredWidth(10);
-        for (int i = 0; i < numOfRows; i++){
-            String v = coursesActive_list.get(i) == 0 ? "Нет" : "Да";
-            listOfCourses_table.setValueAt(v ,i,2);
-        }
-
-        coursesList_panel.add(new JScrollPane(listOfCourses_table));
-
-        listOfCourses_table.addMouseListener(new MouseAdapter() {
+        courses_table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
-                    int index1 = listOfCourses_table.getSelectedRow();//Get the selected row
-                    hiddenCourseId_text.setText(listOfCourses_table.getValueAt(index1,0).toString());
-                    hiddenCourseName_text.setText(listOfCourses_table.getValueAt(index1,1).toString());
-                    hiddenIsActive_text.setText(listOfCourses_table.getValueAt(index1,2).toString());
-                    System.out.println("id = " + hiddenCourseId_text.getText());
-                    System.out.println("name = " + hiddenCourseName_text.getText());
-                    System.out.println("isactive = " + hiddenIsActive_text.getText());
+                    courseSelected = (String) courses_table.getValueAt(courses_table.getSelectedRow(),1);
+                    statusSelected = (String) courses_table.getValueAt(courses_table.getSelectedRow(),2);
+
                 }
             }
         });
     }
 
-    protected void paintComponent(Graphics g) {
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public List<String> loadCourses(List<String> inputList){
+
+        inputList.clear();
+
+        try {
+
+            String courses_query = "SELECT * FROM Courses";
+            Statement course_st = MineOperations.conn.createStatement();
+            ResultSet course_rs = course_st.executeQuery(courses_query);
+
+            if (course_rs.next()){
+                do {
+                    String coursesTitle = course_rs.getString("RusName");
+                    inputList.add(coursesTitle);
+                } while (course_rs.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return  inputList;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public int getCourseID(String courseTitle){
+
+        int courseID = 0;
+
+        try {
+            String courseID_query = "SELECT * FROM Courses WHERE RusName = N'" + courseTitle +"'";
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(courseID_query);
+
+            if (rs.next()){
+                do{
+                    int courseId= rs.getInt("coarseno");
+                    courseID = courseId;
+                } while (rs.next());
+            }
+
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        return courseID;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getCourseActivity(String courseTitle){
+
+        String status = null;
+        int statusID = 0;
+
+        try {
+            String query = "SELECT * FROM Courses WHERE RusName = N'" + courseTitle +"'";
+            Statement st = MineOperations.conn.createStatement();
+            ResultSet rs = st.executeQuery(query);
+
+            if (rs.next()){
+                do{
+                    int isActiveId= rs.getInt("isActive");
+                    statusID = isActiveId;
+                } while (rs.next());
+            }
+
+        } catch (SQLException ex){
+            ex.printStackTrace();
+        }
+
+        if (statusID == 0){
+            status = "Неактивен";
+        }  else {
+            status = "Активен";
+        }
+
+        return status;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    protected void paintComponent(Graphics g){
         super.paintComponent(g); // paint children
 
         g.setColor(Color.WHITE);
@@ -243,194 +278,176 @@ public class Courses extends JPanel {
         g.drawImage(logo_image, 0, 0, 150, 100, this);
     }
 
-    private class createNewCourse extends JFrame{
+    private class AddCourseFrame extends JFrame{
 
-        private JPanel  newCoursePanel, newCourseButtonsPanel;
+        public AddCourseFrame(){
 
-        public createNewCourse(){
-
-            buildFrame();
-
-            this.setTitle("Добавить курс");
-            this.setPreferredSize(new Dimension(400, 120));
-            this.setLayout(new GridLayout(2,1));
+            this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
+            this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setLocation(900,40);
+            this.setTitle("Добавить курс");
+            this.setLocation(200,200);
+
+            CreateFrame();
         }
 
-        private void buildFrame(){
+        private void CreateFrame(){
 
-            newCoursePanel = new JPanel();
-            newCoursePanel.setBackground(Color.WHITE);
-            newCoursePanel.setLayout(new BorderLayout());
-            newCoursePanel.setBorder(new LineBorder(Color.BLACK));
-            newCoursePanel.setVisible(true);
-            this.add(newCoursePanel);
+            JPanel coursesInfo_panel = new JPanel();
+            coursesInfo_panel.setBackground(Color.WHITE);
+            coursesInfo_panel.setLayout(new BorderLayout());
+            this.add(coursesInfo_panel);
 
-            JLabel newCourse_label = new JLabel("Наименование: ");
-            newCoursePanel.add(newCourse_label);
+            JLabel courses_label = new JLabel("  Название курса:  ");
+            courses_label.setForeground(Color.BLACK);
+            coursesInfo_panel.add(courses_label, BorderLayout.WEST);
 
-            newCourse_text = new JTextField();
-            newCourse_text.setEnabled(true);
-            newCourse_text.setForeground(Color.BLACK);
-            newCourse_text.setDisabledTextColor(Color.BLACK);
-            newCoursePanel.add(newCourse_text);
+            JTextField courses_textField = new JTextField();
+            coursesInfo_panel.add(courses_textField, BorderLayout.CENTER);
 
-            newCourseButtonsPanel = new JPanel();
-            newCourseButtonsPanel.setBackground(Color.WHITE);
-            newCourseButtonsPanel.setLayout(new GridLayout(1,2));
-            newCourseButtonsPanel.setBorder(new LineBorder(Color.BLACK));
-            newCourseButtonsPanel.setVisible(true);
-            this.add(newCourseButtonsPanel);
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            save_button = new JButton("Сохранить");
-            save_button.setForeground(Color.BLACK);
+            JPanel buttons_panel = new JPanel();
+            buttons_panel.setBackground(Color.WHITE);
+            buttons_panel.setLayout(new GridLayout(1,2));
+            this.add(buttons_panel);
+
+            JButton save_button = new JButton("Сохранить");
             save_button.setBackground(Color.WHITE);
-            save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
-            newCourseButtonsPanel.add(save_button);
+            buttons_panel.add(save_button);
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (newCourse_text.getText().equals("") ){
+                    if (courses_textField.getText() == null){
                         JOptionPane.showMessageDialog(MineOperations.cardPane,"Пожалуйста, введите название курса");
                     } else {
-                            int maxCourse = 0;
-                            String checkCourse_query = "SELECT * FROM Courses WHERE RusName = '" + newCourse_text.getText() + "'";
-                            try {
-                                Statement checkCourse_st = MineOperations.conn.createStatement();
-                                ResultSet courseExist_result = checkCourse_st.executeQuery(checkCourse_query);
-                                if (!courseExist_result.next()) {
+                        int maxIDCourse = 0;
+                        String query = "SELECT * FROM Courses WHERE RusName = N'" + courses_textField.getText() +"'";
+                        try {
+                            Statement st = MineOperations.conn.createStatement();
+                            ResultSet rs = st.executeQuery(query);
+                            if (!rs.next()){
 
-                                    String insert_query = "INSERT INTO Courses " +
-                                            "( RusName  , isActive ) " +
-                                            "VALUES ( ? , 1)";
 
-                                    System.out.println(insert_query);
-                                    PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
-                                    insertCourse.setString(1,newCourse_text.getText());
-                                    insertCourse.execute();
-                                    JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно добавлен");
+                                String insert_query = "INSERT INTO Courses " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( ? , ? , 1)";
 
-                                    listOfCourses_model.addRow(new Object[]{maxCourse, newCourse_text.getText(),"Да"});
-                                    listOfCourses_model.fireTableDataChanged();
-                                    dispose();
-                                    updateComboboxes();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query);
+                                ps.setString(1, courses_textField.getText());
+                                ps.setString(2, courses_textField.getText());
+                                ps.executeUpdate();
+                                JOptionPane.showMessageDialog(MineOperations.cardPane, "Курс успешно добавлен");
 
-                                    insert_query = "INSERT INTO Courses " +
-                                            "( RusName  , isActive ) " +
-                                            "VALUES ( '" + newCourse_text.getText() + "' , 1)";
-                                    DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
-                                } else {
-                                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
-                                                newCourse_text.getText() + " уже существует");
-                                }
-                            } catch (SQLException ex) {
-                                ex.printStackTrace();
+                                courses_tableModel.addRow(new Object[]{maxIDCourse,courses_textField.getText(), "Активен" });
+                                courses_tableModel.fireTableDataChanged();
+
+                                dispose();
+                                updateComboboxes();
+                                insert_query = "INSERT INTO Courses " +
+                                        "( EngName, RusName, isActive) " +
+                                        "VALUES ( '" + courses_textField.getText() + "' , '" + courses_textField.getText() + "' , 1)";
+                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+                            } else {
+                                JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
+                                        courses_textField.getText() + " уже существует");
                             }
-
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 }
             });
 
-            cancel_button = new JButton("Отмена");
-            cancel_button.setBackground(Color.WHITE);
-            cancel_button.setForeground(Color.BLACK);
-            cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
-            newCourseButtonsPanel.add(cancel_button);
-            cancel_button.addActionListener(new ActionListener() {
+            JButton edit_button = new JButton("Отменить");
+            edit_button.setBackground(Color.WHITE);
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     dispose();
                 }
             });
+
+
         }
+
     }
 
-    private class editCourse extends JFrame{
+    private class EditCourseFrame extends JFrame{
 
-        public editCourse(){
+        public EditCourseFrame(){
 
-            buildFrame();
-
-            this.setPreferredSize(new Dimension(400, 150));
+            this.setPreferredSize(new Dimension(400,120));
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setLocation(900,40);
+            this.setTitle("Изменить статус курса");
+            this.setLocation(200,200);
+
+            CreateFrame();
+
         }
 
-        private void buildFrame(){
+        private void CreateFrame(){
 
-            JPanel newCoursePanel = new JPanel();
-            newCoursePanel.setBackground(Color.WHITE);
-            newCoursePanel.setBounds(2,2,250,30);
-            newCoursePanel.setLayout(new GridLayout(2,1));
-            newCoursePanel.setBorder(new LineBorder(Color.BLACK));
-            newCoursePanel.setVisible(true);
+            JPanel courseInfo_panel = new JPanel();
+            courseInfo_panel.setBackground(Color.WHITE);
+            courseInfo_panel.setLayout(new GridLayout(1,2));
+            this.add(courseInfo_panel);
 
-            this.add(newCoursePanel);
+            JLabel course_label = new JLabel(courseSelected, SwingConstants.CENTER);
+            course_label.setForeground(Color.BLACK);
+            courseInfo_panel.add(course_label);
 
-            JLabel newCourse_label = new JLabel(hiddenCourseName_text.getText());
+            String[] choice_string = {"Активен","Неактивен"};
+            JComboBox isActive_box = new JComboBox(choice_string);
+            courseInfo_panel.add(isActive_box);
+            isActive_box.setSelectedItem(statusSelected);
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            newCoursePanel.add(newCourse_label);
+            JPanel buttons_panel = new JPanel();
+            buttons_panel.setBackground(Color.WHITE);
+            buttons_panel.setLayout(new GridLayout(1,2));
+            this.add(buttons_panel);
 
-            String[] status = new String[]{"Да","Нет"};
-            isActive_box = new JComboBox(status);
-            isActive_box.setBackground(Color.WHITE);
-            newCoursePanel.add(isActive_box);
-            isActive_box.getModel().setSelectedItem(hiddenIsActive_text.getText());
-
-            JPanel newCourseButtonsPanel = new JPanel();
-            newCourseButtonsPanel.setBackground(Color.WHITE);
-            newCourseButtonsPanel.setLayout(new GridLayout(1,2));
-            newCourseButtonsPanel.setBorder(new LineBorder(Color.BLACK));
-            newCourseButtonsPanel.setVisible(true);
-            this.add(newCourseButtonsPanel);
-
-            save_button = new JButton("Сохранить");
-            save_button.setForeground(Color.BLACK);
+            JButton save_button = new JButton("Сохранить");
             save_button.setBackground(Color.WHITE);
-            save_button.setFont(new Font("Helvetica", Font.BOLD, 10));
-            newCourseButtonsPanel.add(save_button);
+            buttons_panel.add(save_button);
             save_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    try {
-                            Integer isact = isActive_box.getSelectedItem() == "Нет" ? 0 : 1;
-                        System.out.println("Isact = " + isact);
-                            String insert_query = "update Courses set isActive = " + isact + " where coarseNo = " + hiddenCourseId_text.getText() ;
-                            PreparedStatement insertCourse = MineOperations.conn.prepareStatement(insert_query);
-                            JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обновлен");
-                            insertCourse.executeUpdate();
+                    String update_query = "";
+                    try{
+                        int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
+                        update_query = "UPDATE Courses set isActive = " + isActive_int + "WHERE RusName = N'" + course_label.getText() + "'";
+                        PreparedStatement ps = MineOperations.conn.prepareStatement(update_query);
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс успешно обнавлен");
+                        ps.executeUpdate();
 
-                            listOfCourses_model.setValueAt(isActive_box.getSelectedItem(),listOfCourses_table.getSelectedRow(),2);
+                        courses_tableModel.setValueAt(isActive_box.getSelectedItem(), courses_table.getSelectedRow(),2);
 
-                            dispose();
-                            updateComboboxes();
-                            DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
-
-                    } catch (SQLException ex) {
+                        dispose();
+                        updateComboboxes();
+                    } catch (SQLException ex){
                         ex.printStackTrace();
                     }
+                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
 
                 }
             });
 
-            cancel_button = new JButton("Отмена");
-            cancel_button.setBackground(Color.WHITE);
-            cancel_button.setForeground(Color.BLACK);
-            cancel_button.setFont(new Font("Helvetica", Font.BOLD, 10));
-            newCourseButtonsPanel.add(cancel_button);
-            cancel_button.addActionListener(new ActionListener() {
+            JButton edit_button = new JButton("Отменить");
+            edit_button.setBackground(Color.WHITE);
+            buttons_panel.add(edit_button);
+            edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     dispose();
                 }
             });
-
         }
-
 
     }
 
@@ -458,10 +475,8 @@ public class Courses extends JPanel {
             g.drawRoundRect(x, y, width-1, height-1, radius, radius);
         }
     }
-
     private void updateComboboxes() {
         OperationsDaily.CourseName_box.removeAllItems();
         OperationsDaily.CourseName_box = OperationsDaily.databaseQueries.loadCourseNameBox(OperationsDaily.CourseName_box);
     }
-
 }

@@ -430,17 +430,14 @@ public class EmployeeInfo extends JPanel{
 
                                 Date today = Calendar.getInstance().getTime();
                                 String todayDate = dateFormatter.format(today);
-                                System.out.println(todayDate);
                                 truckLicence_table.setValueAt(todayDate,truckLicence_table.getSelectedRow(),1);
 
                             } else {
 
                                 String convertedDate = dateFormatter.format(selectedDate);
-                                System.out.println(convertedDate);
                                 truckLicence_table.setValueAt(convertedDate,truckLicence_table.getSelectedRow(),1);
 
                             }
-                            System.out.println(truckLicence_table.getValueAt(truckLicence_table.getSelectedRow(), 1));
                             tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
 
                         }
@@ -547,15 +544,13 @@ public class EmployeeInfo extends JPanel{
                                 Date today = Calendar.getInstance().getTime();
                                 String todayDate = dateFormatter.format(today);
                                 drivingLicence_table.setValueAt(todayDate,drivingLicence_table.getSelectedRow(),1);
-                                System.out.println(todayDate);
+
                             }
                             else {
                                 String convertedDate = dateFormatter.format(selectedDate);
-                                System.out.println(convertedDate);
                                 drivingLicence_table.setValueAt(convertedDate,drivingLicence_table.getSelectedRow(),1);
                             }
 
-                            System.out.println(drivingLicence_table.getValueAt(drivingLicence_table.getSelectedRow(), 1));
                             tempDateFrame.dispatchEvent(new WindowEvent(tempDateFrame, WindowEvent.WINDOW_CLOSING));
 
                         }
@@ -744,7 +739,6 @@ public class EmployeeInfo extends JPanel{
                     if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".png")
                             || extension.equalsIgnoreCase(".bmp") || extension.equalsIgnoreCase(".tif")
                             || extension.equalsIgnoreCase(".gif")) {
-                        System.out.println(fileChooser.getSelectedFile().getPath());
                         photoPath.setText(fileChooser.getSelectedFile().getPath());
                     } else {
                         JOptionPane.showMessageDialog(pobj, "Kindly Select Image File Only",
@@ -1079,8 +1073,7 @@ public class EmployeeInfo extends JPanel{
                 String deleteQuerySRT = "DELETE FROM SRT Where EmployeeID = '"+employeeID+"'";
                 String deleteQueryQualified = "DELETE FROM Qualified Where EmployeeID = '"+employeeID+"'";
 
-                System.out.println(deleteQueryTrainingData);
-                System.out.println(deleteQuerySRT);
+
 
                 eraseDataStatement = MineOperations.conn.prepareStatement(deleteQueryTrainingData);
                 eraseDataStatement.executeUpdate();
@@ -1198,7 +1191,6 @@ public class EmployeeInfo extends JPanel{
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 1){
                         int index1 = listOfEmployees_table.getSelectedRow();//Get the selected row
-                        System.out.println(listOfEmployees_table.getValueAt(index1, 0));
                         tableID_text.setText(listOfEmployees_table.getValueAt(index1,0).toString());
                         search_button.doClick();
                     }

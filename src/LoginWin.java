@@ -37,7 +37,7 @@ public class LoginWin extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         JLabel titleEng = new JLabel("<html><big>Добро пожаловать!</big><br /></html>");
-        titleEng.setBounds(120, 30, 300, 30);
+        titleEng.setBounds(120, 30, 300, 150);
         titleEng.setFont(Font.getFont("Lena"));
         titleEng.setForeground(Color.BLACK);
         this.add(titleEng);
@@ -45,11 +45,10 @@ public class LoginWin extends JPanel {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        JPanel Logfield_panel = new JPanel(new GridLayout(2,2));
+        JPanel Logfield_panel = new JPanel(new GridLayout(1,2));
         Logfield_panel.setVisible(true);
 
-        Logfield_panel.setBackground(Color.WHITE);
-        Logfield_panel.setBounds(200,405,300,100);
+        Logfield_panel.setBounds(15,30,300,50);
         this.add(Logfield_panel);
 
         JLabel login_label = new JLabel("Логин: ");
@@ -57,7 +56,7 @@ public class LoginWin extends JPanel {
         Logfield_panel.add(login_label, BorderLayout.CENTER);
 
 
-        JTextField login = new JTextField(5);
+        JTextField login = new JTextField(10);
         login.setBackground(Color.WHITE);
         login.setFont(Font.getFont("Lena"));
         Logfield_panel.add(login);
@@ -67,34 +66,31 @@ public class LoginWin extends JPanel {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+        JPanel Pswfield_panel = new JPanel(new GridLayout(1,2));
+        Pswfield_panel.setVisible(true);
+
+        Pswfield_panel.setBounds(15,800,300,50);
+        this.add(Pswfield_panel);
 
         JLabel psw_label = new JLabel("Пароль: ");
         psw_label.setFont(Font.getFont("Lena"));
-        Logfield_panel.add(psw_label);
+        Pswfield_panel.add(psw_label);
 
 
 
         JPasswordField psw = new JPasswordField(10);
-        psw.setBackground(Color.WHITE);
+        //psw.setBackground(Color.WHITE);
         psw.setFont(Font.getFont("Lena"));
-        Logfield_panel.add(psw);
+        Pswfield_panel.add(psw);
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 
         JPanel buttons_panel = new JPanel(new GridLayout(1,2,5,0));
         buttons_panel.setBackground(Color.WHITE);
         buttons_panel.setBounds(20,250,100,30);
         this.add(buttons_panel);
-
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 

@@ -22,6 +22,7 @@ public class Supervisors extends JPanel {
     private JTable supervisors_table;
     private DefaultTableModel supervisors_tableModel;
     public String supervisorsSelected;
+    public String statusSelected;
     public List<String> supervisors_list = new ArrayList<>();
 
     public Supervisors(){
@@ -87,9 +88,13 @@ public class Supervisors extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditSupervisorFrame editSupervisorFrame = new EditSupervisorFrame();
-                    editSupervisorFrame.setVisible(true);
-                    editSupervisorFrame.pack();
+                    if (supervisorsSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать руководителя");
+                    } else {
+                        EditSupervisorFrame editSupervisorFrame = new EditSupervisorFrame();
+                        editSupervisorFrame.setVisible(true);
+                        editSupervisorFrame.pack();
+                    }
                 }
             });
 
@@ -163,7 +168,8 @@ public class Supervisors extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     supervisorsSelected = (String) supervisors_table.getValueAt(supervisors_table.getSelectedRow(),1);
-                    System.out.println(supervisorsSelected);
+                    statusSelected = (String) supervisors_table.getValueAt(supervisors_table.getSelectedRow(),2);
+
                 }
             }
         });
@@ -374,7 +380,7 @@ public class Supervisors extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить инструктора");
+            this.setTitle("Изменить статус руководителя");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -395,7 +401,7 @@ public class Supervisors extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             supervisorInfo_panel.add(isActive_box);
-
+            isActive_box.setSelectedItem(statusSelected);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             JPanel buttons_panel = new JPanel();

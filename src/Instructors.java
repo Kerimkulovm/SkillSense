@@ -22,6 +22,7 @@ public class Instructors extends JPanel {
     private JTable instructors_table;
     private DefaultTableModel instructors_tableModel;
     public String instructorSelected;
+    public String statusSelected;
     public List<String> instructors_list = new ArrayList<>();
 
     public Instructors(){
@@ -87,9 +88,13 @@ public class Instructors extends JPanel {
             edit_button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
-                    editInstructorFrame.setVisible(true);
-                    editInstructorFrame.pack();
+                    if (instructorSelected == null){
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Необходимо выбрать инструктора");
+                    } else {
+                        EditInstructorFrame editInstructorFrame = new EditInstructorFrame();
+                        editInstructorFrame.setVisible(true);
+                        editInstructorFrame.pack();
+                    }
                 }
             });
 
@@ -163,6 +168,7 @@ public class Instructors extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1){
                     instructorSelected = (String) instructors_table.getValueAt(instructors_table.getSelectedRow(),1);
+                    statusSelected = (String) instructors_table.getValueAt(instructors_table.getSelectedRow(),2);
                     System.out.println(instructorSelected);
                 }
             }
@@ -380,7 +386,7 @@ public class Instructors extends JPanel {
             this.setFocusableWindowState(true);
             this.setLayout(new GridLayout(2,1));
             this.setAutoRequestFocus(true);
-            this.setTitle("Добавить инструктора");
+            this.setTitle("Изменить статус инструктора");
             this.setLocation(200,200);
 
             CreateFrame();
@@ -401,7 +407,7 @@ public class Instructors extends JPanel {
             String[] choice_string = {"Активен","Неактивен"};
             JComboBox isActive_box = new JComboBox(choice_string);
             instructorInfo_panel.add(isActive_box);
-
+            isActive_box.setSelectedItem(statusSelected);
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             JPanel buttons_panel = new JPanel();
