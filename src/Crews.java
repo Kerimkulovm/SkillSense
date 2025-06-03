@@ -336,11 +336,16 @@ public class Crews extends JPanel {
                                         "( CrewName, isActive) " +
                                         "VALUES ( ? , 1)";
 
-                                PreparedStatement insertCrew = MineOperations.conn.prepareStatement(insert_query);
-                                insertCrew.setString(1, crew_textField.getText());
-                                insertCrew.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1, crew_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Смена успешно добавлена");
 
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDCrew = rs2.getInt(1);
+                                }
 
                                 crews_tableModel.addRow(new Object[]{maxIDCrew,crew_textField.getText(), "Активен" });
                                 crews_tableModel.fireTableDataChanged();

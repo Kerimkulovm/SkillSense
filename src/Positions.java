@@ -336,11 +336,17 @@ public class Positions extends JPanel {
                                         "VALUES ( ? , ? , 1)";
 
 
-                                PreparedStatement insertPosition = MineOperations.conn.prepareStatement(insert_query);
-                                insertPosition.setString(1,position_textField.getText());
-                                insertPosition.setString(2,position_textField.getText());
-                                insertPosition.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1,position_textField.getText());
+                                ps.setString(2,position_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Должность успешно добавлена");
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDPosition = rs2.getInt(1);
+                                }
+
 
                                 positions_tableModel.addRow(new Object[]{maxIDPosition, position_textField.getText(), "Активен"});
                                 positions_tableModel.fireTableDataChanged();

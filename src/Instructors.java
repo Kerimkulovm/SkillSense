@@ -329,12 +329,16 @@ public class Instructors extends JPanel {
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ? , ? , 1)";
 
-                                PreparedStatement insertInstructor = MineOperations.conn.prepareStatement(insert_query);
-                                insertInstructor.setString(1,instructor_textField.getText());
-                                insertInstructor.setString(2,instructor_textField.getText());
-                                insertInstructor.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1,instructor_textField.getText());
+                                ps.setString(2,instructor_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Инструктор успешно добавлен");
 
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDInstructor = rs2.getInt(1);
+                                }
 
                                 instructors_tableModel.addRow(new Object[]{maxIDInstructor,instructor_textField.getText(), "Активен" });
                                 instructors_tableModel.fireTableDataChanged();

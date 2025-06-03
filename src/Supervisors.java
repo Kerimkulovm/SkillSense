@@ -328,11 +328,17 @@ public class Supervisors extends JPanel {
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ? , ? , 1)";
 
-                                PreparedStatement insertSupervisor = MineOperations.conn.prepareStatement(insert_query);
-                                insertSupervisor.setString(1,supervisor_textField.getText());
-                                insertSupervisor.setString(2,supervisor_textField.getText());
-                                insertSupervisor.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1,supervisor_textField.getText());
+                                ps.setString(2,supervisor_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Руководитель успешно добавлен");
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDSupervisor = rs2.getInt(1);
+                                }
+
 
                                 supervisors_tableModel.addRow(new Object[]{maxIDSupervisor,supervisor_textField.getText(), "Активен" });
                                 supervisors_tableModel.fireTableDataChanged();

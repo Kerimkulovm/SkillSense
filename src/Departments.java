@@ -334,11 +334,17 @@ public class Departments extends JPanel {
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ? , ? , 1)";
 
-                                PreparedStatement insertDepartment = MineOperations.conn.prepareStatement(insert_query);
-                                insertDepartment.setString(1, departments_textField.getText());
-                                insertDepartment.setString(2, departments_textField.getText());
-                                insertDepartment.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1, departments_textField.getText());
+                                ps.setString(2, departments_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Отдел успешно добавлен");
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDDepartment = rs2.getInt(1);
+                                }
+
 
                                 departments_tableModel.addRow(new Object[]{maxIDDepartment,departments_textField.getText(), "Активен" });
                                 departments_tableModel.fireTableDataChanged();

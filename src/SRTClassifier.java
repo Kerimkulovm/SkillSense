@@ -332,11 +332,17 @@ public class SRTClassifier extends JPanel {
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ?, ? , 1)";
 
-                                PreparedStatement insertSRTr = MineOperations.conn.prepareStatement(insert_query);
-                                insertSRTr.setString(1, SRT_textField.getText());
-                                insertSRTr.setString(2, SRT_textField.getText());
-                                insertSRTr.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1, SRT_textField.getText());
+                                ps.setString(2, SRT_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Курс успешно добавлен!!!");
+
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDSRT = rs2.getInt(1);
+                                }
 
 
                                 srt_tableModel.addRow(new Object[]{maxIDSRT,SRT_textField.getText(), "Активен" });

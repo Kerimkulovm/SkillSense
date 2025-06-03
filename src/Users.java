@@ -422,12 +422,18 @@ public class Users extends JPanel {
                                         "VALUES ( ? , ? , ?, 1)";
 
 
-                                PreparedStatement insertUser = MineOperations.conn.prepareStatement(insert_query);
-                                insertUser.setString(1,user_textField.getText());
-                                insertUser.setInt(2,roleId);
-                                insertUser.setString(3,psw_textField.getText());
-                                insertUser.executeUpdate();
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
+                                ps.setString(1,user_textField.getText());
+                                ps.setInt(2,roleId);
+                                ps.setString(3,psw_textField.getText());
+                                ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Пользователь успешно добавлен");
+
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDUser = rs2.getInt(1);
+                                }
 
                                 users_tableModel.addRow(new Object[]{maxIDUser, user_textField.getText(), finalRole_box.getSelectedItem(), "Активен"});
                                 users_tableModel.fireTableDataChanged();

@@ -334,11 +334,18 @@ public class Courses extends JPanel {
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( ? , ? , 1)";
 
-                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query);
+                                PreparedStatement ps = MineOperations.conn.prepareStatement(insert_query, PreparedStatement.RETURN_GENERATED_KEYS);
                                 ps.setString(1, courses_textField.getText());
                                 ps.setString(2, courses_textField.getText());
                                 ps.executeUpdate();
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Курс успешно добавлен");
+
+
+                                ResultSet rs2 = ps.getGeneratedKeys();
+                                if (rs2.next()) {
+                                    maxIDCourse = rs2.getInt(1);
+                                }
+
 
                                 courses_tableModel.addRow(new Object[]{maxIDCourse,courses_textField.getText(), "Активен" });
                                 courses_tableModel.fireTableDataChanged();
