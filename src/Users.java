@@ -443,7 +443,7 @@ public class Users extends JPanel {
                                 insert_query = "INSERT INTO users " +
                                         "( login, role, psw,  isActive) " +
                                         "VALUES ( '" + user_textField.getText() + "' , '" + roleId + "', '" + psw_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+                                DatabaseQueries.saveLogs("", "Добавлен пользователь " +  user_textField.getText(),  LoginWin.user.getId());
 
 
                             }
@@ -591,7 +591,8 @@ public class Users extends JPanel {
                             users_tableModel.setValueAt(finalRole_box.getSelectedItem(), users_table.getSelectedRow(), 2);
                             users_tableModel.setValueAt(isActive_box.getSelectedItem(), users_table.getSelectedRow(), 3);
                             dispose();
-                            DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                            String RusLog = "Изменены данные пользователя " + editUser.getLogin();
+                            DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
                         }
 
                     } catch (SQLException ex) {

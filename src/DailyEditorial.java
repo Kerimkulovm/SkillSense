@@ -197,7 +197,7 @@ public class DailyEditorial extends JPanel {
 
                             int selectedRecord = (Integer) dailyHours_table.getValueAt(selectedRowIndex, 8);
 
-                            delete_query = "DELETE FROM TrainingData WHERE RecID = " + selectedRecord;
+                            delete_query = "update TrainingData set isActive = 0 WHERE RecID = " + selectedRecord;
                             try {
                                 PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
                                 delete_pst.executeUpdate();
@@ -208,7 +208,8 @@ public class DailyEditorial extends JPanel {
                             } catch (SQLException ex) {
                                 ex.printStackTrace();
                             }
-                            DatabaseQueries.saveLogs(delete_query, LoginWin.user.getId());
+                            String RusLog = "Удалена запись из таблицы 'Курсы' сотрудника " + tableID_text.getText();
+                            DatabaseQueries.saveLogs(delete_query, RusLog, LoginWin.user.getId());
                         }
                     }
                 }
@@ -312,10 +313,11 @@ public class DailyEditorial extends JPanel {
         String hours_query = "select td.date, td.EmployeeId, cc.RusName as CourseName, td.RecID, td.Fhours, td.Thours, td.ExpHours, td.Phours,  ii.RusName as InstructorName from TrainingData td\n" +
                 "\tleft join Courses cc on td.Coarse = cc.CoarseNo \n" +
                 "\tleft join Instructor ii on td.instructor = ii.InstructoId \n" +
-                "\twhere td.EmployeeID = '" + tableID_text.getText() + "'\n" +
+                "\twhere td.EmployeeID = '" + tableID_text.getText() + "' and td.isActive = 1\n" +
                 "\torder by date desc";
 
         try {
+            System.out.println(hours_query);
             Statement hours_st = MineOperations.conn.createStatement();
             ResultSet hours_rs = hours_st.executeQuery(hours_query);
 

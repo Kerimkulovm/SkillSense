@@ -354,7 +354,9 @@ public class Departments extends JPanel {
                                 insert_query = "INSERT INTO Departments " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( '" + departments_textField.getText() + "' , '" + departments_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                                String RusLog = "Добавлена запись в классификатор 'Отделы':" + departments_textField.getText();
+                                DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Отдел: " +
                                         departments_textField.getText() + " уже существует");
@@ -440,7 +442,8 @@ public class Departments extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Отделы'. Отдел " + department_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
 
                 }
             });

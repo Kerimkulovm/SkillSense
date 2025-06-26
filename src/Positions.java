@@ -361,7 +361,9 @@ public class Positions extends JPanel {
                         insert_query = "INSERT INTO Position " +
                                 "( EngName, RusName, isActive) " +
                                 "VALUES ( '" + position_textField.getText() + "' , '" + position_textField.getText() + "' , 1)";
-                        DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                        String RusLog = "Добавлена запись в классификатор 'Должности':" + position_textField.getText();
+                        DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
                     }
                 }
             });
@@ -436,7 +438,8 @@ public class Positions extends JPanel {
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Должности'. Должность " + position_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
 
                 }
             });

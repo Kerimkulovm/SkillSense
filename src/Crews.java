@@ -356,7 +356,9 @@ public class Crews extends JPanel {
                                 insert_query = "INSERT INTO Crews " +
                                         "( CrewName, isActive) " +
                                         "VALUES ( '" + crew_textField.getText() +  "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                                String RusLog = "Добавлена запись в классификатор 'Смены':" + crew_textField.getText();
+                                DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Смена: " +
                                         crew_textField.getText() + " уже существует");
@@ -434,7 +436,7 @@ public class Crews extends JPanel {
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
                         update_query = "UPDATE Crews set isActive = " + isActive_int + "WHERE CrewName = N'" + crew_label.getText() + "'";
                         PreparedStatement updateCrew_pst = MineOperations.conn.prepareStatement(update_query);
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Смена успешно обнавлена");
                         updateCrew_pst.executeUpdate();
 
                         crews_tableModel.setValueAt(isActive_box.getSelectedItem(),crews_table.getSelectedRow(),2);
@@ -445,7 +447,8 @@ public class Crews extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Смены'. Смена " + crew_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
                 }
             });
 

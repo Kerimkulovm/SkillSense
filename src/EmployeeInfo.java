@@ -693,26 +693,31 @@ public class EmployeeInfo extends JPanel{
                     saveImage();
                 }
             });
-
-            eraseData_button = new JButton("Обнулить данные");
-            eraseData_button.setBackground(Color.WHITE);
-            eraseData_button.setForeground(Color.BLACK);
-            eraseData_button.setBorder(new RoundedBorder(10));
-            eraseData_button.setFont(Font.getFont("Lena"));
-            buttons_panel.add(eraseData_button);
-            eraseData_button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (!Objects.equals(tableID_text.getText(), "")) {
-                        EraseConfirmationFrame eraseConfirmationFrame = new EraseConfirmationFrame(tableID_text.getText());
-                        eraseConfirmationFrame.pack();
-                        eraseConfirmationFrame.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите табельный номер сотрудника");
+            if (LoginWin.user.getRoleid() == 1) {
+                eraseData_button = new JButton("Обнулить данные");
+                eraseData_button.setBackground(Color.WHITE);
+                eraseData_button.setForeground(Color.BLACK);
+                eraseData_button.setBorder(new RoundedBorder(10));
+                eraseData_button.setFont(Font.getFont("Lena"));
+                buttons_panel.add(eraseData_button);
+                eraseData_button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (!Objects.equals(tableID_text.getText(), "")) {
+                            EraseConfirmationFrame eraseConfirmationFrame = new EraseConfirmationFrame(tableID_text.getText());
+                            eraseConfirmationFrame.pack();
+                            eraseConfirmationFrame.setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(MineOperations.cardPane, "Введите табельный номер сотрудника");
+                        }
                     }
-                }
-            });
+                });
+            }
+
+
         }
+
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         photoPath = new JTextField();
@@ -794,6 +799,9 @@ public class EmployeeInfo extends JPanel{
                             int count = updateEmployee.executeUpdate();
                             if (count > 0) {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Фото загруженно успешно!");
+
+                                String RusLog = "Изменена фотография сотрудника " + tableID_text.getText();
+                                DatabaseQueries.saveLogs("", RusLog, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Ошибка загрузки фотографии!");
                             }
@@ -1012,6 +1020,7 @@ public class EmployeeInfo extends JPanel{
             this.setLayout(null);
         }
 
+
         private void buildFrame(String EmployeeID){
             pageTitlePanel = new JPanel();
             pageTitlePanel.setBounds(0,0,500,50);
@@ -1066,11 +1075,12 @@ public class EmployeeInfo extends JPanel{
             this.add(backgroundPanel);
         }
 
+
         private void erasingData(String employeeID){
             try {
                 PreparedStatement eraseDataStatement;
-                String deleteQueryTrainingData = "DELETE FROM TrainingData Where EmployeeID = '"+employeeID+"'";
-                String deleteQuerySRT = "DELETE FROM SRT Where EmployeeID = '"+employeeID+"'";
+                String deleteQueryTrainingData = "update TrainingData set isActive = 0 Where EmployeeID = '"+employeeID+"'";
+                String deleteQuerySRT = "update AnnualTraining set isActive = 0 Where EmployeeID = '"+employeeID+"'";
                 String deleteQueryQualified = "DELETE FROM Qualified Where EmployeeID = '"+employeeID+"'";
 
 
@@ -1085,6 +1095,8 @@ public class EmployeeInfo extends JPanel{
                 eraseDataStatement.executeUpdate();
 
                 JOptionPane.showMessageDialog(MineOperations.cardPane, "Данные обнулены");
+                DatabaseQueries.saveLogs("", "ВСЕ ДАННЫЕ УДАЛЕНЫ ПО ID = " + employeeID ,  LoginWin.user.getId());
+
                 setVisible(false);
                 dispose();
 
@@ -1092,6 +1104,7 @@ public class EmployeeInfo extends JPanel{
                 ex.printStackTrace();
             }
         }
+
     }
 
     private class SearchBySurname extends JFrame{

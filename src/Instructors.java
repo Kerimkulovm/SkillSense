@@ -349,7 +349,9 @@ public class Instructors extends JPanel {
                                 insert_query = "INSERT INTO Instructor " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( '"  + instructor_textField.getText() + "' , '"  + instructor_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                                String RusLog = "Добавлена запись в классификатор 'Инструкторы':" + instructor_textField.getText();
+                                DatabaseQueries.saveLogs(insert_query, RusLog ,  LoginWin.user.getId());
 
 
                             } else {
@@ -441,7 +443,8 @@ public class Instructors extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Инструкторы'. Инструктор " + instructor_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
                 }
             });
 

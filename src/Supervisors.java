@@ -349,7 +349,9 @@ public class Supervisors extends JPanel {
                                 insert_query = "INSERT INTO Supervisors " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( '"+ supervisor_textField.getText() + "' , '"+ supervisor_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                                String RusLog = "Добавлена запись в классификатор 'Руководители':" + supervisor_textField.getText();
+                                DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Руководитель: " +
                                         supervisor_textField.getText() + " уже существует");
@@ -426,7 +428,7 @@ public class Supervisors extends JPanel {
                         int isActive_int = isActive_box.getSelectedItem() == "Неактивен" ? 0:1;
                         update_query = "UPDATE Supervisors set isActive = " + isActive_int + "WHERE RusName = N'" + supervisor_label.getText() + "'";
                         PreparedStatement updateSupervisor_pst = MineOperations.conn.prepareStatement(update_query);
-                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Инструктор успешно обнавлен");
+                        JOptionPane.showMessageDialog(MineOperations.cardPane,"Руководитель успешно обнавлен");
                         updateSupervisor_pst.executeUpdate();
 
                         supervisors_tableModel.setValueAt(isActive_box.getSelectedItem(), supervisors_table.getSelectedRow(),2);
@@ -437,7 +439,8 @@ public class Supervisors extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Руководители'. Руководитель " + supervisor_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
                 }
             });
 

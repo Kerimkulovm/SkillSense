@@ -293,38 +293,40 @@ public class DatabaseQueries {
 
     public void updateEmployee(){
 
+        String q = "RusName = N'" + fullName + "', " +
+                "position = " + PositionID + ", " +
+                "Shiftn = " + crewID + ", " +
+                "Department = " + departmentID + ", " +
+                "ReportsTo = " + ReportsTo + ", " +
+                "Terminated = " + terminatedID + ", " +
+                "SafteyOrin = " + checkTablesContent(lastSafetyOr) + ", " +
+                "local_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
+                "local_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
+                "local_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
+                "local_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
+                "local_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
+                "local_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
+                "local_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
+                "gos_A = " + checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
+                "gos_A1 = " + checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
+                "gos_B = " + checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
+                "gos_B1 = " + checkTablesContent(drivingLicence_table.getValueAt(3,1)) + ", " +
+                "gos_C = " + checkTablesContent(drivingLicence_table.getValueAt(4,1)) + ", " +
+                "gos_C1 = " + checkTablesContent(drivingLicence_table.getValueAt(5,1)) + ", " +
+                "gos_D = " + checkTablesContent(drivingLicence_table.getValueAt(6,1)) + ", " +
+                "gos_D1 = " + checkTablesContent(drivingLicence_table.getValueAt(7,1)) + ", " +
+                "gos_BE = " + checkTablesContent(drivingLicence_table.getValueAt(8,1)) + ", " +
+                "gos_CE = " + checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
+                "gos_C1E = " + checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
+                "gos_DE = " + checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
+                "gos_D1E = " + checkTablesContent(drivingLicence_table.getValueAt(12,1)) ;
         String updateQuery =
-                "UPDATE Employees SET RusName = N'" + fullName + "', " +
-                        "position = " + PositionID + ", " +
-                        "Shiftn = " + crewID + ", " +
-                        "Department = " + departmentID + ", " +
-                        "ReportsTo = " + ReportsTo + ", " +
-                        "Terminated = " + terminatedID + ", " +
-                        "SafteyOrin = " + checkTablesContent(lastSafetyOr) + ", " +
-                        "local_A = " + checkTablesContent(truckLicence_table.getValueAt(0,1)) + ", " +
-                        "local_B = " + checkTablesContent(truckLicence_table.getValueAt(1,1)) + ", " +
-                        "local_V = " + checkTablesContent(truckLicence_table.getValueAt(2,1)) + ", " +
-                        "local_G = " + checkTablesContent(truckLicence_table.getValueAt(3,1)) + ", " +
-                        "local_D = " + checkTablesContent(truckLicence_table.getValueAt(4,1)) + ", " +
-                        "local_E = " + checkTablesContent(truckLicence_table.getValueAt(5,1)) + ", " +
-                        "local_E1 = " + checkTablesContent(truckLicence_table.getValueAt(6,1)) + ", " +
-                        "gos_A = " + checkTablesContent(drivingLicence_table.getValueAt(0,1)) + ", " +
-                        "gos_A1 = " + checkTablesContent(drivingLicence_table.getValueAt(1,1)) + ", " +
-                        "gos_B = " + checkTablesContent(drivingLicence_table.getValueAt(2,1)) + ", " +
-                        "gos_B1 = " + checkTablesContent(drivingLicence_table.getValueAt(3,1)) + ", " +
-                        "gos_C = " + checkTablesContent(drivingLicence_table.getValueAt(4,1)) + ", " +
-                        "gos_C1 = " + checkTablesContent(drivingLicence_table.getValueAt(5,1)) + ", " +
-                        "gos_D = " + checkTablesContent(drivingLicence_table.getValueAt(6,1)) + ", " +
-                        "gos_D1 = " + checkTablesContent(drivingLicence_table.getValueAt(7,1)) + ", " +
-                        "gos_BE = " + checkTablesContent(drivingLicence_table.getValueAt(8,1)) + ", " +
-                        "gos_CE = " + checkTablesContent(drivingLicence_table.getValueAt(9,1)) + ", " +
-                        "gos_C1E = " + checkTablesContent(drivingLicence_table.getValueAt(10,1)) + ", " +
-                        "gos_DE = " + checkTablesContent(drivingLicence_table.getValueAt(11,1)) + ", " +
-                        "gos_D1E = " + checkTablesContent(drivingLicence_table.getValueAt(12,1)) + " " +
-                        "WHERE EmployeeID = '" + employeeID+"'";
+                "UPDATE Employees SET " + q  +
+                        " WHERE EmployeeID = '" + employeeID+"'";
 
         System.out.println(updateQuery);
-        DatabaseQueries.saveLogs(updateQuery, LoginWin.user.getId());
+        String logRus = "Изменены данные пользователя " + employeeID + ": " + q;
+        DatabaseQueries.saveLogs(updateQuery, logRus, LoginWin.user.getId());
         try{
             updateEmployee = MineOperations.conn.prepareStatement(updateQuery);
             updateEmployee.executeUpdate();
@@ -504,7 +506,8 @@ public class DatabaseQueries {
                 System.out.println(insertQuery);
                 insertEmployee = MineOperations.conn.prepareStatement(insertQuery);
                 insertEmployee.executeUpdate();
-                DatabaseQueries.saveLogs(insertQuery, LoginWin.user.getId());
+                String LogRus = "Создана карта сотрудника " + employeeID + " " +fullName;
+                DatabaseQueries.saveLogs(insertQuery, LogRus, LoginWin.user.getId());
 
                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Сотрудник успешно добавлен");
 
@@ -804,7 +807,8 @@ public class DatabaseQueries {
                       System.out.println(insertQuery);
                       insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
                       insertQStatement.executeUpdate();
-                      saveLogs(insertQuery, LoginWin.user.getId());
+                      String RusLog = "Изменена квалицикация сотрудника " + employeeID;
+                      saveLogs(insertQuery, RusLog, LoginWin.user.getId());
                   }
 
             }
@@ -954,7 +958,7 @@ public class DatabaseQueries {
 
         try {
 
-            String positionRus_query = "select 100 as roleid, 'Выберите роль' as rolename\n " +
+            String positionRus_query = "select 100 as roleid, N'Выберите роль' as rolename\n " +
                     "union all select roleid, rolename from roles where isactive =1 order by roleid desc";
             Statement st = MineOperations.conn.createStatement();
             ResultSet rs = st.executeQuery(positionRus_query);
@@ -1057,9 +1061,9 @@ public class DatabaseQueries {
             PreparedStatement insertQStatement;
 
             insertQuery = "INSERT INTO AnnualTraining " +
-                    "( EmployeeID, LastDate, ScheduledDate, coarse, FieldHours, Thours, Instructor, Mark) " +
+                    "( EmployeeID, LastDate, ScheduledDate, coarse, FieldHours, Thours, Instructor, Mark, isActive) " +
                     "VALUES ( '" + empId + "', '" + lastDate + "', " + val + ", " +
-                    CourseId + ",  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ")";
+                    CourseId + ",  " + fHours+ ", " + tHours + ", " + instructorId + ", " + mark_text + ", 1)";
 
             System.out.println(insertQuery);
             insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
@@ -1069,7 +1073,8 @@ public class DatabaseQueries {
         } catch (SQLException ex){
             ex.printStackTrace();
         }
-        saveLogs(insertQuery, LoginWin.user.getId());
+        String RusLog = "Добавлена запись в таблицу 'Ежегодные обучения' сотруднику " + empId;
+        saveLogs(insertQuery, RusLog, LoginWin.user.getId());
 
         return res;
     }
@@ -1086,9 +1091,9 @@ public class DatabaseQueries {
             //m++;
             PreparedStatement insertQStatement;
             insertQuery = "INSERT INTO TrainingData " +
-                        "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor  ) " +
+                        "( EmployeeID, Date, Thours, FHours, Phours, Exphours, coarse, Instructor, isActive ) " +
                     "VALUES ( '" + empId + "', '" + Date + "', " + tHours + ", " + fHours + ", " + pHours + ", " + expHours + ", " +
-                     CourseId + ", " + instructorId + ")";
+                     CourseId + ", " + instructorId + ", 1)";
 
             System.out.println(insertQuery);
             insertQStatement = MineOperations.conn.prepareStatement(insertQuery);
@@ -1099,8 +1104,8 @@ public class DatabaseQueries {
         } catch (SQLException ex){
             ex.printStackTrace();
         }
-
-        saveLogs(insertQuery, LoginWin.user.getId());
+        String RusLog = "Добавлена запись в таблицу 'Курсы' сотруднику " + empId;
+        saveLogs(insertQuery, RusLog, LoginWin.user.getId());
         return res;
     }
 
@@ -1170,7 +1175,7 @@ public class DatabaseQueries {
 
 
 
-    public static void saveLogs(String log, int userid){
+    public static void saveLogs(String logCode, String logRus, int userid){
 
         try{
             PreparedStatement insertQStatement;
@@ -1180,8 +1185,8 @@ public class DatabaseQueries {
             else curdate = "getdate()";
 
             String insertQuery = "INSERT INTO logs " +
-                    "( Date, Userid, LogText, isActive  ) " +
-                    "VALUES ( " + curdate + ", " + userid + ", '" + log.replace( "'", "''") + "', 1)";
+                    "( Date, Userid, LogText, LogRus, isActive  ) " +
+                    "VALUES ( " + curdate + ", " + userid + ", N'" + logCode.replace( "'", "''") + "', N'" + logRus.replace( "'", "''") + "', 1)";
 
             System.out.println(insertQuery);
             insertQStatement = MineOperations.conn.prepareStatement(insertQuery);

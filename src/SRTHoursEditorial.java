@@ -177,7 +177,7 @@ public class SRTHoursEditorial extends JPanel {
 
                             int selectedRecord = (Integer) acceptedHours_table.getValueAt(selectedRowIndex, 7);
 
-                            String delete_query = "DELETE FROM AnnualTraining WHERE RecID = " + selectedRecord;
+                            String delete_query = "update AnnualTraining set isActive =0  WHERE RecID = " + selectedRecord;
                             try {
                                 PreparedStatement delete_pst = MineOperations.conn.prepareStatement(delete_query);
                                 delete_pst.executeUpdate();
@@ -188,7 +188,8 @@ public class SRTHoursEditorial extends JPanel {
                             } catch (SQLException ex) {
                                 ex.printStackTrace();
                             }
-                            DatabaseQueries.saveLogs(delete_query, LoginWin.user.getId());
+                            String RusLog = "Удалена запись из таблицы 'Ежегодные обучения' сотрудника " + tableID_text.getText();
+                            DatabaseQueries.saveLogs(delete_query, RusLog, LoginWin.user.getId());
 
                         }
                     }
@@ -302,7 +303,7 @@ public class SRTHoursEditorial extends JPanel {
         String hours_query = "select s.lastdate as date, s.EmployeeId, cc.RusName as CourseName, s.RecID, s.Thours,  s.Phours, Fieldhours as fHours,  ii.RusName as InstructorName from AnnualTraining s\n" +
                 "\tleft join SafetyNames cc on s.Coarse = cc.ReviewNo \n" +
                 "\tleft join Instructor ii on s.instructor = ii.InstructoId \n" +
-                "\twhere s.EmployeeID = '"+ tableID_text.getText() +"'\n" +
+                "\twhere s.EmployeeID = '"+ tableID_text.getText() +"'  and s.isActive = 1 \n" +
                 "\torder by  s.lastdate  desc";
 
         try {

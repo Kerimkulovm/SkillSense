@@ -355,7 +355,9 @@ public class Courses extends JPanel {
                                 insert_query = "INSERT INTO Courses " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( '" + courses_textField.getText() + "' , '" + courses_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+                                String RusLog = "Добавлена запись в классификатор 'Курсы':" + courses_textField.getText();
+
+                                DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
                                         courses_textField.getText() + " уже существует");
@@ -440,7 +442,8 @@ public class Courses extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Курсы'. Курс " + course_label.getText()  + " = "  + isActive_box.getSelectedItem();
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
 
                 }
             });

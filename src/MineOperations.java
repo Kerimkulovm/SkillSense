@@ -22,10 +22,7 @@ public class MineOperations extends JFrame {
                 conn = DriverManager.getConnection(url, "postgres", "741852" );
             }else {
 
-                //url = "jdbc:sqlserver://localhost:1433;databaseName=MineOperationsTestDB; username=MineTraining;password=qazwsx";
-                url = "jdbc:sqlserver://localhost:1433;databaseName=MineOps; username=MineTraining;password=qazwsx";
-                //url = "jdbc:sqlserver://localhost:1433;databaseName=MineSkillV2; username=MineTraining;password=qazwsx";
-                //url = "jdbc:sqlserver://localhost:1433;databaseName=SkillSense; username=MineTraining;password=qazwsx";
+                url = "jdbc:sqlserver://localhost:1433;databaseName=MineOps; username=mt2;password=741852";
                 //url = "jdbc:sqlserver://kyrkumms05.kumtor.kg:1433;databaseName=MineTrainingDB; username=mt;password=weKnowNothing01";
 
                 conn = DriverManager.getConnection(url);

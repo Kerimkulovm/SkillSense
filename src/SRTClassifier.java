@@ -354,7 +354,10 @@ public class SRTClassifier extends JPanel {
                                 insert_query = "INSERT INTO SafetyNames " +
                                         "( EngName, RusName, isActive) " +
                                         "VALUES ( '" + SRT_textField.getText() + "', '" + SRT_textField.getText() + "' , 1)";
-                                DatabaseQueries.saveLogs(insert_query, LoginWin.user.getId());
+
+                                String RusLog = "Добавлена запись в классификатор 'Ежегодные обучения':" + SRT_textField.getText();
+
+                                DatabaseQueries.saveLogs(insert_query, RusLog, LoginWin.user.getId());
 
                             } else {
                                 JOptionPane.showMessageDialog(MineOperations.cardPane,"Курс: " +
@@ -447,7 +450,9 @@ public class SRTClassifier extends JPanel {
                     } catch (SQLException ex){
                         ex.printStackTrace();
                     }
-                    DatabaseQueries.saveLogs(update_query, LoginWin.user.getId());
+                    String RusLog = "Изменена запись в классификаторе 'Ежегодные обучения'. Обучение " + SRT_label.getText()  + " = "  + isActive_box.getSelectedItem();
+
+                    DatabaseQueries.saveLogs(update_query, RusLog, LoginWin.user.getId());
                 }
             });
 
